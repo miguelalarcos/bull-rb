@@ -1,13 +1,45 @@
 require 'reactive-ruby'
 require 'set'
 
-class DisplayDoc < React::Component::Base
-  attr_accessor :predicate_id
+class DisplayList < React::Component::Base
+
+  before_mount do
+    state.docs! {}
+    @predicate_id = nil
+  end
 
   def watch(name, *args)
     $controller.stop_watch(@predicate_id) if @predicate_id != nil
-    @predicate_id = $controller.watch(name, *args) do |data|
-      data['new_val'].each {|k, v| state.send(k+'!', v)}
+    @predicate_id = $controller.watch(name, *args) {|data| consume data}
+  end
+
+  def consume data
+    docs = state.docs.clone
+    if data['new_val'] == nil
+      docs.delete data['old_val']['id']
+    else data['old_val'] == nil
+      docs[data['new_val']['id']] = data['new_val']
+    end
+    state.docs! docs
+  end
+
+  before_unmount do
+    $controller.stop_watch @predicate_id if @predicate_id != nil
+  end
+end
+
+class DisplayDoc < React::Component::Base
+
+  before_mount do
+    @predicate_id = nil
+  end
+
+  def watch(table, rvar)
+    reactive(rvar) do
+      $controller.stop_watch(@predicate_id) if @predicate_id != nil
+      @predicate_id = $controller.watch('by_id', table) do |data|
+        data['new_val'].each {|k, v| state.send(k+'!', v)}
+      end
     end
   end
 

@@ -2,8 +2,8 @@ require 'opal'
 require 'opal-browser'
 require 'reactive-ruby'
 
-desc "Build our app to build.js"
-task :build do
+desc "Build our app to build.js in development mode"
+task :development do
   Opal.append_path "."
   builder = Opal::Builder.new
   build_js = builder.build("main").to_s

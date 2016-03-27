@@ -11,12 +11,13 @@ class Controller
     end
 
     def notify(msg)
-        msg = JSON.parse msg
+        msg = JSON.parse msg #, symbolize_names: true
         command = msg['command']
+        kwargs = Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
         if command.start_with? 'rpc_'
-            handle_rpc command, msg['id'], *msg['args']
+            handle_rpc command, msg['id'], *msg['args'], **kwargs
         elsif command.start_with? 'watch_'
-            handle_watch command, msg['id'], *msg['args']            
+            handle_watch command, msg['id'], *msg['args'], **kwargs
         elsif command == 'stop_watch'
             handle_stop_watch msg['id']
         end    
@@ -28,8 +29,9 @@ class Controller
 
     private
 
-        def login! user
-            @user_id = user
+        def rpc_login! user
+          @user_id = user
+          true
         end
 
         def user_is_owner? doc

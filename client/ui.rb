@@ -1,3 +1,4 @@
+require_relative 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
 
@@ -26,9 +27,7 @@ class DisplayCar < DisplayDoc
 
     param :selected
 
-    before_mount do
-        reactive(params.selected) {watch 'by_id', 'car', params.selected.value}
-    end
+    before_mount {watch 'car', params.selected}
 
     def render
         div do

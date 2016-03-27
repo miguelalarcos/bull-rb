@@ -1,4 +1,4 @@
-require 'opal'
+#require 'opal'
 require 'browser'
 require 'browser/socket'
 require 'promise'
@@ -73,8 +73,8 @@ class Controller
             id
         end
 
-        def send(command, id, *args)
-            @ws.send({command: command, id: id, args: args}.to_json)
+        def send(command, id, *args, **kwargs)
+            @ws.send({command: command, id: id, args: args, kwargs: kwargs}.to_json)
             # @ws.send_data [command, args].to_json
         end
 
@@ -82,7 +82,7 @@ class Controller
             puts msg
             if msg['response'] == 'watch'
                 handle_watch_data msg['id'], msg['data']
-            else
+            elsif msg['response'] == 'rpc'
                 handle_rpc_result msg['id'], msg['result']
             end
         end
