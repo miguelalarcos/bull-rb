@@ -1,0 +1,15 @@
+require 'opal'
+require 'opal-browser'
+require 'reactive-ruby'
+
+desc "Build our app to build.js"
+task :build do
+  Opal.append_path "."
+  builder = Opal::Builder.new
+  build_js = builder.build("main").to_s
+  source_map = builder.source_map
+  build_js << '//# sourceMappingURL=main.js.map'
+  File.write('main.js.map', source_map)
+  File.write('build.js', build_js)
+  #File.binwrite "build.js", Opal::Builder.build("main").to_s
+end
