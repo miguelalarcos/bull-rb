@@ -95,8 +95,13 @@ class Controller
             $r.table(table).get(id).update(new_val).run(@conn)[:replaced]            
         end
 
-        def handle_watch command, id, *args
-            w = self.send command, *args
+        def handle_watch command, id, *args, **kwargs
+            puts '=>', command, args, kwargs
+            if kwargs.empty?
+                w = self.send command, *args
+            else
+                w = self.send command, *args, **kwargs
+            end
             return if !w
             EventMachine.run do
                 @watch[id] = w.em_run(@conn) do |doc|               
@@ -115,9 +120,13 @@ class Controller
             @watch.delete id
         end
 
-        def handle_rpc command, id, *args
+        def handle_rpc command, id, *args, **kwargs
             #try
-            ret = self.send command, *args
+            if kwargs.empty?
+                ret = self.send command, *args
+            else
+                ret = self.send command, *args, **kwargs
+            end
             @ws.send({response: 'rpc', id: id, result: ret}.to_json)
         end
 

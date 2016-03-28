@@ -1,15 +1,24 @@
 require 'opal'
 require 'opal-browser'
 require 'reactive-ruby'
+require 'uglifier'
 
 desc "Build our app to build.js in development mode"
 task :development do
   Opal.append_path "."
   builder = Opal::Builder.new
+  #builder = Opal::Builder.new(:stubs => ['opal', 'reactive-ruby'])
   build_js = builder.build("main").to_s
   source_map = builder.source_map
   build_js << '//# sourceMappingURL=main.js.map'
   File.write('main.js.map', source_map)
   File.write('build.js', build_js)
   #File.binwrite "build.js", Opal::Builder.build("main").to_s
+end
+
+desc "build reactive-ruby"
+task :build_reactive_ruby do
+  Opal.append_path "."
+  File.binwrite "build_reactive_ruby.js", Opal::Builder.build("rr").to_s
+  File.binwrite "build_reactive_ruby_uglify.js", Uglifier.new.compile(File.read("build_reactive_ruby.js"))
 end

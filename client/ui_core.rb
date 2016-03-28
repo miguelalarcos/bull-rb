@@ -34,11 +34,11 @@ class DisplayDoc < React::Component::Base
     @predicate_id = nil
   end
 
-  def watch(table, rvar)
+  def watch_ table, rvar
     reactive(rvar) do
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
-      @predicate_id = $controller.watch('by_id', table) do |data|
-        data['new_val'].each {|k, v| state.send(k+'!', v)}
+      @predicate_id = $controller.watch('by_id', table, rvar.value) do |data|
+        data['new_val'].each {|k, v| state.__send__(k+'!', v)}
       end
     end
   end
@@ -56,6 +56,7 @@ class AttrInput < React::Component::Base
   def render
     div do
       input(type: :text, value: params.value){}.on(:change) do |event|
+      #input(type: :text){}.on(:change) do |event|
         params.change_attr event.target.value
       end
     end
@@ -71,24 +72,24 @@ class Form < React::Component::Base
   def change_attr(attr)
     lambda do |value|
       @dirty.add attr
-      state.send(attr+'!', value)
+      state.__send__(attr+'!', value)
     end
   end
 
   def update
     ret = {}
     @dirty.each do |attr|
-      ret[attr] = state.send(attr) if attr != 'id'
+      ret[attr] = state.__send__(attr) if attr != 'id'
     end
-    $controller.rpc('update', @@table, state.id, ret).then {|response| puts response}
     @dirty.clear
+    $controller.rpc('update', @@table, state.id, ret)
   end
 
   def get rvar
     reactive(rvar) do
       $controller.rpc('get', @@table, rvar.value).then do|response|
         response.each do |k, v|
-          state.send(k+'!', v)
+          state.__send__(k+'!', v)
         end
       end
     end

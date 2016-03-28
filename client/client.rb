@@ -41,7 +41,7 @@ class Controller
             controller = self
             @ws = Browser::Socket.new 'ws://localhost:3000' do
                 on :open do |e|
-                    if !app_rendered
+                    if !controller.app_rendered
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
                           controller.app_rendered = true
@@ -103,6 +103,8 @@ class Controller
             @watch.each_value do |value|
                 value[:who].notify nil
             end
+            @promises = {}
+            @watch = {}
             start nil
         end
 end

@@ -27,10 +27,14 @@ class DisplayCar < DisplayDoc
 
     param :selected
 
-    before_mount {watch 'car', params.selected}
+    before_mount do
+        state.registration! ''
+        watch_ 'car', params.selected
+    end
 
     def render
         div do
+            span {"display_car"}
             b {state.registration}
         end
     end
@@ -41,7 +45,10 @@ class MyForm < Form
 
     param :selected
 
-    before_mount {get params.selected}
+    before_mount do
+        state.registration! ''
+        get params.selected
+    end
 
     def render
         v1 = Validate_Car.is_valid_registration? state.registration

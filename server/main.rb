@@ -1,9 +1,17 @@
 require './server'
+require 'em-synchrony'
 
 class MyController < Controller
 
+  def initialize ws, conn
+    super ws, conn
+    @mutex = EM::Synchrony::Thread::Mutex.new
+  end
+
   def rpc_add a, b
-    a + b
+    @mutex.synchronize do
+      a + b
+    end
   end
 
   def before_watch_by_id_car doc
@@ -17,7 +25,9 @@ class MyController < Controller
   end
 
   def before_update_car old_val, new_val
-    user_role_in? old_val
+    u_timestamp! new_val
+    true
+    #user_role_in? old_val
   end
 
   def before_insert_car doc
