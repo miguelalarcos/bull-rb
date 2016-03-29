@@ -63,9 +63,6 @@ end
 
 class AttrInput < React::Component::Base
 
-  param :change_attr, type: Proc
-  param :value, type: String
-
   def render
     div do
       input(type: :text, value: params.value){}.on(:change) do |event|
@@ -75,14 +72,36 @@ class AttrInput < React::Component::Base
   end
 end
 
-class StringInput < AttrInput
-  def update_state
+class StringInput < React::Component::Base # AttrInput
+  param :change_attr, type: Proc
+  param :value, type: String
+
+  def render
+    div do
+      input(type: :text, value: params.value){}.on(:change) do |event|
+        update_state event
+      end
+    end
+  end
+
+  def update_state event
       params.change_attr event.target.value
   end
 end
 
-class FloatInput < AttrInput
-  def update_state
+class FloatInput < React::Component::Base
+  param :change_attr, type: Proc
+  param :value, type: Float
+
+  def render
+    div do
+      input(type: :text, value: params.value){}.on(:change) do |event|
+        update_state event
+      end
+    end
+  end
+
+  def update_state event
     begin
       params.change_attr Float(event.target.value)
     rescue
@@ -90,8 +109,19 @@ class FloatInput < AttrInput
   end
 end
 
-class IntegerInput < AttrInput
-  def update_state
+class IntegerInput < React::Component::Base
+  param :change_attr, type: Proc
+  param :value, type: Integer
+
+  def render
+    div do
+      input(type: :text, value: params.value){}.on(:change) do |event|
+        update_state event
+      end
+    end
+  end
+
+  def update_state event
     begin
       params.change_attr Integer(event.target.value)
     rescue
@@ -100,6 +130,7 @@ class IntegerInput < AttrInput
 end
 
 class Form < React::Component::Base
+  #param :selected
 
   before_mount do
     @dirty = Set.new
@@ -112,13 +143,32 @@ class Form < React::Component::Base
     end
   end
 
-  def update
+  def hash_from_state
     ret = {}
     @dirty.each do |attr|
       ret[attr] = state.__send__(attr) if attr != 'id'
     end
+    ret
+  end
+
+  def save
+    if state.id
+      update
+    else
+      insert
+    end
+  end
+
+  def insert
+    $controller.rpc('insert', @@table, hash_from_state).then do |response|
+      params.selected.value = response['id']
+    end
     @dirty.clear
-    $controller.rpc('update', @@table, state.id, ret)
+  end
+
+  def update
+    @dirty.clear
+    $controller.rpc('update', @@table, state.id, hash_from_state)
   end
 
   def get value

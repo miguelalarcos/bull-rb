@@ -66,7 +66,8 @@ class Controller
         end
 
         def rpc_get table, id
-            doc = $r.table(table).get(id).run(@conn)    
+            doc = $r.table(table).get(id).run(@conn)
+            puts '==================================================', table, id, doc
             if self.class.method_defined? 'before_get_'+table
                 if !self.send('before_get_'+table, doc)
                     return nil

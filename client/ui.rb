@@ -54,8 +54,7 @@ class DisplayCar < DisplayDoc
 end
 
 class MyForm < Form
-    @@table = 'car'   
-
+    @@table = 'car'
     param :selected
 
     before_mount do
@@ -68,19 +67,22 @@ class MyForm < Form
         state.registration! ''
         state.color! ''
         state.wheels! 0
-        state.date! Time.now
+        state.date! nil
+        state.id! nil
     end
 
     def render
-        v1 = Validate_Car.is_valid_registration? state.registration
-        state.is_valid_registration! v1
-        state.is_valid! [v1].all?        
+        #v1 = Validate_Car.is_valid_registration? state.registration
+        #state.is_valid_registration! v1
+        #state.is_valid! [v1].all?
+
         div do
             StringInput(change_attr: change_attr('registration'), value: state.registration)
-            span{'not valid registration'} if !state.is_valid_registration
+            #span{'not valid registration'} if !state.is_valid_registration
             IntegerInput(change_attr: change_attr('wheels'), value: state.wheels)
-            DateTimePicker(format: '%d-%m-%Y %H:%M', value: state.date, time: true, change_attr: change_attr('date'))
-            button(type: :button) { 'update' }.on(:click) {update} if state.is_valid
+            DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
+            button(type: :button) { 'save' }.on(:click) {save} # if state.is_valid
+            #button(type: :button) { 'clear' }.on(:click) {clear}
         end        
     end
 end

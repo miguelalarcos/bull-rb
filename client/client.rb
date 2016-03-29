@@ -93,7 +93,7 @@ class Controller
         end
 
         def notify msg
-            data = msg['data'] or msg['result']
+            data = msg['data'] || msg['result']
             if msg['times'] and data.respond_to?(:each_pair)
                 data.each_pair do |k, v|
                     if msg['times'].include? k
