@@ -3,6 +3,7 @@ require 'browser'
 require 'browser/socket'
 require 'promise'
 require 'json'
+require 'time'
 
 class Controller
 
@@ -49,14 +50,22 @@ class Controller
                     end
                 end
                 on :message do |e|
-                    controller.notify JSON.parse(e.data)
+                    begin
+                        controller.notify JSON.parse(e.data)
+                    rescue Exception => e
+                        puts e.message
+                        puts e.backtrace.inspect
+                    end
+                end
+                on :close do |e|
+                    puts 'close and reset'
+                    after(5) {reset}
                 end
             end            
         rescue Exception => e  
             puts e.message  
             puts e.backtrace.inspect 
-            #sleep 5
-            #retry
+            after(5) {reset}
         end
         if !@watch.empty?
             @watch.each do |id, value|
@@ -74,16 +83,28 @@ class Controller
         end
 
         def send(command, id, *args, **kwargs)
-            @ws.send({command: command, id: id, args: args, kwargs: kwargs}.to_json)
-            # @ws.send_data [command, args].to_json
+            times = []
+            kwargs.each_pair do |k, v|
+                if v.instance_of? Time
+                    times << k
+                end
+            end
+            @ws.send({command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json)
         end
 
         def notify msg
-            puts msg
+            data = msg['data'] or msg['result']
+            if msg['times'] and data.respond_to?(:each_pair)
+                data.each_pair do |k, v|
+                    if msg['times'].include? k
+                        data[k] = Time.parse v
+                    end
+                end
+            end
             if msg['response'] == 'watch'
-                handle_watch_data msg['id'], msg['data']
+                handle_watch_data msg['id'], data
             elsif msg['response'] == 'rpc'
-                handle_rpc_result msg['id'], msg['result']
+                handle_rpc_result msg['id'], data
             end
         end
 
@@ -101,7 +122,7 @@ class Controller
 
         def reset
             @watch.each_value do |value|
-                value[:who].notify nil
+                value[:who].clear
             end
             @promises = {}
             @watch = {}

@@ -14,6 +14,13 @@ class Controller
         msg = JSON.parse msg #, symbolize_names: true
         command = msg['command']
         kwargs = Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
+        if msg['times']
+            kwargs.each do |k, v|
+                if msg['times'].include? k
+                    kwargs[k] = Time.parse v
+                end
+            end
+        end
         if command.start_with? 'rpc_'
             handle_rpc command, msg['id'], *msg['args'], **kwargs
         elsif command.start_with? 'watch_'
@@ -109,7 +116,7 @@ class Controller
                     ret[:response] = 'watch'
                     ret[:id] = id
                     ret[:data] = doc
-                    puts ret.to_json
+                    ret[:times] = times doc
                     @ws.send ret.to_json                    
                 end
             end
@@ -127,7 +134,7 @@ class Controller
             else
                 ret = self.send command, *args, **kwargs
             end
-            @ws.send({response: 'rpc', id: id, result: ret}.to_json)
+            @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
         end
 
         def watch_by_id table, id
@@ -138,6 +145,16 @@ class Controller
                 end
             end
             $r.table(table).get(id).changes({include_initial: true})    
+        end
+
+        def times kwargs
+            times_ = []
+            kwargs.each_pair do |k, v|
+                if v.instance_of? Time
+                    times_ << k
+                end
+            end
+          times_
         end
 end
 

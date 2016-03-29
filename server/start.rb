@@ -12,7 +12,14 @@ EM.run do
 
     ws.onopen { |handshake| controller = MyController.new ws, conn}
 
-    ws.onmessage { |msg| controller.notify msg }
+    ws.onmessage do |msg|
+      begin
+        controller.notify msg
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace.inspect
+      end
+    end
 
     ws.onclose { controller.close; controller = nil }
 

@@ -1,6 +1,7 @@
 require_relative 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
+require_relative 'datetime_ui'
 
 class Validate_Car
     def self.is_valid_registration?(value)
@@ -12,29 +13,41 @@ class App < React::Component::Base
 
     before_mount do
         @car_selected = RVar.new 0
+        state.date! Time.now
     end
 
     def render
         div do
             MyForm(selected: @car_selected)
-            br
+            hr
             DisplayCar(selected: @car_selected)
+            hr
+            div{'red cars:'}
+            DisplayCars(color: 'red', selected: @car_selected)
+            hr
+            div{'blue cars:'}
+            DisplayCars(color: 'blue', selected: @car_selected)
         end
     end    
 end
 
 class DisplayCar < DisplayDoc
-
+    @@table = 'car'
     param :selected
 
     before_mount do
+        reactive(params.selected) do
+            watch_ params.selected.value
+        end
+    end
+
+    def clear
         state.registration! ''
-        watch_ 'car', params.selected
+        state.color! ''
     end
 
     def render
         div do
-            span {"display_car"}
             b {state.registration}
         end
     end
@@ -46,8 +59,16 @@ class MyForm < Form
     param :selected
 
     before_mount do
+        reactive(params.selected) do
+            get params.selected.value
+        end
+    end
+
+    def clear
         state.registration! ''
-        get params.selected
+        state.color! ''
+        state.wheels! 0
+        state.date! Time.now
     end
 
     def render
@@ -55,9 +76,41 @@ class MyForm < Form
         state.is_valid_registration! v1
         state.is_valid! [v1].all?        
         div do
-            AttrInput(change_attr: change_attr('registration'), value: state.registration)
+            StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
-            button(type: :button) { "update" }.on(:click) {update} if state.is_valid
+            IntegerInput(change_attr: change_attr('wheels'), value: state.wheels)
+            DateTimePicker(format: '%d-%m-%Y %H:%M', value: state.date, time: true, change_attr: change_attr('date'))
+            button(type: :button) { 'update' }.on(:click) {update} if state.is_valid
         end        
     end
 end
+
+class DisplayCars < DisplayList
+    param :color
+    param :selected
+
+    before_mount do
+        watch_ 'cars_of_color', params.color
+    end
+
+    def render
+        div do
+            state.docs.each do |doc|
+                div(key: doc['id']) do
+                    span{doc['registration']}
+                    button(type: :button) {'select'}.on(:click) do
+                        params.selected.value = doc['id']
+                    end
+                    button(type: :button) {'change color'}.on(:click) do
+                        color = 'red'
+                        if doc['color'] == 'red'
+                            color = 'blue'
+                        end
+                        $controller.rpc('update', 'car', doc['id'], {color: color})
+                    end
+                end
+            end
+        end
+    end
+end
+
