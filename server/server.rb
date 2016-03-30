@@ -2,6 +2,8 @@ require 'eventmachine'
 require 'json'
 require 'time'
 
+module Bull
+
 class Controller
     def initialize(ws, conn)
         @ws = ws        
@@ -50,7 +52,7 @@ class Controller
         end
 
         def user_role_in? doc
-            doc["update_roles"].to_set.intersect?(user_roles.to_set)
+            doc['update_roles'].to_set.intersect?(user_roles.to_set)
         end
 
         def i_timestamp! doc
@@ -67,7 +69,6 @@ class Controller
 
         def rpc_get table, id
             doc = $r.table(table).get(id).run(@conn)
-            puts '==================================================', table, id, doc
             if self.class.method_defined? 'before_get_'+table
                 if !self.send('before_get_'+table, doc)
                     return nil
@@ -104,7 +105,6 @@ class Controller
         end
 
         def handle_watch command, id, *args, **kwargs
-            puts '=>', command, args, kwargs
             if kwargs.empty?
                 w = self.send command, *args
             else
@@ -158,4 +158,4 @@ class Controller
           times_
         end
 end
-
+end

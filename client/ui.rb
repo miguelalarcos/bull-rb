@@ -2,12 +2,7 @@ require_relative 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
 require_relative 'datetime_ui'
-
-class Validate_Car
-    def self.is_valid_registration?(value)
-        value.start_with? 'A'
-    end
-end
+require_relative '../validation/validation'
 
 class App < React::Component::Base
 
@@ -54,6 +49,7 @@ class DisplayCar < DisplayDoc
 end
 
 class MyForm < Form
+
     @@table = 'car'
     param :selected
 
@@ -72,17 +68,14 @@ class MyForm < Form
     end
 
     def render
-        #v1 = Validate_Car.is_valid_registration? state.registration
-        #state.is_valid_registration! v1
-        #state.is_valid! [v1].all?
-
+        ValidateCar.new.validate state
         div do
             StringInput(change_attr: change_attr('registration'), value: state.registration)
-            #span{'not valid registration'} if !state.is_valid_registration
+            span{'not valid registration'} if !state.is_valid_registration
             IntegerInput(change_attr: change_attr('wheels'), value: state.wheels)
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
-            button(type: :button) { 'save' }.on(:click) {save} # if state.is_valid
-            #button(type: :button) { 'clear' }.on(:click) {clear}
+            button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
+            button(type: :button) { 'clear' }.on(:click) {clear}
         end        
     end
 end

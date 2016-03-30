@@ -4,5 +4,5 @@ Bull-rb
 Ruby full stack for real time web apps:
 ---------------------------------------
 
-Ruby + Opal + React.rb + Rack + Rethinkdb
+Ruby + Opal + React.rb + EventMachine + Rethinkdb
 
