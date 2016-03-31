@@ -7,7 +7,15 @@ $r = RethinkDB::RQL.new
 conn = $r.connect()
 
 EM.run do
-  EM::WebSocket.run(:host => "0.0.0.0", :port => 3000, :debug => true) do |ws|
+  EM::WebSocket.run(:host => "0.0.0.0",
+                    :port => 3000,
+                    :debug => true,
+                    :secure => true,
+                    :tls_options => {
+                      :private_key_file => "../privateKey.key",
+                      :cert_chain_file => "../CSR.csr"
+                    }
+                    ) do |ws|
     controller = nil
 
     ws.onopen { |handshake| controller = MyController.new ws, conn}

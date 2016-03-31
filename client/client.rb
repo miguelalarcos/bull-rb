@@ -40,7 +40,7 @@ class Controller
     def start(app)
         begin
             controller = self
-            @ws = Browser::Socket.new 'ws://localhost:3000' do
+            @ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     if !controller.app_rendered
                         $document.ready do

@@ -4,11 +4,11 @@ require_relative 'reactive_var'
 require_relative 'datetime_ui'
 require_relative '../validation/validation'
 
-class App < React::Component::Base
+class Page < React::Component::Base
 
     before_mount do
         @car_selected = RVar.new 0
-        state.date! Time.now
+        #state.date! Time.now
     end
 
     def render
@@ -22,6 +22,40 @@ class App < React::Component::Base
             hr
             div{'blue cars:'}
             DisplayCars(color: 'blue', selected: @car_selected)
+        end
+    end
+end
+
+class Login < React::Component::Base
+    param :set_user
+
+    before_mount do
+        state.user_name! ''
+        state.password! ''
+    end
+
+    def render
+        StringInput(change_attr: lambda {|v| state.user_name! v})
+        PasswordInput(change_attr: lambda {|v| state.password! v})
+        button(type: :button) { 'login' }.on(:click) do
+            $controller.rpc('login', state.user_name, 'secret').then do |response|
+                params.set_user.call response
+            end
+        end
+    end
+end
+
+class App < React::Component::Base
+
+    before_mount do
+        state.user! false
+    end
+
+    def render
+        if state.user
+            Page()
+        else
+            Login(set_user: lambda {|v| state.user! v})
         end
     end    
 end

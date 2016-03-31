@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'json'
 require 'time'
+require 'bcrypt'
 
 module Bull
 
@@ -38,9 +39,17 @@ class Controller
 
     private
 
-        def rpc_login! user
-          @user_id = user
-          true
+        def rpc_login! user, password
+          #@user_id = user
+          #true
+          pass = BCrypt::Password.create('secret')
+          pass = BCrypt::Password.new(pass)
+          if pass == password
+            @user_id = user
+            true
+          else
+            false
+          end
         end
 
         def user_is_owner? doc

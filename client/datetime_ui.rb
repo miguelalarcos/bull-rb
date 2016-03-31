@@ -61,8 +61,14 @@ class DateTimeInput < React::Component::Base
 
   def render
     day = params.value || Time.now
+    val = if params.value
+            params.value.strftime(params.format)
+          else
+            ''
+          end
     div do
-      input(type: :text, value: day.strftime(params.format)).on(:click) {|event| state.show! !state.show}
+      #input(type: :text, value: day.strftime(params.format)).on(:click) {|event| state.show! !state.show}
+      input(type: :text, value: val).on(:click) {|event| state.show! !state.show}
       div(class: 'xdatetime-popover') do
         div(class: 'xdatetime-header') do
           span(class: 'minus-month'){'-'}.on(:click) {params.change_date.call day - 30*24*60*60}

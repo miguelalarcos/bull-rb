@@ -1,6 +1,6 @@
-gem 'rack'
-gem 'faye-websocket'
+#gem 'rack'
 gem 'eventmachine'
 gem 'rethinkdb'
 gem 'em-websocket'
 gem 'em-synchrony'
+gem 'bcrypt'
