@@ -2,7 +2,7 @@ require_relative 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
 require_relative 'datetime_ui'
-require_relative '../validation/validation'
+require_relative 'validation/validation'
 
 class Page < React::Component::Base
 
@@ -13,6 +13,11 @@ class Page < React::Component::Base
 
     def render
         div do
+            button(type: :button){'logout'}.on(:click) do
+                $controller.rpc('logout')
+                $controller.logout
+            end
+            hr
             MyForm(selected: @car_selected)
             hr
             DisplayCar(selected: @car_selected)
@@ -32,14 +37,26 @@ class Login < React::Component::Base
     before_mount do
         state.user_name! ''
         state.password! ''
+        state.create_user_name! ''
+        state.create_password! ''
     end
 
     def render
-        StringInput(change_attr: lambda {|v| state.user_name! v})
-        PasswordInput(change_attr: lambda {|v| state.password! v})
-        button(type: :button) { 'login' }.on(:click) do
-            $controller.rpc('login', state.user_name, 'secret').then do |response|
-                params.set_user.call response
+        div do
+            StringInput(change_attr: lambda {|v| state.user_name! v}, value: state.user_name)
+            PasswordInput(change_attr: lambda {|v| state.password! v}, value: state.password)
+            button(type: :button) { 'login' }.on(:click) do
+                $controller.rpc('login', state.user_name, state.password).then do |response|
+                    params.set_user.call response
+                end
+            end
+            div {'Create user'}
+            StringInput(change_attr: lambda {|v| state.create_user_name! v}, value: state.create_user_name)
+            PasswordInput(change_attr: lambda {|v| state.create_password! v}, value: state.create_password)
+            button(type: :button) { 'create' }.on(:click) do
+                $controller.rpc('create_user', state.create_user_name, state.create_password).then do |response|
+                    puts response
+                end
             end
         end
     end

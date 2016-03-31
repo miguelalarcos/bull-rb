@@ -72,6 +72,30 @@ class AttrInput < React::Component::Base
   end
 end
 
+class AbstractStringInput < React::Component::Base
+  param :change_attr, type: Proc
+  param :value, type: String
+  def render_
+    div do
+      input(type: @@type, value: params.value){}.on(:change) do |event|
+        update_state event
+      end
+    end
+  end
+
+  def update_state event
+    params.change_attr event.target.value
+  end
+end
+
+class StringInput_ < AbstractStringInput
+  @@type = :text
+end
+
+class PasswordInput_ < AbstractStringInput
+  @@type = :password
+end
+
 class StringInput < React::Component::Base # AttrInput, it doesn't work, why?
   param :change_attr, type: Proc
   param :value, type: String
@@ -89,7 +113,7 @@ class StringInput < React::Component::Base # AttrInput, it doesn't work, why?
   end
 end
 
-class PasswordInput
+class PasswordInput < React::Component::Base
   param :change_attr, type: Proc
   param :value, type: String
 

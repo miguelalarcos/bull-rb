@@ -39,10 +39,9 @@ class Controller
 
     private
 
-        def rpc_login! user, password
-          #@user_id = user
-          #true
-          pass = BCrypt::Password.create('secret')
+        def rpc_login user, password
+          #pass = BCrypt::Password.create('secret')
+          pass = $r.table('user').filter(user: user).run(@conn).to_a[0]['password']
           pass = BCrypt::Password.new(pass)
           if pass == password
             @user_id = user
@@ -50,6 +49,18 @@ class Controller
           else
             false
           end
+        end
+
+        def rpc_logout
+            close
+            @user_id = nil
+            true
+        end
+
+        def rpc_create_user user, password
+            # check if the user exists
+            password = BCrypt::Password.create(password)
+            $r.table('user').insert(user: user, password: password, roles: []).run(@conn)['generated_keys'][0]
         end
 
         def user_is_owner? doc
@@ -77,6 +88,9 @@ class Controller
         end
 
         def rpc_get table, id
+            if table == 'user'
+                return {}
+            end
             doc = $r.table(table).get(id).run(@conn)
             if self.class.method_defined? 'before_get_'+table
                 if !self.send('before_get_'+table, doc)
@@ -87,6 +101,9 @@ class Controller
         end
 
         def rpc_insert table, new_val
+            if table == 'user'
+                return nil
+            end
             new_val.delete 'i_timestamp'
             new_val.delete 'owner'
             new_val.delete 'id'
@@ -95,10 +112,13 @@ class Controller
                     return nil
                 end
             end
-            $r.table(table).insert(new_val).run(@conn)[:generated_keys][0]
+            $r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
         end        
 
         def rpc_update table, id, new_val
+            if table == 'user'
+                return 0
+            end
             new_val.delete 'u_timestamp'
             if self.class.method_defined? 'before_update_'+table
                 old_val = $r.table(table).get(id).run(@conn)
@@ -148,6 +168,9 @@ class Controller
         end
 
         def watch_by_id table, id
+            if table == 'user'
+                return nil
+            end
             doc = $r.table(table).get(id).run(@conn)    
             if self.class.method_defined? 'before_watch_by_id_'+table
                 if !self.send('before_watch_by_id_'+table, doc)
@@ -158,13 +181,17 @@ class Controller
         end
 
         def times kwargs
-            times_ = []
-            kwargs.each_pair do |k, v|
-                if v.instance_of? Time
-                    times_ << k
+            if !kwargs.respond_to? :each_pair
+                []
+            else
+                times_ = []
+                kwargs.each_pair do |k, v|
+                    if v.instance_of? Time
+                        times_ << k
+                    end
                 end
+                return times_
             end
-          times_
         end
 end
 end

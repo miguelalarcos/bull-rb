@@ -6,6 +6,7 @@ require 'uglifier'
 desc "Build our app to build.js in development mode"
 task :development do
   Opal.append_path "."
+  Opal.append_path ".."
   builder = Opal::Builder.new
   #builder = Opal::Builder.new(:stubs => ['opal', 'reactive-ruby'])
   build_js = builder.build("main").to_s

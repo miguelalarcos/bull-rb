@@ -120,12 +120,20 @@ class Controller
             @promises.delete id
         end
 
-        def reset
+        def clear
             @watch.each_value do |value|
                 value[:who].clear
             end
             @promises = {}
             @watch = {}
+        end
+
+        def logout
+            clear
+        end
+
+        def reset
+            clear
             start nil
         end
 end
