@@ -8,15 +8,13 @@ conn = $r.connect()
 
 EM.run do
   EM::WebSocket.run(:host => "0.0.0.0",
-                    :port => 3000,
-                    :debug => true,
-                    :secure => true,
-                    #:use_tls => true,
-                    #:verify_peer => false,
-                    :tls_options => {
-                      :private_key_file => "/home/miguel/development/ruby/bull/privateKey.key",
-                      :cert_chain_file => "/home/miguel/development/ruby/bull/certificate.crt"
-                    }
+                    :port => 3000
+                    #:debug => true,
+                    #:secure => true,
+                    #:tls_options => {
+                    #  :private_key_file => "/home/miguel/development/ruby/bull/privateKey.key",
+                    #  :cert_chain_file => "/home/miguel/development/ruby/bull/certificate.crt"
+                    #}
                     ) do |ws|
     controller = nil
 

@@ -23,8 +23,12 @@ class DisplayList < React::Component::Base
       docs << data['new_val']
     else
       index = docs.index {|x| x['id'] == data['old_val']['id']}
+      #if !index.nil?
       doc = docs.fetch index
       doc.merge! data['new_val']
+      #else
+      #  docs << data['new_val']
+      #end
     end
     state.docs! sort(docs)
   end
@@ -72,34 +76,28 @@ class AttrInput < React::Component::Base
   end
 end
 
-class AbstractStringInput < React::Component::Base
-  param :change_attr, type: Proc
-  param :value, type: String
-  def render_
+module AbstractStringInput
+
+  def render
     div do
-      input(type: @@type, value: params.value){}.on(:change) do |event|
-        update_state event
+      input(type: type_attr, value: params.value){}.on(:change) do |event|
+        params.change_attr event.target.value
       end
     end
   end
-
-  def update_state event
-    params.change_attr event.target.value
-  end
 end
 
-class StringInput_ < AbstractStringInput
-  @@type = :text
-end
+class StringInput < React::Component::Base
+  include AbstractStringInput
 
-class PasswordInput_ < AbstractStringInput
-  @@type = :password
-end
-
-class StringInput < React::Component::Base # AttrInput, it doesn't work, why?
   param :change_attr, type: Proc
   param :value, type: String
 
+  def type_attr
+    :text
+  end
+
+=begin
   def render
     div do
       input(type: :text, value: params.value){}.on(:change) do |event|
@@ -111,12 +109,20 @@ class StringInput < React::Component::Base # AttrInput, it doesn't work, why?
   def update_state event
       params.change_attr event.target.value
   end
+=end
 end
 
 class PasswordInput < React::Component::Base
+  include AbstractStringInput
+
   param :change_attr, type: Proc
   param :value, type: String
 
+  def type_attr
+    :password
+  end
+
+=begin
   def render
     div do
       input(type: :password, value: params.value){}.on(:change) do |event|
@@ -128,45 +134,49 @@ class PasswordInput < React::Component::Base
   def update_state event
     params.change_attr event.target.value
   end
+=end
 end
 
-class FloatInput < React::Component::Base
-  param :change_attr, type: Proc
-  param :value, type: Float
-
+module AbstractNumeric
   def render
-    div do
-      input(type: :text, value: params.value){}.on(:change) do |event|
-        update_state event
-      end
+    value = params.value
+    if value.nil?
+      value = ''
     end
-  end
-
-  def update_state event
-    begin
-      params.change_attr Float(event.target.value)
-    rescue
+    div do
+      input(type: :text, value: value.to_s){}.on(:change) do |event|
+        begin
+          if event.target.value == ''
+            params.change_attr nil
+          else
+            update_state event
+          end
+        rescue
+        end
+      end
     end
   end
 end
 
 class IntegerInput < React::Component::Base
+  include AbstractNumeric
+
   param :change_attr, type: Proc
   param :value, type: Integer
 
-  def render
-    div do
-      input(type: :text, value: params.value){}.on(:change) do |event|
-        update_state event
-      end
-    end
+  def update_state event
+    params.change_attr Integer(event.target.value)
   end
+end
+
+class FloatInput < React::Component::Base
+  include AbstractNumeric
+
+  param :change_attr, type: Proc
+  param :value, type: Float
 
   def update_state event
-    begin
-      params.change_attr Integer(event.target.value)
-    rescue
-    end
+    params.change_attr Float(event.target.value)
   end
 end
 
@@ -201,15 +211,18 @@ class Form < React::Component::Base
   end
 
   def insert
-    $controller.rpc('insert', @@table, hash_from_state).then do |response|
+    $controller.insert(@@table, hash_from_state).then do |response|
+    #$controller.rpc('insert', @@table, hash_from_state).then do |response|
       params.selected.value = response['id']
     end
     @dirty.clear
   end
 
   def update
+    ret = $controller.update(@@table, state.id, hash_from_state)
+    #ret = $controller.rpc('update', @@table, state.id, hash_from_state)
     @dirty.clear
-    $controller.rpc('update', @@table, state.id, hash_from_state)
+    ret
   end
 
   def get value

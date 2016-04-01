@@ -20,13 +20,14 @@ class MyController < Bull::Controller
   end
 
   def watch_cars_of_color color
-    $r.table('car').changes({include_initial: true}).filter do |row|
-      (row[:new_val][:color].eq(color)) | (row[:old_val][:color].eq(color))
-    end
+    #$r.table('car').changes({include_initial: true}).filter do |row|
+    #  (row[:new_val][:color].eq(color)) | (row[:old_val][:color].eq(color))
+    #end
+    $r.table('car').filter(color: color).changes({include_initial: true})
   end
 
   def before_update_car old_val, new_val
-    if !ValidateCar.new.validate_update old_val.merge(new_val)
+    if !ValidateCar.new.validate_server_side old_val.merge(new_val)
       return false
     end
     u_timestamp! new_val
@@ -35,7 +36,7 @@ class MyController < Bull::Controller
   end
 
   def before_insert_car doc
-    if user_roles.include? 'writer' && ValidateCar.new.validate_insert(doc)
+    if user_roles.include? 'writer' && ValidateCar.new.validate_server_side(doc)
       i_timestamp! doc
       owner! doc
       true

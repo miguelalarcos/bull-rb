@@ -1,10 +1,29 @@
+require 'time'
+
 module Validate
+
+  def attrs
+    @attrs ||= {}
+  end
+
+  def field hsh
+    attrs.merge! hsh
+  end
+
   def validate state
     dct = state_to_hash(state)
     ret = []
     dct.each_pair do |k, v|
-      if to_validate.include? k
-        val = send('is_valid_' + k + '?', v, dct)
+      if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
+        next
+      end
+      return false if !v.is_a? attrs[k]
+      if respond_to? 'is_valid_' + k + '?'
+        begin
+          val = send('is_valid_' + k + '?', v, dct)
+        rescue
+          val = false
+        end
         state.__send__('is_valid_' + k + '!', val)
         ret << val
       end
@@ -12,46 +31,42 @@ module Validate
     state.is_valid! ret.all?
   end
 
-  def validate_update dct
-    ret = []
+  def validate_server_side dct
     dct.each_pair do |k, v|
-      val = send 'is_valid_' + k.to_s + '?', v, dct
-      ret << val
+      k = k.to_s
+      if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
+        next
+      end
+      return false if !v.is_a? attrs[k]
+      if respond_to? 'is_valid_' + k + '?'
+        begin
+          b = send 'is_valid_' + k + '?', v, dct
+        rescue
+          b = false
+        end
+        return false if !b
+      end
     end
-    ret.all?
-  end
-
-  def validate_insert dct
-    ret = []
-    to_validate.each do |attr|
-      val = send 'is_valid_' + attr.to_s + '?', dct[attr], dct
-      ret << val
-    end
-    ret.all?
+    true
   end
 
   def state_to_hash state
     ret = {}
-    all_attrs.each do |attr|
-      ret[attr] = state.__send__ attr.to_s
+    attrs.keys.each do |attr|
+      ret[attr] = state.__send__ attr
     end
     ret
-  end
-
-  def to_validate
-    []
   end
 end
 
 class ValidateCar
   include Validate
 
-  def all_attrs
-    ['registration', 'wheels', 'date']
-  end
-
-  def to_validate
-    ['registration']
+  def initialize
+    field 'registration' => String
+    field 'color' => String
+    field 'wheels' => Integer
+    field 'date' => Time
   end
 
   def is_valid_registration? (value, doc)

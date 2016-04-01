@@ -14,12 +14,16 @@ class Controller
     end
 
     def notify(msg)
+        puts msg
         msg = JSON.parse msg #, symbolize_names: true
+        puts 'llego', msg
         command = msg['command']
+        puts command
         kwargs = Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
+        puts kwargs
         if msg['times']
             kwargs.each do |k, v|
-                if msg['times'].include? k
+                if msg['times'].include? k.to_s
                     kwargs[k] = Time.parse v
                 end
             end
@@ -30,7 +34,8 @@ class Controller
             handle_watch command, msg['id'], *msg['args'], **kwargs
         elsif command == 'stop_watch'
             handle_stop_watch msg['id']
-        end    
+        end
+        puts 'llego2'
     end
 
     def close
@@ -115,22 +120,23 @@ class Controller
             $r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
         end        
 
-        def rpc_update table, id, new_val
+        def rpc_update table, id, value
             if table == 'user'
                 return 0
             end
-            new_val.delete 'u_timestamp'
+            value.delete 'u_timestamp'
+            old_val = $r.table(table).get(id).run(@conn)
             if self.class.method_defined? 'before_update_'+table
-                old_val = $r.table(table).get(id).run(@conn)
-                if !(old_val && self.send('before_update_'+table, old_val, new_val))
+                #old_val = $r.table(table).get(id).run(@conn)
+                if !(old_val && self.send('before_update_'+table, old_val, value))
                     return 0
                 end
             end
-            new_val.delete 'update_roles'
-            new_val.delete 'i_timestamp'
-            new_val.delete 'owner'
-            new_val.delete 'id'
-            $r.table(table).get(id).update(new_val).run(@conn)[:replaced]            
+            value.delete 'update_roles'
+            value.delete 'i_timestamp'
+            value.delete 'owner'
+            value.delete 'id'
+            $r.table(table).get(id).update(value).run(@conn)[:replaced]
         end
 
         def handle_watch command, id, *args, **kwargs

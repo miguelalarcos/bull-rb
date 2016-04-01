@@ -37,10 +37,19 @@ class Controller
         promise
     end
 
+    def insert(table, hsh)
+        $controller.rpc('insert', table, hsh)
+    end
+
+    def update(table, id, hsh)
+        $controller.rpc('update', table, id, hsh)
+    end
+
     def start(app)
         begin
             controller = self
-            @ws = Browser::Socket.new 'wss://localhost:3000' do
+            @ws = Browser::Socket.new 'ws://localhost:3000' do
+            #@ws = Browser::Socket.new 'wss://localhost:7443' do
                 on :open do |e|
                     if !controller.app_rendered
                         $document.ready do

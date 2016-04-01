@@ -69,11 +69,12 @@ class App < React::Component::Base
     end
 
     def render
-        if state.user
-            Page()
-        else
-            Login(set_user: lambda {|v| state.user! v})
-        end
+        Page()
+        #if state.user
+        #    Page()
+        #else
+        #    Login(set_user: lambda {|v| state.user! v})
+        #end
     end    
 end
 
@@ -123,7 +124,7 @@ class MyForm < Form
         div do
             StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
-            IntegerInput(change_attr: change_attr('wheels'), value: state.wheels)
+            IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
             button(type: :button) { 'clear' }.on(:click) {clear}
