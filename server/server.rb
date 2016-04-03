@@ -16,9 +16,7 @@ class Controller
     def notify(msg)
         puts msg
         msg = JSON.parse msg #, symbolize_names: true
-        puts 'llego', msg
         command = msg['command']
-        puts command
         kwargs = Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
         puts kwargs
         if msg['times']
@@ -35,7 +33,6 @@ class Controller
         elsif command == 'stop_watch'
             handle_stop_watch msg['id']
         end
-        puts 'llego2'
     end
 
     def close
@@ -186,12 +183,16 @@ class Controller
             $r.table(table).get(id).changes({include_initial: true})    
         end
 
-        def times kwargs
-            if !kwargs.respond_to? :each_pair
-                []
+        def times ret
+            if !ret.respond_to? :each_pair
+                if ret.instance_of? Time
+                    ['result']
+                else
+                    []
+                end
             else
                 times_ = []
-                kwargs.each_pair do |k, v|
+                ret.each_pair do |k, v|
                     if v.instance_of? Time
                         times_ << k
                     end

@@ -3,31 +3,59 @@ require 'reactive-ruby'
 require_relative 'reactive_var'
 require_relative 'datetime_ui'
 require_relative 'validation/validation'
+require_relative 'i18n'
 
-class Page < React::Component::Base
+class Menu < React::Component::Base
+    param :change_page
+    param :change_language
 
-    before_mount do
-        @car_selected = RVar.new 0
-        #state.date! Time.now
+    def render
+        button(type: :button, class: 'button-secondary pure-button'){'logout'}.on(:click) do
+            $controller.rpc('logout')
+            $controller.logout
+        end
+        div(class: 'pure-menu pure-menu-horizontal') do
+            ul(class: 'pure-menu-list') do
+                li(class: 'pure-menu-item'){} do
+                    a(class: 'pure-menu-link', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
+                end
+                li(class: 'pure-menu-item'){} do
+                    a(class: 'pure-menu-link', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
+                end
+            end
+            a(class: 'pure-menu-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
+            a(class: 'pure-menu-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
+        end
     end
+end
+
+class PageA < React::Component::Base
+
+    param :car_seletecd
+    #before_mount do
+    #    @car_selected = RVar.new 0
+    #end
 
     def render
         div do
-            button(type: :button){'logout'}.on(:click) do
-                $controller.rpc('logout')
-                $controller.logout
-            end
+            MyForm(selected: params.car_selected)
             hr
-            MyForm(selected: @car_selected)
-            hr
-            DisplayCar(selected: @car_selected)
-            hr
-            div{'red cars:'}
-            DisplayCars(color: 'red', selected: @car_selected)
-            hr
-            div{'blue cars:'}
-            DisplayCars(color: 'blue', selected: @car_selected)
+            DisplayCar(selected: params.car_selected)
         end
+    end
+end
+
+class PageB < React::Component::Base
+    param :car_seletecd
+    param :i18n_map
+
+    def render
+        #div{'red cars:'}
+        div(i18n params.i18n_map, 'RED_CARS')
+        DisplayCars(color: 'red', selected: params.car_selected)
+        hr
+        div(i18n params.i18n_map, 'BLUE_CARS')
+        DisplayCars(color: 'blue', selected: params.car_selected)
     end
 end
 
@@ -66,10 +94,20 @@ class App < React::Component::Base
 
     before_mount do
         state.user! false
+        state.page! 'pageA'
+        @car_selected = RVar.new 0
+        @language = RVar.new 'es'
+        reactive(@language) do
+            $controller.rpc('get', 'i18n', @language.value).then do|response|
+                state.i18n_map! response
+            end
+        end
     end
 
     def render
-        Page()
+        Menu(change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
+        PageA(car_selected: @car_selected) if state.page == 'pageA'
+        PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
         #if state.user
         #    Page()
         #else

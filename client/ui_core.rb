@@ -23,12 +23,8 @@ class DisplayList < React::Component::Base
       docs << data['new_val']
     else
       index = docs.index {|x| x['id'] == data['old_val']['id']}
-      #if !index.nil?
       doc = docs.fetch index
       doc.merge! data['new_val']
-      #else
-      #  docs << data['new_val']
-      #end
     end
     state.docs! sort(docs)
   end
@@ -96,20 +92,6 @@ class StringInput < React::Component::Base
   def type_attr
     :text
   end
-
-=begin
-  def render
-    div do
-      input(type: :text, value: params.value){}.on(:change) do |event|
-        update_state event
-      end
-    end
-  end
-
-  def update_state event
-      params.change_attr event.target.value
-  end
-=end
 end
 
 class PasswordInput < React::Component::Base
@@ -121,20 +103,6 @@ class PasswordInput < React::Component::Base
   def type_attr
     :password
   end
-
-=begin
-  def render
-    div do
-      input(type: :password, value: params.value){}.on(:change) do |event|
-        update_state event
-      end
-    end
-  end
-
-  def update_state event
-    params.change_attr event.target.value
-  end
-=end
 end
 
 module AbstractNumeric
@@ -212,7 +180,6 @@ class Form < React::Component::Base
 
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
-    #$controller.rpc('insert', @@table, hash_from_state).then do |response|
       params.selected.value = response['id']
     end
     @dirty.clear
@@ -220,7 +187,6 @@ class Form < React::Component::Base
 
   def update
     ret = $controller.update(@@table, state.id, hash_from_state)
-    #ret = $controller.rpc('update', @@table, state.id, hash_from_state)
     @dirty.clear
     ret
   end

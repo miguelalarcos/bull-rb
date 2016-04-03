@@ -103,7 +103,9 @@ class Controller
 
         def notify msg
             data = msg['data'] || msg['result']
-            if msg['times'] and data.respond_to?(:each_pair)
+            if data.instance_of? String && msg['times'] && msg['times'][0] == 'result'
+                data = Time.parse data
+            elsif msg['times'] and data.respond_to?(:each_pair)
                 data.each_pair do |k, v|
                     if msg['times'].include? k
                         data[k] = Time.parse v

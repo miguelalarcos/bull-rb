@@ -20,9 +20,6 @@ class MyController < Bull::Controller
   end
 
   def watch_cars_of_color color
-    #$r.table('car').changes({include_initial: true}).filter do |row|
-    #  (row[:new_val][:color].eq(color)) | (row[:old_val][:color].eq(color))
-    #end
     $r.table('car').filter(color: color).changes({include_initial: true})
   end
 
