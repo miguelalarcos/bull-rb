@@ -45,6 +45,11 @@ class Controller
         $controller.rpc('update', table, id, hsh)
     end
 
+    def logout
+        rpc('logout')
+        clear
+    end
+
     def start(app)
         begin
             controller = self
@@ -137,10 +142,6 @@ class Controller
             end
             @promises = {}
             @watch = {}
-        end
-
-        def logout
-            clear
         end
 
         def reset

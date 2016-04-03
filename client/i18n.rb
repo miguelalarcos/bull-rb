@@ -1,4 +1,7 @@
 def i18n i18n_map, tag, count=nil
+  if i18n_map.nil?
+    return ''
+  end
   doc_tag = i18n_map[tag]
   if count
     doc_tag.each_pair do |k, v|

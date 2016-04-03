@@ -8,23 +8,26 @@ require_relative 'i18n'
 class Menu < React::Component::Base
     param :change_page
     param :change_language
+    param :logout
 
     def render
-        button(type: :button, class: 'button-secondary pure-button'){'logout'}.on(:click) do
-            $controller.rpc('logout')
-            $controller.logout
-        end
-        div(class: 'pure-menu pure-menu-horizontal') do
-            ul(class: 'pure-menu-list') do
-                li(class: 'pure-menu-item'){} do
-                    a(class: 'pure-menu-link', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
-                end
-                li(class: 'pure-menu-item'){} do
-                    a(class: 'pure-menu-link', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
-                end
+        div do
+            button(type: :button, class: 'button-secondary pure-button'){'logout'}.on(:click) do
+                params.logout.call
+                $controller.logout
             end
-            a(class: 'pure-menu-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
-            a(class: 'pure-menu-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
+            div(class: 'pure-menu pure-menu-horizontal') do
+                ul(class: 'pure-menu-list') do
+                    li(class: 'pure-menu-item'){} do
+                        a(class: 'pure-menu-link', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
+                    end
+                    li(class: 'pure-menu-item'){} do
+                        a(class: 'pure-menu-link', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
+                    end
+                end
+                a(class: 'pure-menu-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
+                a(class: 'pure-menu-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
+            end
         end
     end
 end
@@ -32,9 +35,6 @@ end
 class PageA < React::Component::Base
 
     param :car_seletecd
-    #before_mount do
-    #    @car_selected = RVar.new 0
-    #end
 
     def render
         div do
@@ -50,7 +50,6 @@ class PageB < React::Component::Base
     param :i18n_map
 
     def render
-        #div{'red cars:'}
         div(i18n params.i18n_map, 'RED_CARS')
         DisplayCars(color: 'red', selected: params.car_selected)
         hr
@@ -105,7 +104,7 @@ class App < React::Component::Base
     end
 
     def render
-        Menu(change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
+        Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
         PageA(car_selected: @car_selected) if state.page == 'pageA'
         PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
         #if state.user

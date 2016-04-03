@@ -23,3 +23,32 @@ task :build_reactive_ruby do
   File.binwrite "build_reactive_ruby.js", Opal::Builder.build("rr").to_s
   File.binwrite "build_reactive_ruby_uglify.js", Uglifier.new.compile(File.read("build_reactive_ruby.js"))
 end
+
+desc "clean"
+task :clean do
+  File.delete 'build.css' if File.exist? 'build.css'
+  File.delete 'build.less.css' if File.exist? 'build.less.css'
+  File.delete 'build.styl.css' if File.exist? 'build.styl.css'
+end
+
+desc "less compile"
+task :less do
+  files = Dir.glob(File.join("**", "*.less"))
+  files.each do |f|
+    `lessc #{f} >> build.less.css`
+  end
+end
+
+desc "stylus compile"
+task :stylus do
+  files = Dir.glob(File.join("**", "*.styl"))
+  files.each do |f|
+    `stylus < #{f} >> build.styl.css`
+  end
+end
+
+desc "concatenate css to build.css"
+task :css => [:clean, :less] do
+  files = Dir.glob(File.join("**", "*.css")).join(' ')
+  `cat #{files} > build.css` if files != ''
+end
