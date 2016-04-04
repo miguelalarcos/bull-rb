@@ -22,8 +22,8 @@ From client side you can ask the server in two ways:
     example: $controller.watch('cars_of_color', 'red') do ... end
     the server will notify the client if:
     * a new red car is created
-    * a red car change
-    * a red car change the color
+    * a red car changes
+    * a red car changes the color
 
 The serve will send to the client a *return message* in the first case and *data* messages for a watch request.
 Behind the scenes: a ticket (integer) is sent with each request to the server and sent back to the client, so the client knows who
@@ -277,7 +277,7 @@ end
 Instructions to install and execute:
 ------------------------------------
 * You have to install Ruby and Rethinkdb.
-* Clone the repository:
+* Clone the repository: git clone https://github.com/miguelalarcos/bull-rb.git
 * Gemfile in client folder
 * Gemfile in server folder
 * Console in client folder:
@@ -288,7 +288,7 @@ Instructions to install and execute:
 * Console in root folder:
     $ rethinkdb &
     $ ruby setup_data_base.rb
-* Console in server side:
+* Console in server folder:
     $ ruby start.rb
 * Open browser in localhost:8000
 
@@ -298,9 +298,9 @@ Controller client side:
 * watch(name, *args, &block) -> id
 * stop_watch(id)
 * rpc(command, *args) -> promise
-  you can sent Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
+  you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
-  way I construct Times server side.
+  way I construct Times server side. I hope in future release to construct nested Times.
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
 * logout
