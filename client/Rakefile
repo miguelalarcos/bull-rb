@@ -32,7 +32,7 @@ task :clean do
 end
 
 desc "less compile"
-task :less do
+task :less => [:clean] do
   files = Dir.glob(File.join("**", "*.less"))
   files.each do |f|
     `lessc #{f} >> build.less.css`
@@ -40,7 +40,7 @@ task :less do
 end
 
 desc "stylus compile"
-task :stylus do
+task :stylus => [:clean] do
   files = Dir.glob(File.join("**", "*.styl"))
   files.each do |f|
     `stylus < #{f} >> build.styl.css`
@@ -48,7 +48,7 @@ task :stylus do
 end
 
 desc "concatenate css to build.css"
-task :css => [:clean, :less] do
+task :css => [:less, :stylus] do
   files = Dir.glob(File.join("**", "*.css")).join(' ')
   `cat #{files} > build.css` if files != ''
 end
