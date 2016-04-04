@@ -19,14 +19,14 @@ From client side you can ask the server in two ways:
     $controller.rpc('login', user, password)
 
 * watch
-    example: $controller.watch('cars_of_color', 'red')
+    example: $controller.watch('cars_of_color', 'red') do ... end
     the server will notify the client if:
     * a new red car is created
     * a red car change
     * a red car change the color
 
-The serve will send to the client a return message in the first case or data messages because of a watch request.
-Behind the scenes: a ticket (integer) is sent with each request and send back to client, so the client knows who
+The serve will send to the client a *return message* in the first case and *data* messages for a watch request.
+Behind the scenes: a ticket (integer) is sent with each request to the server and sent back to the client, so the client knows who
 notify with the data received.
 
 Forms:
@@ -40,7 +40,7 @@ class MyForm < Form
     param :selected # an instance of RVar (see later).
 
     before_mount do
-        reactive(params.selected) do
+        reactive(params.selected) do  # the block will be execute each time params.selected.value is set
             get params.selected.value
             # behind the scenes it makes a $controller.rpc('get', @@table, params.selected.value)
             # and sets the values of the object returned in the state
@@ -56,7 +56,7 @@ class MyForm < Form
     end
 
     def render
-        ValidateCar.new.validate state
+        ValidateCar.new.validate state # it sets in state vars like is_valid_registration?
         div do
             StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
@@ -86,8 +86,10 @@ v.value = 8
 ```
 
 Other example, in App before_mount:
+
 ```ruby
 @language = RVar.new 'es'
+
 reactive(@language) do
     $controller.rpc('get', 'i18n', @language.value).then do|response|
         state.i18n_map! response
@@ -175,9 +177,107 @@ end
 
 See client/ui.rb for more details.
 
+Files
+-----
+Client side:
+
+* client.rb: it has the controller class for the client
+* datetime_ui.rb: it has a date time picker
+* i18n.rb: module for i18n
+* index.html: this is the file sent to the browser by the http server
+* main.rb: the entry point for Opal. You must define here the global $controller
+* Rakefile: to make the build.js and build.css
+* reactive_var.rb: here you've got the implementation for reactive vars. Please note that this reactive var does not work
+  with the render method of the react.rb components. These work with the provided reactive function.
+* rr.rb: when the 'rake production' will be coded, rr.rb will be used to make the js version of reactive-ruby.
+* ui.rb: here you've got all the React components of the client application.
+* ui_core.rb: useful ui components like Form, PasswordInput, ...
+
+Server side:
+------------
+* main.rb: you define the custom controller used in the server
+* server.rb: it has the controller class for the server
+* start.rb: entry point for the server application
+
+This is an example of a custom Controller:
+
+```ruby
+require './server'
+require 'em-synchrony'
+require '../validation/validation'
+
+class MyController < Bull::Controller
+
+  def initialize ws, conn
+    super ws, conn
+    @mutex = EM::Synchrony::Thread::Mutex.new
+  end
+
+  def rpc_store_item item
+    @mutex.synchronize do
+      ...
+    end
+  end
+
+  def before_watch_by_id_car doc
+    user_is_owner? doc
+  end
+
+  def watch_cars_of_color color
+    $r.table('car').filter(color: color).changes({include_initial: true})
+  end
+
+  def before_update_car old_val, new_val
+    if !ValidateCar.new.validate_server_side old_val.merge(new_val)
+      return false
+    end
+    u_timestamp! new_val
+    user_role_in? old_val
+  end
+
+  def before_insert_car doc
+    if user_roles.include? 'writer' && ValidateCar.new.validate_server_side(doc)
+      i_timestamp! doc
+      owner! doc
+      true
+    else
+      false
+    end
+  end
+end
+
+
+```
+
+Both sides:
+-----------
+* validation.rb: here is defined the module Validate. You use it the next wsy:
+
+```ruby
+class ValidateCar
+  include Validate
+
+  def initialize
+    field 'registration' => String
+    field 'color' => String
+    field 'wheels' => Integer
+    field 'date' => Time
+  end
+
+  def is_valid_registration? (value, doc)
+    if doc['wheels'] <= 4
+      value.start_with? 'A'
+    else
+      value.start_with? 'B'
+    end
+  end
+end
+```
+
 Instructions to install and execute:
 ------------------------------------
 * You have to install Ruby and Rethinkdb.
+* Clone the repository:
 * Gemfile in client folder
 * Gemfile in server folder
 * Console in client folder:
@@ -191,3 +291,39 @@ Instructions to install and execute:
 * Console in server side:
     $ ruby start.rb
 * Open browser in localhost:8000
+
+API
+---
+Controller client side:
+* watch(name, *args, &block) -> id
+* stop_watch(id)
+* rpc(command, *args) -> promise
+  you can sent Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
+  Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
+  way I construct Times server side.
+* insert(table, hsh) -> promise
+* update(table, id, hsh) -> promise
+* logout
+* start(app)
+
+Controller server side:
+* user_is_owner? doc -> boolean
+* user_roles -> list of roles
+* def user_role_in? doc
+    doc['update_roles'].to_set.intersect?(user_roles.to_set)
+ end
+* i_timestamp! doc #sets the inserted timestamp
+* u_timestamp! doc
+* owner! doc # sets the user_id as owner in the doc
+*
+
+TODO
+----
+* change the name of files. For example rename client.rb for client_controller.rb
+  ui.core.rb --> ui_utils.rb
+  ui.rb --> app_ui.rb
+  server.rb --> server_controller.rb
+* login and create user API controller client side.
+*
+* lots of things
+* Do you like the code name of the project? --> Bull
