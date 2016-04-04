@@ -18,10 +18,10 @@ class Menu < React::Component::Base
             end
             div(class: 'pure-menu pure-menu-horizontal') do
                 ul(class: 'pure-menu-list') do
-                    li(class: 'pure-menu-item'){} do
+                    li(class: 'pure-menu-item') do
                         a(class: 'pure-menu-link', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
                     end
-                    li(class: 'pure-menu-item'){} do
+                    li(class: 'pure-menu-item') do
                         a(class: 'pure-menu-link', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
                     end
                 end
@@ -34,7 +34,7 @@ end
 
 class PageA < React::Component::Base
 
-    param :car_seletecd
+    param :car_selected
 
     def render
         div do
@@ -46,15 +46,17 @@ class PageA < React::Component::Base
 end
 
 class PageB < React::Component::Base
-    param :car_seletecd
+    param :car_selected
     param :i18n_map
 
     def render
-        div(i18n params.i18n_map, 'RED_CARS')
-        DisplayCars(color: 'red', selected: params.car_selected)
-        hr
-        div(i18n params.i18n_map, 'BLUE_CARS')
-        DisplayCars(color: 'blue', selected: params.car_selected)
+        div do
+            div{i18n params.i18n_map, 'RED_CARS'}
+            DisplayCars(color: 'red', selected: params.car_selected)
+            hr
+            div{i18n params.i18n_map, 'BLUE_CARS'}
+            DisplayCars(color: 'blue', selected: params.car_selected)
+        end
     end
 end
 
@@ -104,9 +106,11 @@ class App < React::Component::Base
     end
 
     def render
-        Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
-        PageA(car_selected: @car_selected) if state.page == 'pageA'
-        PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+        div do
+            Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
+            PageA(car_selected: @car_selected) if state.page == 'pageA'
+            PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+        end
         #if state.user
         #    Page()
         #else
@@ -120,9 +124,7 @@ class DisplayCar < DisplayDoc
     param :selected
 
     before_mount do
-        reactive(params.selected) do
-            watch_ params.selected.value
-        end
+        watch_ params.selected
     end
 
     def clear
@@ -143,9 +145,7 @@ class MyForm < Form
     param :selected
 
     before_mount do
-        reactive(params.selected) do
-            get params.selected.value
-        end
+        get params.selected
     end
 
     def clear

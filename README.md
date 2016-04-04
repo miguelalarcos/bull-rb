@@ -12,6 +12,7 @@ This is a Meteor like framework, but with Ruby language. (Other example is Volt.
 From client side you can ask the server in two ways:
 
 * rpc (returns a promise)
+
     examples:
     $controller.rpc('add', 3, 4).then do |response| ... end
 
@@ -19,7 +20,9 @@ From client side you can ask the server in two ways:
     $controller.rpc('login', user, password)
 
 * watch
+
     example: $controller.watch('cars_of_color', 'red') do ... end
+
     the server will notify the client if:
     * a new red car is created
     * a red car changes
@@ -40,11 +43,7 @@ class MyForm < Form
     param :selected # an instance of RVar (see later).
 
     before_mount do
-        reactive(params.selected) do  # the block will be execute each time params.selected.value is set
-            get params.selected.value
-            # behind the scenes it makes a $controller.rpc('get', @@table, params.selected.value)
-            # and sets the values of the object returned in the state
-        end
+        get params.seleted
     end
 
     def clear
@@ -119,8 +118,13 @@ class DisplayCar < React::Component::Base
 
     before_mount do
         @predicate_id = nil
-        reactive(params.selected) do
-            watch_ params.selected.value
+        @rvs = reactive(params.selected) do
+            value = params.selected.value
+            clear
+            $controller.stop_watch(@predicate_id) if @predicate_id
+            @predicate_id = $controller.watch('by_id', @@table, value) do |data|
+                data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+            end
         end
     end
 
@@ -135,16 +139,9 @@ class DisplayCar < React::Component::Base
         end
     end
 
-    def watch_ value
-      clear
-      $controller.stop_watch(@predicate_id) if @predicate_id != nil
-      @predicate_id = $controller.watch('by_id', @@table, value) do |data|
-        data['new_val'].each {|k, v| state.__send__(k+'!', v)}
-      end
-    end
-
     before_unmount do
-      $controller.stop_watch @predicate_id if @predicate_id != nil
+      $controller.stop_watch @predicate_id if @predicate_id
+      @rvs.each_pair {|k, v| v.remove k}
     end
 end
 ```
@@ -157,9 +154,7 @@ class DisplayCar < DisplayDoc
     param :selected
 
     before_mount do
-        reactive(params.selected) do
-            watch_ params.selected.value
-        end
+        watch_ params.selected
     end
 
     def clear
@@ -188,7 +183,7 @@ Client side:
 * main.rb: the entry point for Opal. You must define here the global $controller
 * Rakefile: to make the build.js and build.css
 * reactive_var.rb: here you've got the implementation for reactive vars. Please note that this reactive var does not work
-  with the render method of the react.rb components. These work with the provided reactive function.
+  with the render method of the react.rb components. This works with the provided reactive function.
 * rr.rb: when the 'rake production' will be coded, rr.rb will be used to make the js version of reactive-ruby.
 * ui.rb: here you've got all the React components of the client application.
 * ui_core.rb: useful ui components like Form, PasswordInput, ...
@@ -251,7 +246,7 @@ end
 
 Both sides:
 -----------
-* validation.rb: here is defined the module Validate. You use it the next wsy:
+* validation.rb: here is defined the module Validate. You use it the next way:
 
 ```ruby
 class ValidateCar
@@ -281,15 +276,23 @@ Instructions to install and execute:
 * Gemfile in client folder
 * Gemfile in server folder
 * Console in client folder:
-    $ rake css
-    $ rake development
+
+    *$ rake css
+    *$ rake development
+
 * Console in client folder:
-    $ python -m SimpleHTTPServer
+
+    * $ python -m SimpleHTTPServer
+
 * Console in root folder:
-    $ rethinkdb &
-    $ ruby setup_data_base.rb
+
+    *$ rethinkdb &
+    *$ ruby setup_data_base.rb
+
 * Console in server folder:
-    $ ruby start.rb
+
+    * $ ruby start.rb
+
 * Open browser in localhost:8000
 
 API
@@ -297,10 +300,12 @@ API
 Controller client side:
 * watch(name, *args, &block) -> id
 * stop_watch(id)
-* rpc(command, *args) -> promise
+* rpc(command, \*args) -> promise
+
   you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
   way I construct Times server side. I hope in future release to construct nested Times.
+
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
 * logout
@@ -309,13 +314,10 @@ Controller client side:
 Controller server side:
 * user_is_owner? doc -> boolean
 * user_roles -> list of roles
-* def user_role_in? doc
-    doc['update_roles'].to_set.intersect?(user_roles.to_set)
- end
-* i_timestamp! doc #sets the inserted timestamp
-* u_timestamp! doc
+* def user_role_in? doc -> user has a role that is included in doc['update_roles']
+* i_timestamp! doc # sets the inserted timestamp
+* u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc
-*
 
 TODO
 ----
@@ -324,6 +326,9 @@ TODO
   ui.rb --> app_ui.rb
   server.rb --> server_controller.rb
 * login and create user API controller client side.
-*
 * lots of things
 * Do you like the code name of the project? --> Bull
+
+Help
+----
+Please contact me if you would like to contribute to the project. All opinions are welcome.

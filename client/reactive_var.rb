@@ -1,31 +1,41 @@
 class RVar
 
     attr_reader :value
+    @@ticket = 0
 
     def initialize value
         @value = value
-        @blocks = []
+        @blocks = {}
     end
 
     def value= value
         if value != @value
             @value = value
-            @blocks.each {|b| b.call}
+            @blocks.each_value {|b| b.call}
+            #@blocks.each {|b| b.call}
         end
     end
 
     def add block
-        @blocks << block
+        id = @@ticket
+        @@ticket += 1
+        @blocks[id] = block
+        id
+        #@blocks << block
+    end
+
+    def remove id
+        @blocks.delete id
     end
 end
 
 def reactive(*args, &block)
-    args.each {|v| v.add block}
+    ret = {}
+    args.each do |v|
+        id = v.add(block)
+        ret[id] = v
+    end
     block.call
-    # return a ticket that will be used to remove block from rvar
+    ret
 end
 
-#a = RVar.new 5
-
-#reactive(a) {puts a.value}
-#a.value = 8

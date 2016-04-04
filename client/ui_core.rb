@@ -1,5 +1,6 @@
 require 'reactive-ruby'
 require 'set'
+require_relative 'reactive_var'
 
 class DisplayList < React::Component::Base
 
@@ -48,16 +49,20 @@ class DisplayDoc < React::Component::Base
     @predicate_id = nil
   end
 
-  def watch_ value
-    clear
-    $controller.stop_watch(@predicate_id) if @predicate_id != nil
-    @predicate_id = $controller.watch('by_id', @@table, value) do |data|
-      data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+  def watch_ selected
+    @rvs = reactive(selected) do
+      value = selected.value
+      clear
+      $controller.stop_watch(@predicate_id) if @predicate_id != nil
+      @predicate_id = $controller.watch('by_id', @@table, value) do |data|
+        data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+      end
     end
   end
 
   before_unmount do
     $controller.stop_watch @predicate_id if @predicate_id != nil
+    @rvs.each_pair {|k, v| v.remove k} if @rvs
   end
 end
 
@@ -155,6 +160,10 @@ class Form < React::Component::Base
     @dirty = Set.new
   end
 
+  before_unmount do
+    @rvs.each_pair {|k, v| v.remove k} if @rvs
+  end
+
   def change_attr(attr)
     lambda do |value|
       @dirty.add attr
@@ -191,11 +200,13 @@ class Form < React::Component::Base
     ret
   end
 
-  def get value
-    clear
-    $controller.rpc('get', @@table, value).then do|response|
-      response.each do |k, v|
-        state.__send__(k+'!', v)
+  def get selected
+    @rvs = reactive(selected) do
+      clear
+      $controller.rpc('get', @@table, selected.value).then do|response|
+        response.each do |k, v|
+          state.__send__(k+'!', v)
+        end
       end
     end
   end
