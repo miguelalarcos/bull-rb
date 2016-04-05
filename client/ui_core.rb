@@ -189,7 +189,7 @@ class Form < React::Component::Base
 
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
-      params.selected.value = response['id']
+      params.selected.value = response #['id']
     end
     @dirty.clear
   end

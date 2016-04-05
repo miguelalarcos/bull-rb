@@ -18,7 +18,7 @@ class Controller
         msg = JSON.parse msg #, symbolize_names: true
         command = msg['command']
         kwargs = Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
-        puts kwargs
+
         if msg['times']
             kwargs.each do |k, v|
                 if msg['times'].include? k.to_s
@@ -123,8 +123,8 @@ class Controller
             end
             value.delete 'u_timestamp'
             old_val = $r.table(table).get(id).run(@conn)
+            old_val = Hash[old_val.map { |k, v| [k.to_sym, v] }]
             if self.class.method_defined? 'before_update_'+table
-                #old_val = $r.table(table).get(id).run(@conn)
                 if !(old_val && self.send('before_update_'+table, old_val, value))
                     return 0
                 end
@@ -161,7 +161,6 @@ class Controller
         end
 
         def handle_rpc command, id, *args, **kwargs
-            #try
             if kwargs.empty?
                 ret = self.send command, *args
             else

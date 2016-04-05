@@ -1,4 +1,4 @@
-require_relative 'ui_core'
+require 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
 require_relative 'datetime_ui'
@@ -159,9 +159,14 @@ class MyForm < Form
     def render
         ValidateCar.new.validate state
         div do
+            span{'Registration'}
             StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
+            span{'Wheels'}
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
+            span{'Color'}
+            StringInput(change_attr: change_attr('color'), value: state.color)
+            span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
             button(type: :button) { 'clear' }.on(:click) {clear}

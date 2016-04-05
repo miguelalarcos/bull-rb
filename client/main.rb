@@ -1,5 +1,6 @@
 require 'opal'
-require_relative 'client'
+require 'client'
+#require_relative 'client'
 require_relative 'ui'
 
 $controller = Controller.new
