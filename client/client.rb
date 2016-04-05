@@ -4,6 +4,7 @@ require 'browser/socket'
 require 'promise'
 require 'json'
 require 'time'
+require 'lib/encode_times'
 
 class Controller
 
@@ -38,11 +39,11 @@ class Controller
     end
 
     def insert(table, hsh)
-        $controller.rpc('insert', table, hsh)
+        $controller.rpc('insert', table, value: hsh)
     end
 
     def update(table, id, hsh)
-        $controller.rpc('update', table, id, hsh)
+        $controller.rpc('update', table, id, value: hsh)
     end
 
     def logout
@@ -97,12 +98,13 @@ class Controller
         end
 
         def send(command, id, *args, **kwargs)
-            times = []
-            kwargs.each_pair do |k, v|
-                if v.instance_of? Time
-                    times << k
-                end
-            end
+            #times = []
+            #kwargs.each_pair do |k, v|
+            #    if v.instance_of? Time
+            #        times << k
+            #    end
+            #end
+            times = encode_times(kwargs)
             @ws.send({command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json)
         end
 
@@ -110,12 +112,14 @@ class Controller
             data = msg['data'] || msg['result']
             if data.instance_of? String && msg['times'] && msg['times'][0] == 'result'
                 data = Time.parse data
-            elsif msg['times'] and data.respond_to?(:each_pair)
-                data.each_pair do |k, v|
-                    if msg['times'].include? k
-                        data[k] = Time.parse v
-                    end
-                end
+            #elsif msg['times'] and data.respond_to?(:each_pair)
+            #    data.each_pair do |k, v|
+            #        if msg['times'].include? k
+            #            data[k] = Time.parse v
+            #        end
+            #    end
+            else
+              data = resolve_times data, msg['times']
             end
             if msg['response'] == 'watch'
                 handle_watch_data msg['id'], data
