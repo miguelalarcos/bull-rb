@@ -105,7 +105,9 @@ class Controller
             #    end
             #end
             times = encode_times(kwargs)
-            @ws.send({command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json)
+            msg = {command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json
+            puts msg
+            @ws.send(msg)
         end
 
         def notify msg
@@ -119,7 +121,9 @@ class Controller
             #        end
             #    end
             else
-              data = resolve_times data, msg['times']
+              puts 'before', data, msg['times']
+              resolve_times data, msg['times']
+              puts 'after', data
             end
             if msg['response'] == 'watch'
                 handle_watch_data msg['id'], data

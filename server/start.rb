@@ -24,8 +24,8 @@ EM.run do
       begin
         controller.notify msg
       rescue Exception => e
-        puts e.message
-        puts e.backtrace.inspect
+        puts 'message: ', e.message
+        puts 'trace: ', e.backtrace.inspect
       end
     end
 

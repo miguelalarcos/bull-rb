@@ -15,11 +15,15 @@ module Bull
         end
 
         def notify(msg)
-            puts msg
+            puts msg, '<-', msg
             msg = JSON.parse msg #, symbolize_names: true
+            puts msg
             command = msg['command']
+            puts command
             kwargs = symbolize_keys(msg['kwargs']) # Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
+            puts kwargs
             resolve_times kwargs, msg['times']
+            puts 'llego'
             #if msg['times']
             #    kwargs.each do |k, v|
             #        if msg['times'].include? k.to_s
@@ -34,6 +38,7 @@ module Bull
             elsif command == 'stop_watch'
                 handle_stop_watch msg['id']
             end
+            puts 'end of notify'
         end
 
         def close
@@ -148,12 +153,15 @@ module Bull
                 return if !w
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
+                        puts doc
                         ret = {}
                         ret[:response] = 'watch'
                         ret[:id] = id
                         ret[:data] = doc
                         ret[:times] = times doc
+                        puts '(a)'
                         @ws.send ret.to_json
+                        puts '(b)'
                     end
                 end
             end
@@ -182,6 +190,7 @@ module Bull
                         return nil
                     end
                 end
+                puts 'llego 2'
                 $r.table(table).get(id).changes({include_initial: true})
             end
 
