@@ -107,6 +107,7 @@ class App < React::Component::Base
 
     def render
         div do
+            Notification()
             Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
             PageA(car_selected: @car_selected) if state.page == 'pageA'
             PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'

@@ -2,6 +2,46 @@ require 'reactive-ruby'
 require 'set'
 require_relative 'reactive_var'
 
+class NotificationController
+  @@ticket = 0
+
+  def initialize state
+    @state = state
+  end
+
+  def add msg
+    id = @@ticket
+    @@ticket += 1
+    aux = @state.notifications
+    aux[id] = ['animated fadeIn'] + msg
+    @state.notifications! aux
+  end
+end
+
+class Notification < React::Component::Base
+  before_mount do
+    state.notifications! Hash.new
+    $notifications = NotificationController.new state
+  end
+
+  def render
+    div do
+      state.notifications.each_pair do |k, (animation, code, v)|
+        div(key: k, class: animation + ' notification ' + code){v}.on(:click) do
+          aux = state.notifications
+          aux[k] = ['animated fadeOut'] + aux[k][1..-1]
+          state.notifications! aux
+          $window.after(2) do
+            aux = state.notifications
+            aux.delete k
+            state.notifications! aux
+          end
+        end
+      end
+    end
+  end
+end
+
 class DisplayList < React::Component::Base
 
   before_mount do
@@ -189,15 +229,26 @@ class Form < React::Component::Base
 
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
-      params.selected.value = response #['id']
+      if response.nil?
+        $notifications.add ['error', 'data not inserted'] if $notifications
+      else
+        params.selected.value = response
+        $notifications.add ['ok', 'data inserted'] if $notifications
+      end
     end
     @dirty.clear
   end
 
   def update
-    ret = $controller.update(@@table, state.id, hash_from_state)
+    $controller.update(@@table, state.id, hash_from_state).then do |count|
+      if count == 0
+        $notifications.add ['error', 'data not updated'] if $notifications
+      elsif count == 1
+        $notifications.add ['ok', 'data updated'] if $notifications
+      end
+    end
     @dirty.clear
-    ret
+    #ret
   end
 
   def get selected

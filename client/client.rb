@@ -1,6 +1,7 @@
 #require 'opal'
 require 'browser'
 require 'browser/socket'
+require 'browser/delay'
 require 'promise'
 require 'json'
 require 'time'
@@ -55,7 +56,7 @@ class Controller
         begin
             controller = self
             @ws = Browser::Socket.new 'ws://localhost:3000' do
-            #@ws = Browser::Socket.new 'wss://localhost:7443' do
+            #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     if !controller.app_rendered
                         $document.ready do
@@ -74,7 +75,7 @@ class Controller
                 end
                 on :close do |e|
                     puts 'close and reset'
-                    after(5) {reset}
+                    $window.after(5) {reset}
                 end
             end            
         rescue Exception => e  
@@ -121,9 +122,7 @@ class Controller
             #        end
             #    end
             else
-              puts 'before', data, msg['times']
               resolve_times data, msg['times']
-              puts 'after', data
             end
             if msg['response'] == 'watch'
                 handle_watch_data msg['id'], data

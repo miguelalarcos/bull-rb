@@ -72,20 +72,20 @@ class DateTimeInput < React::Component::Base
       input(type: :text, value: val).on(:click) {|event| state.show! !state.show}
       div(class: 'xdatetime-popover') do
         div(class: 'xdatetime-header') do
-          span(class: 'minus-month'){'-'}.on(:click) {state.day! state.day - 30*24*60*60} #{params.change_date.call day - 30*24*60*60}
+          i(class: 'minus-month fa fa-minus').on(:click) {state.day! state.day - 30*24*60*60} #{params.change_date.call day - 30*24*60*60}
           span{state.day.strftime('%m')}
-          span(class: 'plus-month'){'+'}.on(:click) {state.day! state.day  + 30*24*60*60}
-          span(class: 'minus-year'){'-'}.on(:click) {state.day! state.day  - 365*24*60*60}
+          i(class: 'plus-month fa fa-plus').on(:click) {state.day! state.day  + 30*24*60*60}
+          i(class: 'minus-year fa fa-minus').on(:click) {state.day! state.day  - 365*24*60*60}
           span{state.day.strftime('%Y')}
-          span(class: 'plus-year'){'+'}.on(:click) {state.day! state.day  + 365*24*60*60}
+          i(class: 'plus-year fa fa-plus').on(:click) {state.day! state.day  + 365*24*60*60}
         end
         6.times {|w| Week(week: w, day: state.day, change_date: params.change_date)}
         div(class: 'xdatetime-bottom') do
-          span(class: 'minus-hour'){'-'}.on(:click) {params.change_date.call day - 60*60; state.day! state.day - 60*60}
-          span(class: 'plus-hour'){'+'}.on(:click) {params.change_date.call day + 60*60; state.day! state.day + 60*60}
+          i(class: 'minus-hour fa fa-minus').on(:click) {params.change_date.call day - 60*60; state.day! state.day - 60*60}
+          i(class: 'plus-hour fa fa-plus').on(:click) {params.change_date.call day + 60*60; state.day! state.day + 60*60}
           span{day.strftime('%H:%M')}
-          span(class: 'minus-minute'){'-'}.on(:click) {params.change_date.call day - 60; state.day! state.day - 60}
-          span(class: 'plus-minute'){'+'}.on(:click) {params.change_date.call day + 60; state.day! state.day + 60}
+          i(class: 'minus-minute fa fa-minus').on(:click) {params.change_date.call day - 60; state.day! state.day - 60}
+          i(class: 'plus-minute fa fa-plus').on(:click) {params.change_date.call day + 60; state.day! state.day + 60}
         end if params.time
       end if state.show
     end

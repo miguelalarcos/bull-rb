@@ -141,7 +141,7 @@ module Bull
                 value.delete 'i_timestamp'
                 value.delete 'owner'
                 value.delete 'id'
-                $r.table(table).get(id).update(value).run(@conn)[:replaced]
+                $r.table(table).get(id).update(value).run(@conn)['replaced']
             end
 
             def handle_watch command, id, *args, **kwargs

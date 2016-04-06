@@ -1,7 +1,6 @@
 require 'time'
 
 def resolve_times doc, keys
-  puts 'keys', keys
   keys.each do |k|
     d = doc
     ks = k.split('.')
@@ -17,9 +16,7 @@ def resolve_times doc, keys
     begin
         i = Integer(attr.to_s)
         d[i] = Time.parse d[i]
-        puts 'time parse i', attr, i, d[i]
     rescue
-        puts 'time parse attr', d[attr]
         d[attr] = Time.parse d[attr]
     end
   end
