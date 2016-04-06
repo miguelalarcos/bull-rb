@@ -56,6 +56,10 @@ class DisplayList < React::Component::Base
   end
 
   def consume data
+    if data.nil?
+      clear
+      return
+    end
     docs = state.docs.dup
     if data['new_val'] == nil
       index = docs.index {|x| x['id'] == data['old_val']['id']}
@@ -95,7 +99,11 @@ class DisplayDoc < React::Component::Base
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
       @predicate_id = $controller.watch('by_id', @@table, value) do |data|
-        data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+        if data.nil?
+          clear
+        else
+          data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+        end
       end
     end
   end

@@ -196,7 +196,7 @@ class DisplayCars < DisplayList
                         if doc['color'] == 'red'
                             color = 'blue'
                         end
-                        $controller.rpc('update', 'car', doc['id'], {color: color})
+                        $controller.rpc('update', 'car', doc['id'], value: {color: color})
                     end
                 end
             end

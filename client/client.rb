@@ -26,6 +26,10 @@ class Controller
         id
     end
 
+    def get_watch
+        @watch
+    end
+
     def stop_watch(id)
         @watch.delete(id)
         send('stop_watch', id)
@@ -58,10 +62,16 @@ class Controller
             @ws = Browser::Socket.new 'ws://localhost:3000' do
             #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
+                    p 'conected!'
                     if !controller.app_rendered
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
                           controller.app_rendered = true
+                        end
+                    end
+                    if !controller.get_watch.empty?
+                        controller.get_watch.each do |id, value|
+                            controller.send 'watch_' + value[:name], id, *value[:args]
                         end
                     end
                 end
@@ -69,24 +79,19 @@ class Controller
                     begin
                         controller.notify JSON.parse(e.data)
                     rescue Exception => e
-                        puts e.message
-                        puts e.backtrace.inspect
+                        p e.message
+                        p e.backtrace.inspect
                     end
                 end
                 on :close do |e|
-                    puts 'close and reset'
-                    $window.after(5) {reset}
+                    p 'close and reset'
+                    $window.after(5) {controller.reset}
                 end
             end            
         rescue Exception => e  
-            puts e.message  
-            puts e.backtrace.inspect 
-            after(5) {reset}
-        end
-        if !@watch.empty?
-            @watch.each do |id, value|
-                send 'watch', id, value[:name], value[:args]
-            end
+            p e.message
+            p e.backtrace.inspect
+            $window.after(5) {reset}
         end
     end
 
@@ -145,10 +150,10 @@ class Controller
 
         def clear
             @watch.each_value do |value|
-                value[:who].clear
+                value[:who].call nil
             end
             @promises = {}
-            @watch = {}
+            #@watch = {}
         end
 
         def reset
