@@ -8,40 +8,48 @@ module Validate
     attrs.merge! hsh
   end
 
+  def validate_ dct
+    ret = []
+    attrs.each_key do |k|
+      if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
+        next
+      end
+      v = get_value_nested k, dct
+      k_r = k.gsub('.', '_')
+      if !v.nil? && !v.is_a?(attrs[k])
+        val = false
+      elsif respond_to? 'is_valid_' + k_r + '?'
+        begin
+          val = send('is_valid_' + k_r + '?', v, dct)
+        rescue
+          val = false
+        end
+      else
+        val=true
+      end
+      ret << val
+      yield k, val if !val.nil?
+    end
+    ret
+  end
+
   if RUBY_ENGINE == 'opal'
 
     def validate state
-      dct = state_to_hash(state)
-      ret = []
-      dct.each_pair do |k, v|
-        if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
-          next
-        end
-        #return false if !v.nil? && !v.is_a?(attrs[k])
-        if !v.nil? && !v.is_a?(attrs[k])
-          val = false
-        elsif respond_to? 'is_valid_' + k + '?'
-          begin
-            val = send('is_valid_' + k + '?', v, dct)
-          rescue
-            val = false
-          end
-          state.__send__('is_valid_' + k + '!', val)
-          ret << val
-        end
-      end
+      ret = validate_(state_to_hash(state)){|k, v|state.__send__('is_valid_' + k + '!', v)}
       state.is_valid! ret.all?
     end
 
   else
 
     def validate dct
-      dct.each_pair do |k, v|
-        k = k.to_s
+      attrs.each_key do |k|
         if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
           next
         end
+        v = get_value_nested k, dct
         return false if !v.nil? && !v.is_a?(attrs[k])
+        k = k.gsub('.', '_')
         if respond_to? 'is_valid_' + k + '?'
           begin
             b = send 'is_valid_' + k + '?', v, dct
@@ -57,10 +65,20 @@ module Validate
 
   def state_to_hash state
     ret = {}
-    attrs.keys.each do |attr|
+    aux = attrs.keys.map{|x| x.split('.')[0]}.uniq
+    aux.each do |attr|
       ret[attr] = state.__send__ attr
     end
     ret
+  end
+
+  def get_value_nested k, dct
+    value = dct
+    for k in k.split('.')
+      value = value[k]
+      return nil if value.nil?
+    end
+    value
   end
 end
 

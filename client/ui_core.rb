@@ -1,6 +1,7 @@
 require 'reactive-ruby'
 require 'set'
 require_relative 'reactive_var'
+require_relative 'lib/utils'
 
 class NotificationController
   @@ticket = 0
@@ -220,14 +221,15 @@ class Form < React::Component::Base
   def change_attr(attr)
     lambda do |value|
       @dirty.add attr
-      state.__send__(attr+'!', value)
+      doc = state.__send__(attr.split('.')[0])
+      set_nested_state(attr, value, doc){|r, v| state.__send__(r+'!', v)}
     end
   end
 
   def hash_from_state
     ret = {}
     @dirty.each do |attr|
-      ret[attr] = state.__send__(attr) if attr != 'id'
+      get_nested_state!(ret, attr) {|r| state.__send__(r)}
     end
     ret
   end
