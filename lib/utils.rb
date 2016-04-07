@@ -26,7 +26,7 @@ def get_nested_state! ret, attr
   doc[root] = yield root #state.__send__(root)
 
   if path.empty?
-    ret[root] = doc if root != 'id'
+    ret[root] = doc[root] if root != 'id'
   else
     path.unshift root
     while !path.empty?
