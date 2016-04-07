@@ -1,9 +1,10 @@
+$LOAD_PATH.unshift '..'
 require 'eventmachine'
 require 'json'
 require 'time'
 require 'bcrypt'
-require '../lib/encode_times'
-require '../lib/symbolize'
+require 'lib/encode_times' #..
+require 'lib/symbolize'    #..
 
 module Bull
     class Controller
@@ -15,15 +16,11 @@ module Bull
         end
 
         def notify(msg)
-            puts msg, '<-', msg
             msg = JSON.parse msg #, symbolize_names: true
-            puts msg
+            print '>', msg, "\n"
             command = msg['command']
-            puts command
             kwargs = symbolize_keys(msg['kwargs']) # Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
-            puts kwargs
             resolve_times kwargs, msg['times']
-            puts 'llego'
             #if msg['times']
             #    kwargs.each do |k, v|
             #        if msg['times'].include? k.to_s
@@ -38,7 +35,6 @@ module Bull
             elsif command == 'stop_watch'
                 handle_stop_watch msg['id']
             end
-            puts 'end of notify'
         end
 
         def close
@@ -94,7 +90,7 @@ module Bull
             def owner! doc
                 doc['owner'] = @user_id
             end
-
+=begin
             def rpc_get table, id
                 if table == 'user'
                     return {}
@@ -107,40 +103,42 @@ module Bull
                 end
                 doc
             end
-
+=end
             def rpc_insert(table, value:)
                 new_val = value
-                if table == 'user'
+                #if table == 'user'
+                #    return nil
+                #end
+                new_val.delete :i_timestamp
+                new_val.delete :owner
+                new_val.delete :id
+                #if self.class.method_defined? 'before_insert_'+table
+                if !self.send('before_insert_'+table, new_val)
                     return nil
+                else
+                    $r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
                 end
-                new_val.delete 'i_timestamp'
-                new_val.delete 'owner'
-                new_val.delete 'id'
-                if self.class.method_defined? 'before_insert_'+table
-                    if !self.send('before_insert_'+table, new_val)
-                        return nil
-                    end
-                end
-                $r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
+                #end
+                #$r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
             end
 
             def rpc_update(table, id, value:)
-                if table == 'user'
-                    return 0
-                end
-                value.delete 'u_timestamp'
+                #if table == 'user'
+                #    return 0
+                #end
+                value.delete :u_timestamp
                 old_val = $r.table(table).get(id).run(@conn)
                 #old_val = Hash[old_val.map { |k, v| [k.to_sym, v] }]
                 old_val = symbolize_keys old_val
-                if self.class.method_defined? 'before_update_'+table
-                    if !(old_val && self.send('before_update_'+table, old_val, value))
-                        return 0
-                    end
+                #if self.class.method_defined? 'before_update_'+table
+                if !(old_val && self.send('before_update_'+table, old_val, value))
+                    return 0
                 end
-                value.delete 'update_roles'
-                value.delete 'i_timestamp'
-                value.delete 'owner'
-                value.delete 'id'
+                #end
+                value.delete :update_roles
+                value.delete :i_timestamp
+                value.delete :owner
+                value.delete :id
                 $r.table(table).get(id).update(value).run(@conn)['replaced']
             end
 
@@ -150,6 +148,7 @@ module Bull
                 else
                     w = self.send command, *args, **kwargs
                 end
+                #w = self.send command, *args, **kwargs
                 return if !w
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
@@ -159,9 +158,7 @@ module Bull
                         ret[:id] = id
                         ret[:data] = doc
                         ret[:times] = times doc
-                        puts '(a)'
                         @ws.send ret.to_json
-                        puts '(b)'
                     end
                 end
             end
@@ -180,6 +177,7 @@ module Bull
                 @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
             end
 
+=begin
             def watch_by_id table, id
                 if table == 'user'
                     return nil
@@ -190,10 +188,9 @@ module Bull
                         return nil
                     end
                 end
-                puts 'llego 2'
                 $r.table(table).get(id).changes({include_initial: true})
             end
-
+=end
             def times ret
                 if !ret.respond_to? :each_pair
                     if ret.instance_of? Time

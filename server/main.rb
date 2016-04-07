@@ -15,9 +15,21 @@ class MyController < Bull::Controller
     end
   end
 
-  def before_watch_by_id_car doc
-    user_is_owner? doc
+  def rpc_get_i18n id
+    $r.table('i18n').get(id).run(@conn)
   end
+
+  def rpc_get_car id
+    $r.table('car').get(id).run(@conn)
+  end
+
+  def watch_car id
+    $r.table('car').get(id).changes({include_initial: true})
+  end
+
+  #def before_watch_by_id_car doc
+  #  user_is_owner? doc
+  #end
 
   def watch_cars_of_color color
     $r.table('car').filter(color: color).changes({include_initial: true})

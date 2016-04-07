@@ -99,7 +99,7 @@ class App < React::Component::Base
         @car_selected = RVar.new 0
         @language = RVar.new 'es'
         reactive(@language) do
-            $controller.rpc('get', 'i18n', @language.value).then do|response|
+            $controller.rpc('get_i18n', @language.value).then do|response|
                 state.i18n_map! response
             end
         end
@@ -152,7 +152,7 @@ class MyForm < Form
     def clear
         state.registration! ''
         state.color! ''
-        state.wheels! 0
+        state.wheels! nil
         state.date! nil
         state.id! nil
     end

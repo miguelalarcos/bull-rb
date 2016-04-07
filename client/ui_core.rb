@@ -15,6 +15,16 @@ class NotificationController
     aux = @state.notifications
     aux[id] = ['animated fadeIn'] + msg
     @state.notifications! aux
+    $window.after(2) do
+      aux = @state.notifications
+      aux[id] = ['animated fadeOut'] + aux[id][1..-1]
+      @state.notifications! aux
+    end
+    $window.after(3) do
+      aux = @state.notifications
+      aux.delete id
+      @state.notifications! aux
+    end
   end
 end
 
@@ -27,16 +37,16 @@ class Notification < React::Component::Base
   def render
     div do
       state.notifications.each_pair do |k, (animation, code, v)|
-        div(key: k, class: animation + ' notification ' + code){v}.on(:click) do
-          aux = state.notifications
-          aux[k] = ['animated fadeOut'] + aux[k][1..-1]
-          state.notifications! aux
-          $window.after(2) do
-            aux = state.notifications
-            aux.delete k
-            state.notifications! aux
-          end
-        end
+        div(key: k, class: animation + ' notification ' + code){v}#.on(:click) do
+          #aux = state.notifications
+          #aux[k] = ['animated fadeOut'] + aux[k][1..-1]
+          #state.notifications! aux
+          #$window.after(2) do
+          #  aux = state.notifications
+          #  aux.delete k
+          #  state.notifications! aux
+          #end
+        #end
       end
     end
   end
@@ -98,7 +108,7 @@ class DisplayDoc < React::Component::Base
       value = selected.value
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
-      @predicate_id = $controller.watch('by_id', @@table, value) do |data|
+      @predicate_id = $controller.watch(@@table, value) do |data|
         if data.nil?
           clear
         else
@@ -262,7 +272,7 @@ class Form < React::Component::Base
   def get selected
     @rvs = reactive(selected) do
       clear
-      $controller.rpc('get', @@table, selected.value).then do|response|
+      $controller.rpc('get_' + @@table, selected.value).then do|response|
         response.each do |k, v|
           state.__send__(k+'!', v)
         end

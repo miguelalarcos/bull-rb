@@ -214,7 +214,7 @@ class MyController < Bull::Controller
     end
   end
 
-  def before_watch_by_id_car doc
+  def watch_car doc
     user_is_owner? doc
   end
 
@@ -260,7 +260,7 @@ class ValidateCar
   end
 
   def is_valid_registration? (value, doc)
-    if doc['wheels'] <= 4
+    if doc[:wheels] <= 4
       value.start_with? 'A'
     else
       value.start_with? 'B'
@@ -304,7 +304,7 @@ Controller client side:
 
   you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
-  way I construct Times server side. I hope in future release to construct nested Times.
+  way I construct Times server side.
 
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise

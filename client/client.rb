@@ -10,6 +10,7 @@ require 'lib/encode_times'
 class Controller
 
     attr_accessor :app_rendered
+    attr_accessor :ws
     @@ticket = 0
 
     def initialize
@@ -44,16 +45,39 @@ class Controller
     end
 
     def insert(table, hsh)
-        $controller.rpc('insert', table, value: hsh)
+        #$controller.rpc('insert', table, value: hsh)
+        rpc('insert', table, value: hsh)
     end
 
     def update(table, id, hsh)
-        $controller.rpc('update', table, id, value: hsh)
+        #$controller.rpc('update', table, id, value: hsh)
+        rpc('update', table, id, value: hsh)
     end
 
     def logout
         rpc('logout')
         clear
+    end
+
+    def notify msg
+        msg = JSON.parse(msg)
+        data = msg['data'] || msg['result']
+        if data.instance_of?(String) && msg['times'] && msg['times'][0] == 'result'
+            data = Time.parse data
+            #elsif msg['times'] and data.respond_to?(:each_pair)
+            #    data.each_pair do |k, v|
+            #        if msg['times'].include? k
+            #            data[k] = Time.parse v
+            #        end
+            #    end
+        else
+            resolve_times data, msg['times']
+        end
+        if msg['response'] == 'watch'
+            handle_watch_data msg['id'], data
+        elsif msg['response'] == 'rpc'
+            handle_rpc_result msg['id'], data
+        end
     end
 
     def start(app)
@@ -62,11 +86,10 @@ class Controller
             @ws = Browser::Socket.new 'ws://localhost:3000' do
             #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
-                    p 'conected!'
-                    if !controller.app_rendered
+                    if !controller.app_rendered # if !app.nil?
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
-                          controller.app_rendered = true
+                          controller.app_rendered = true #
                         end
                     end
                     if !controller.get_watch.empty?
@@ -77,20 +100,19 @@ class Controller
                 end
                 on :message do |e|
                     begin
-                        controller.notify JSON.parse(e.data)
+                        controller.notify e.data #JSON.parse(e.data)
                     rescue Exception => e
-                        p e.message
-                        p e.backtrace.inspect
+                        print e.message
+                        print e.backtrace.inspect
                     end
                 end
                 on :close do |e|
-                    p 'close and reset'
                     $window.after(5) {controller.reset}
                 end
             end            
         rescue Exception => e  
-            p e.message
-            p e.backtrace.inspect
+            print e.message
+            print e.backtrace.inspect
             $window.after(5) {reset}
         end
     end
@@ -112,28 +134,7 @@ class Controller
             #end
             times = encode_times(kwargs)
             msg = {command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json
-            puts msg
             @ws.send(msg)
-        end
-
-        def notify msg
-            data = msg['data'] || msg['result']
-            if data.instance_of? String && msg['times'] && msg['times'][0] == 'result'
-                data = Time.parse data
-            #elsif msg['times'] and data.respond_to?(:each_pair)
-            #    data.each_pair do |k, v|
-            #        if msg['times'].include? k
-            #            data[k] = Time.parse v
-            #        end
-            #    end
-            else
-              resolve_times data, msg['times']
-            end
-            if msg['response'] == 'watch'
-                handle_watch_data msg['id'], data
-            elsif msg['response'] == 'rpc'
-                handle_rpc_result msg['id'], data
-            end
         end
 
         def handle_watch_data(id, data)
