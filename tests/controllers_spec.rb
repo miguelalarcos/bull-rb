@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift '.'
 $LOAD_PATH.unshift 'lib'
-print $LOAD_PATH
+$LOAD_PATH.unshift 'client'
+
 LIBS_TO_SKIP = ['browser', 'browser/socket', 'browser/delay', 'promise']
 
 module Kernel
