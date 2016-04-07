@@ -50,7 +50,7 @@ RSpec.describe Validate do
     ValidateA.new.validate_('a' => 'A', 'b' => 4) do |k, v|
       ret[k] = v
     end
-    d = {'a'=>true, 'b'=>true, 'c' => true, 'c.x'=>true}
+    d = {'a'=>true, 'b'=>true, 'c' => true, 'c_x'=>true}
     expect(ret).to eq d
   end
 
@@ -59,7 +59,7 @@ RSpec.describe Validate do
     ValidateA.new.validate_('a' => 'A', 'b' => 4, 'c'=>{'x'=>1}) do |k, v|
       ret[k] = v
     end
-    d = {'a'=>true, 'b'=>true, 'c' => true, 'c.x'=>true}
+    d = {'a'=>true, 'b'=>true, 'c' => true, 'c_x'=>true}
     expect(ret).to eq d
   end
 
@@ -68,7 +68,7 @@ RSpec.describe Validate do
     ValidateA.new.validate_('a' => 'A', 'b' => 4, 'c'=>{'x'=>'1'}) do |k, v|
       ret[k] = v
     end
-    d = {'a'=>true, 'b'=>true, 'c' => true, 'c.x'=>false}
+    d = {'a'=>true, 'b'=>true, 'c' => true, 'c_x'=>false}
     expect(ret).to eq d
   end
 

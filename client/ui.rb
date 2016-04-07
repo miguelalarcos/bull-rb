@@ -155,6 +155,8 @@ class MyForm < Form
         state.wheels! nil
         state.date! nil
         state.id! nil
+        d = {'x' => nil}
+        state.nested! d
     end
 
     def render
@@ -170,6 +172,8 @@ class MyForm < Form
             StringInput(change_attr: change_attr('color'), value: state.color)
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
+            span{'Nested'}
+            IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
             button(type: :button) { 'clear' }.on(:click) {clear}
         end        

@@ -28,7 +28,7 @@ module Validate
         val=true
       end
       ret << val
-      yield k, val if !val.nil?
+      yield k_r, val if !val.nil?
     end
     ret
   end
@@ -75,7 +75,7 @@ module Validate
   def get_value_nested k, dct
     value = dct
     for k in k.split('.')
-      value = value[k]
+      value = value[k.to_sym]
       return nil if value.nil?
     end
     value
