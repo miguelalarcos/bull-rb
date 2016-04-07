@@ -6,11 +6,25 @@ require 'promise'
 require 'json'
 require 'time'
 require 'lib/encode_times'
+require 'reactive_var'
+
+=begin
+$connection = RVar.new 'disconnected'
+
+reactive($connection) do
+    if $connection.value == 'disconnected'
+        $notifications.add ['error', 'disconnected', 1] if $notifications
+    else
+        $notifications.add ['ok', 'connected', 1] if $notifications
+    end
+end
+=end
 
 class Controller
 
     attr_accessor :app_rendered
     attr_accessor :ws
+    attr_reader :connection
     @@ticket = 0
 
     def initialize
@@ -18,6 +32,15 @@ class Controller
         @promises = {}
         @ws = nil
         @app_rendered = false
+
+        @connection = RVar.new 'disconnected'
+        reactive(@connection) do
+            if @connection.value == 'disconnected'
+                $notifications.add ['error', 'disconnected', 1] if $notifications
+            else
+                $notifications.add ['ok', 'connected', 1] if $notifications
+            end
+        end
     end
 
     def watch(name, *args, &block)
@@ -45,13 +68,39 @@ class Controller
     end
 
     def insert(table, hsh)
-        #$controller.rpc('insert', table, value: hsh)
-        rpc('insert', table, value: hsh)
+        prom = rpc('insert', table, value: hsh).then do |response|
+            if response.nil?
+                $notifications.add ['error', 'data not inserted', 0] if $notifications
+            else
+                $notifications.add ['ok', 'data inserted', 0] if $notifications
+            end
+            response
+        end
+        prom
     end
 
     def update(table, id, hsh)
-        #$controller.rpc('update', table, id, value: hsh)
-        rpc('update', table, id, value: hsh)
+        prom = rpc('update', table, id, value: hsh).then do |count|
+            if count == 0
+                $notifications.add ['error', 'data not updated', 0] if $notifications
+            elsif count == 1
+                $notifications.add ['ok', 'data updated', 0] if $notifications
+            end
+            count
+        end
+        prom
+    end
+
+    def delete(table, id)
+        prom = rpc('delete', table, id).then do |count|
+            if count == 0
+                $notifications.add ['error', 'data not deleted', 0] if $notifications
+            elsif count == 1
+                $notifications.add ['ok', 'data deleted', 0] if $notifications
+            end
+            count
+        end
+        prom
     end
 
     def logout
@@ -86,6 +135,7 @@ class Controller
             @ws = Browser::Socket.new 'ws://localhost:3000' do
             #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
+                    controller.connection.value = 'connected'
                     if !controller.app_rendered # if !app.nil?
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
@@ -107,6 +157,7 @@ class Controller
                     end
                 end
                 on :close do |e|
+                    controller.connection.value = 'disconnected'
                     $window.after(5) {controller.reset}
                 end
             end            

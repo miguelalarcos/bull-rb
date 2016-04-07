@@ -5,11 +5,13 @@ require_relative 'reactive_var'
 class NotificationController
   @@ticket = 0
 
-  def initialize state
+  def initialize state, level
     @state = state
+    @level = level
   end
 
   def add msg
+    return if msg[-1] < @level
     id = @@ticket
     @@ticket += 1
     aux = @state.notifications
@@ -29,24 +31,17 @@ class NotificationController
 end
 
 class Notification < React::Component::Base
+  param :level
+
   before_mount do
     state.notifications! Hash.new
-    $notifications = NotificationController.new state
+    $notifications = NotificationController.new state, params.level
   end
 
   def render
-    div do
-      state.notifications.each_pair do |k, (animation, code, v)|
-        div(key: k, class: animation + ' notification ' + code){v}#.on(:click) do
-          #aux = state.notifications
-          #aux[k] = ['animated fadeOut'] + aux[k][1..-1]
-          #state.notifications! aux
-          #$window.after(2) do
-          #  aux = state.notifications
-          #  aux.delete k
-          #  state.notifications! aux
-          #end
-        #end
+    div(style: {position: 'absolute'}) do
+      state.notifications.each_pair do |k, (animation, code, v, level)|
+        div(key: k, class: animation + ' notification ' + code){v}
       end
     end
   end
@@ -248,10 +243,10 @@ class Form < React::Component::Base
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
       if response.nil?
-        $notifications.add ['error', 'data not inserted'] if $notifications
+        $notifications.add ['error', 'form: data not inserted', 1] if $notifications
       else
         params.selected.value = response
-        $notifications.add ['ok', 'data inserted'] if $notifications
+        $notifications.add ['ok', 'form: data inserted', 1] if $notifications
       end
     end
     @dirty.clear
@@ -260,9 +255,9 @@ class Form < React::Component::Base
   def update
     $controller.update(@@table, state.id, hash_from_state).then do |count|
       if count == 0
-        $notifications.add ['error', 'data not updated'] if $notifications
+        $notifications.add ['error', 'form: data not updated', 1] if $notifications
       elsif count == 1
-        $notifications.add ['ok', 'data updated'] if $notifications
+        $notifications.add ['ok', 'form: data updated', 1] if $notifications
       end
     end
     @dirty.clear

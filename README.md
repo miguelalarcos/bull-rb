@@ -49,7 +49,7 @@ class MyForm < Form
     def clear
         state.registration! ''
         state.color! ''
-        state.wheels! 0
+        state.wheels! nil
         state.date! nil
         state.id! nil
     end
@@ -96,16 +96,7 @@ reactive(@language) do
 end
 ```
 
-And in render method:
-
-```ruby
-def render
-    Menu(...)
-    PageA(car_selected: @car_selected)
-    PageB(car_selected: @car_selected)
-```
-
-This way several components can watch the rvar and set a value to it. For example a form is editing the rvar
+Several components can watch the rvar and set a value to it. For example a form is editing the rvar
 car_selected, and a list component of cars can set the car_selected to another id when clicking in one car.
 
 The canonical way of writing a custom component:
@@ -135,7 +126,7 @@ class DisplayCar < React::Component::Base
 
     def render
         div do
-            {state.registration + ' color: ' + state.color}
+            {state.registration + ', color: ' + state.color}
         end
     end
 
@@ -219,14 +210,14 @@ class MyController < Bull::Controller
   end
 
   def watch_cars_of_color color
-    $r.table('car').filter(color: color).changes({include_initial: true})
+    $r.table('car').filter(color: color)
   end
 
-  def before_update_car old_val, new_val
-    if !ValidateCar.new.validate old_val.merge(new_val)
+  def before_update_car old_val, new_val, merged
+    if !ValidateCar.new.validate merged
       return false
     end
-    u_timestamp! new_val
+    u_timestamp! merged
     user_role_in? old_val
   end
 
@@ -287,7 +278,7 @@ Instructions to install and execute:
 * Console in root folder:
 
     *$ rethinkdb &
-    *$ ruby setup_data_base.rb
+    *$ ruby setup_data_base.rb (pending of create the rb file)
 
 * Console in server folder:
 
@@ -304,7 +295,7 @@ Controller client side:
 
   you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
-  way I construct Times server side.
+  way I construct Times in the other side.
 
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
@@ -314,7 +305,7 @@ Controller client side:
 Controller server side:
 * user_is_owner? doc -> boolean
 * user_roles -> list of roles
-* def user_role_in? doc -> user has a role that is included in doc['update_roles']
+* def user_role_in? doc -> user has a role that is included in doc\['update_roles']
 * i_timestamp! doc # sets the inserted timestamp
 * u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc

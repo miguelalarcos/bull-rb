@@ -107,7 +107,7 @@ class App < React::Component::Base
 
     def render
         div do
-            Notification()
+            Notification(level: 0)
             Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
             PageA(car_selected: @car_selected) if state.page == 'pageA'
             PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
@@ -160,6 +160,7 @@ class MyForm < Form
     def render
         ValidateCar.new.validate state
         div do
+            div{state.id}
             span{'Registration'}
             StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
@@ -196,7 +197,7 @@ class DisplayCars < DisplayList
                         if doc['color'] == 'red'
                             color = 'blue'
                         end
-                        $controller.rpc('update', 'car', doc['id'], value: {color: color})
+                        $controller.update('car', doc['id'], {color: color})
                     end
                 end
             end

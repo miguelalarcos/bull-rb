@@ -122,24 +122,30 @@ module Bull
                 #$r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
             end
 
-            def rpc_update(table, id, value:)
-                #if table == 'user'
-                #    return 0
-                #end
-                value.delete :u_timestamp
-                old_val = $r.table(table).get(id).run(@conn)
-                #old_val = Hash[old_val.map { |k, v| [k.to_sym, v] }]
-                old_val = symbolize_keys old_val
-                #if self.class.method_defined? 'before_update_'+table
-                if !(old_val && self.send('before_update_'+table, old_val, value))
+            def rpc_delete(table, id)
+                doc = get table, id
+                if !self.send('before_delete_'+table, doc)
                     return 0
+                else
+                    $r.table(table).get(id).delete.run(@conn)['deleted']
                 end
-                #end
+            end
+
+            def rpc_update(table, id, value:)
+                value.delete :u_timestamp
                 value.delete :update_roles
                 value.delete :i_timestamp
                 value.delete :owner
                 value.delete :id
-                $r.table(table).get(id).update(value).run(@conn)['replaced']
+                old_val = $r.table(table).get(id).run(@conn)
+                old_val = symbolize_keys old_val
+
+                merged = old_val.merge(value)
+                if !(old_val && self.send('before_update_'+table, old_val, value, merged))
+                    return 0
+                end
+
+                $r.table(table).get(id).update(merged).run(@conn)['replaced']
             end
 
             def handle_watch command, id, *args, **kwargs
@@ -148,8 +154,8 @@ module Bull
                 else
                     w = self.send command, *args, **kwargs
                 end
-                #w = self.send command, *args, **kwargs
                 return if !w
+                w = w.changes({include_initial: true})
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
                         puts doc
@@ -175,6 +181,10 @@ module Bull
                     ret = self.send command, *args, **kwargs
                 end
                 @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
+            end
+
+            def get table, id
+                $r.table(table).get(id).run(@conn)
             end
 
 =begin

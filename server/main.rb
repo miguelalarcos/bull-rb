@@ -16,15 +16,17 @@ class MyController < Bull::Controller
   end
 
   def rpc_get_i18n id
-    $r.table('i18n').get(id).run(@conn)
+    get 'i18n', id
+    #$r.table('i18n').get(id).run(@conn)
   end
 
   def rpc_get_car id
-    $r.table('car').get(id).run(@conn)
+    get 'car', id
+    #$r.table('car').get(id).run(@conn)
   end
 
   def watch_car id
-    $r.table('car').get(id).changes({include_initial: true})
+    $r.table('car').get(id) #.changes({include_initial: true})
   end
 
   #def before_watch_by_id_car doc
@@ -32,17 +34,22 @@ class MyController < Bull::Controller
   #end
 
   def watch_cars_of_color color
-    $r.table('car').filter(color: color).changes({include_initial: true})
+    $r.table('car').filter(color: color) #.changes({include_initial: true})
   end
 
-  def before_update_car old_val, new_val
-    puts old_val, new_val
-    if !ValidateCar.new.validate old_val.merge(new_val)
+  def before_update_car old_val, new_val, merged
+    if !ValidateCar.new.validate merged
+    #if !ValidateCar.new.validate old_val.merge(new_val)
       return false
     end
-    u_timestamp! new_val
+    u_timestamp! merged
     true
     #user_role_in? old_val
+  end
+
+  def before_delete_car doc
+    true
+    #user_is_owner? doc
   end
 
   def before_insert_car doc
