@@ -15,6 +15,11 @@ class MyController < Bull::Controller
     end
   end
 
+  def rpc_get_location value
+    return [] if value == ''
+    $r.table('location').filter{|doc| doc['description'].match("(?i).*"+value+".*")}.run(@conn).to_a
+  end
+
   def rpc_get_i18n id
     get 'i18n', id
     #$r.table('i18n').get(id).run(@conn)
@@ -38,7 +43,7 @@ class MyController < Bull::Controller
   end
 
   def before_update_car old_val, new_val, merged
-    if !ValidateCar.new.validate merged
+    if !ValidateCar.new(conn: @conn).validate merged
     #if !ValidateCar.new.validate old_val.merge(new_val)
       return false
     end

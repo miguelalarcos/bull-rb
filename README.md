@@ -39,11 +39,13 @@ The framework comes with a Form class:
 
 ```ruby
 class MyForm < Form
+
     @@table = 'car'
-    param :selected # an instance of RVar (see later).
+    param :selected
 
     before_mount do
-        get params.seleted
+        @fields_ref = {'auto'=>['location', 'description']}
+        get params.selected
     end
 
     def clear
@@ -52,21 +54,34 @@ class MyForm < Form
         state.wheels! nil
         state.date! nil
         state.id! nil
+        d = {'x' => nil}
+        state.nested! d
+        state.auto = nil
     end
 
     def render
-        ValidateCar.new.validate state # it sets in state vars like is_valid_registration?
+        ValidateCar.new(refs: @refs).validate state
         div do
+            div{state.id}
+            span{'Registration'}
             StringInput(change_attr: change_attr('registration'), value: state.registration)
             span{'not valid registration'} if !state.is_valid_registration
+            span{'Wheels'}
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
+            span{'Color'}
+            StringInput(change_attr: change_attr('color'), value: state.color)
+            span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
+            span{'Nested'}
+            IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
+            span{'Autocomplete'}
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', add_ref: add_ref,
+                              name: 'description', value: state.auto)
             button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
             button(type: :button) { 'clear' }.on(:click) {clear}
-        end
+        end        
     end
 end
-
 ```
 
 RVar

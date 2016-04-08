@@ -40,7 +40,15 @@ module Validate
       state.is_valid! ret.all?
     end
 
+    def is_value_in_refs? ref, name, value
+      @refs.include? [ref, name, value]
+    end
+
   else
+
+    def is_value_in_refs? ref, name, value
+      $r.table(ref).filter(name=>value).run(@conn)
+    end
 
     def validate dct
       attrs.each_key do |k|

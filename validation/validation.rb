@@ -1,13 +1,18 @@
 require_relative 'validation_core'
+require 'set'
 
 class ValidateCar
   include Validate
 
-  def initialize
+  def initialize refs: nil, conn: nil
     field 'registration' => String
     field 'color' => String
     field 'wheels' => Integer
     field 'date' => Time
+    field 'auto' => String
+
+    @refs = refs
+    @conn = conn
   end
 
   def is_valid_registration? (value, doc)
@@ -17,4 +22,9 @@ class ValidateCar
       value.start_with? 'B'
     end
   end
+
+  def is_valid_auto? (value, doc)
+    is_value_in_refs? 'location', 'description', value
+  end
 end
+

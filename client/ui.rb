@@ -2,6 +2,7 @@ require 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
 require_relative 'datetime_ui'
+require_relative 'autocomplete_ui'
 require_relative 'validation/validation'
 require_relative 'i18n'
 
@@ -146,6 +147,7 @@ class MyForm < Form
     param :selected
 
     before_mount do
+        @fields_ref = {'auto'=>['location', 'description']}
         get params.selected
     end
 
@@ -157,10 +159,11 @@ class MyForm < Form
         state.id! nil
         d = {'x' => nil}
         state.nested! d
+        state.auto = nil
     end
 
     def render
-        ValidateCar.new.validate state
+        ValidateCar.new(refs: @refs).validate state
         div do
             div{state.id}
             span{'Registration'}
@@ -174,6 +177,9 @@ class MyForm < Form
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}
             IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
+            span{'Autocomplete'}
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', add_ref: add_ref,
+                              name: 'description', value: state.auto)
             button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
             button(type: :button) { 'clear' }.on(:click) {clear}
         end        

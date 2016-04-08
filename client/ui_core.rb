@@ -212,10 +212,15 @@ class Form < React::Component::Base
 
   before_mount do
     @dirty = Set.new
+    @refs = Set.new
   end
 
   before_unmount do
     @rvs.each_pair {|k, v| v.remove k} if @rvs
+  end
+
+  def add_ref
+    lambda {|ref| @refs.add ref; print '->', ref}
   end
 
   def change_attr(attr)
@@ -270,6 +275,7 @@ class Form < React::Component::Base
     @rvs = reactive(selected) do
       clear
       $controller.rpc('get_' + @@table, selected.value).then do|response|
+        @fields_ref.each_pair {|k, (table, field)| @refs.add([table, field, response[k]])}
         response.each do |k, v|
           state.__send__(k+'!', v)
         end
