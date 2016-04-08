@@ -285,3 +285,12 @@ class Form < React::Component::Base
   end
 end
 
+module Modal
+  def render
+    div(class: 'modal') do
+      div(class: 'modal-center') do
+        content
+      end
+    end
+  end
+end

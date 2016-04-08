@@ -95,15 +95,14 @@ class Login < React::Component::Base
     end
 end
 
-class Modal < React::Component::Base
+class MyModal < React::Component::Base
+    include Modal
     param :ok
 
-    def render
-        div(class: 'modal') do
-            div(class: 'modal-center') do
-                h1{'Hello!'}
-                button(type: :button){'close'}.on(:click) {params.ok.call}
-            end
+    def content
+        div do
+            h1{'Hello!'}
+            button(type: :button){'close'}.on(:click) {params.ok.call}
         end
     end
 end
@@ -129,7 +128,7 @@ class App < React::Component::Base
             Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
             PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
             PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
-            Modal(ok: lambda {state.modal! false}) if state.modal
+            MyModal(ok: lambda {state.modal! false}) if state.modal
         end
         #if state.user
         #    Page()
