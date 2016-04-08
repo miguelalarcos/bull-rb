@@ -40,13 +40,14 @@ module Validate
       state.is_valid! ret.all?
     end
 
-    def is_value_in_refs? ref, name, value
-      @refs.include? [ref, name, value]
+    def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil)
+      #@refs.include? [ref, name, value]
+      @refs[attr]
     end
 
   else
 
-    def is_value_in_refs? ref, name, value
+    def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil) # ref, name, value
       $r.table(ref).filter(name=>value).run(@conn)
     end
 

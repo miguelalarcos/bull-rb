@@ -16,7 +16,12 @@ class AutocompleteInput < React::Component::Base
     div do
       input(type: :text, value: params.value).on(:change) do |event|
         params.change_attr.call event.target.value
-        params.add_ref.call([params.ref_, params.name, event.target.value]) if state.options.include? event.target.value
+        #params.add_ref.call([params.ref_, params.name, event.target.value]) if state.options.include? event.target.value
+        if state.options.include? event.target.value
+          params.add_ref.call true
+        else
+          params.add_ref.call false
+        end
         $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
           result = result.map do |x|
             x[params.name]
@@ -29,7 +34,8 @@ class AutocompleteInput < React::Component::Base
         state.options.each do |v|
           div{v}.on(:click) do |e|
             params.change_attr.call v
-            params.add_ref.call([params.ref_, params.name, v])
+            #params.add_ref.call([params.ref_, params.name, v])
+            params.add_ref.call true
             state.options! []
           end
         end
