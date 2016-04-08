@@ -60,6 +60,15 @@ class PageB < React::Component::Base
             hr
             div{i18n params.i18n_map, 'BLUE_CARS'}
             DisplayCars(color: 'blue', selected: params.car_selected)
+            hr
+            button(type: :button){'chart'}.on(:click) do
+                Chartist = Native(`Chartist`)
+                data = { 'labels' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                        'series' => [ [5, 2, 4, 2, 0] ]}
+                Chartist.Line('.ct-chart', data)
+            end
+            div(class: 'ct-chart ct-perfect-fourth'){'grafico'}
+            hr
         end
     end
 end
