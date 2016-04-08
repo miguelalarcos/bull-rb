@@ -273,9 +273,10 @@ class Form < React::Component::Base
 
   def get selected
     @rvs = reactive(selected) do
+      @dirty.clear
       clear
       $controller.rpc('get_' + @@table, selected.value).then do|response|
-        @fields_ref.each_pair {|k, (table, field)| @refs.add([table, field, response[k]])}
+        @fields_ref.each_pair {|k, (table, field)| @refs.add([table, field, response[k]])} if @fields_ref
         response.each do |k, v|
           state.__send__(k+'!', v)
         end

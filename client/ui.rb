@@ -36,12 +36,15 @@ end
 class PageA < React::Component::Base
 
     param :car_selected
+    param :show_modal
 
     def render
         div do
             MyForm(selected: params.car_selected)
             hr
             DisplayCar(selected: params.car_selected)
+            hr
+            button(type: :button){'show modal'}.on(:click) {params.show_modal.call}
         end
     end
 end
@@ -92,9 +95,23 @@ class Login < React::Component::Base
     end
 end
 
+class Modal < React::Component::Base
+    param :ok
+
+    def render
+        div(class: 'modal') do
+            div(class: 'modal-center') do
+                h1{'Hello!'}
+                button(type: :button){'close'}.on(:click) {params.ok.call}
+            end
+        end
+    end
+end
+
 class App < React::Component::Base
 
     before_mount do
+        state.modal! false
         state.user! false
         state.page! 'pageA'
         @car_selected = RVar.new 0
@@ -110,8 +127,9 @@ class App < React::Component::Base
         div do
             Notification(level: 0)
             Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
-            PageA(car_selected: @car_selected) if state.page == 'pageA'
+            PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
             PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+            Modal(ok: lambda {state.modal! false}) if state.modal
         end
         #if state.user
         #    Page()
