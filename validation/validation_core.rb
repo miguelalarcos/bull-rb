@@ -48,7 +48,7 @@ module Validate
   else
 
     def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil) # ref, name, value
-      $r.table(ref).filter(name=>value).run(@conn)
+      $r.table(ref).filter(name=>value).run(@conn).to_a[0]
     end
 
     def validate dct
