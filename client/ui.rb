@@ -1,8 +1,8 @@
 require 'ui_core'
 require 'reactive-ruby'
 require_relative 'reactive_var'
-require_relative 'datetime_ui'
-require_relative 'autocomplete_ui'
+require 'bull-date-time-picker'
+require 'bull-autocomplete'
 require_relative 'validation/validation'
 require_relative 'i18n'
 

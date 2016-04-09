@@ -7,6 +7,9 @@ desc "Build our app to build.js in development mode"
 task :development do
   Opal.append_path "."
   Opal.append_path ".."
+
+  Opal.use_gem 'bull-autocomplete'
+  Opal.use_gem 'bull-date-time-picker'
   builder = Opal::Builder.new
   #builder = Opal::Builder.new(:stubs => ['opal', 'reactive-ruby'])
   build_js = builder.build("main").to_s
@@ -27,28 +30,20 @@ end
 desc "clean"
 task :clean do
   File.delete 'build.css' if File.exist? 'build.css'
-  File.delete 'build.less.css' if File.exist? 'build.less.css'
   File.delete 'build.styl.css' if File.exist? 'build.styl.css'
-end
-
-desc "less compile"
-task :less => [:clean] do
-  files = Dir.glob(File.join("**", "*.less"))
-  files.each do |f|
-    `lessc #{f} >> build.less.css`
-  end
 end
 
 desc "stylus compile"
 task :stylus => [:clean] do
-  files = Dir.glob(File.join("**", "*.styl"))
+  #files = Dir.glob(File.join("**", "*.styl")) + Dir.glob(File.join("../style/**", "*.styl"))
+  files = Dir.glob(File.join("../style/**", "*.styl"))
   files.each do |f|
     `stylus < #{f} >> build.styl.css`
   end
 end
 
 desc "concatenate css to build.css"
-task :css => [:less, :stylus] do
-  files = Dir.glob(File.join("**", "*.css")).join(' ')
+task :css => [:stylus] do
+  files = (Dir.glob(File.join("**", "*.css")) + Dir.glob(File.join("../style/**", "*.css")) ).join(' ')
   `cat #{files} > build.css` if files != ''
 end
