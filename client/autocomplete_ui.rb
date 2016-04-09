@@ -10,31 +10,44 @@ class AutocompleteInput < React::Component::Base
 
   before_mount do
     state.options! []
+    state.index! 0
+  end
+
+  def selected pos
+    if pos == state.index
+      'autocomplete-selected'
+    else
+      ''
+    end
   end
 
   def render
     div do
       input(type: :text, value: params.value).on(:change) do |event|
         params.change_attr.call event.target.value
-        #params.add_ref.call([params.ref_, params.name, event.target.value]) if state.options.include? event.target.value
         if state.options.include? event.target.value
           params.add_ref.call true
         else
           params.add_ref.call false
         end
         $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
-          result = result.map do |x|
-            x[params.name]
-          end
-          #result = result.select {|k, v| k == params.name}.values
-          state.options! result
+          state.options! result.map {|x| x[params.name]}
+        end
+      end.on(:keyDown) do |event|
+        if event.key_code == 13
+          params.change_attr.call state.options[state.index]
+          params.add_ref.call true
+          state.options! []
+        elsif event.key_code == 40
+          state.index! (state.index + 1) % state.options.length if state.options.length != 0
+        elsif event.key_code == 38
+          state.index! (state.index - 1) % state.options.length if state.options.length != 0
         end
       end
-      div(style: {backgroundColor: 'white', position: 'absolute', cursor: 'pointer'}) do
-        state.options.each do |v|
-          div{v}.on(:click) do |e|
+      div(class: 'autocomplete-popover') do
+        state.options.each_with_index do |v, i|
+          div(class: selected(i)){v}.on(:click) do |e|
             params.change_attr.call v
-            #params.add_ref.call([params.ref_, params.name, v])
             params.add_ref.call true
             state.options! []
           end
