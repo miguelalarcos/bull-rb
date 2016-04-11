@@ -1,8 +1,35 @@
 require './server'
 require 'em-synchrony'
 require '../validation/validation'
+require 'bcrypt'
+
+module CreateUserTextCapcha
+
+  def challenge
+    @challenge_response = 'secret'
+    yield 'question?'
+  end
+
+  def create_user_text_challenge user, password, challenge_response
+    if challenge_response != @challenge_response
+      yield false
+    else
+      user_exist?(user) do |flag|
+        if flag
+          yield false
+        else
+          password = BCrypt::Password.create(password)
+          $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn){|response| yield response['generated_keys'][0]}
+        end
+      end
+    end
+  end
+
+end
 
 class MyController < Bull::Controller
+
+  include CreateUserTextCapcha
 
   def initialize ws, conn
     super ws, conn
@@ -15,36 +42,45 @@ class MyController < Bull::Controller
     end
   end
 
+  def docs_with_count predicate
+    predicate.count().em_run(@conn) do |count|
+      predicate.em_run(@conn) {|doc| yield count, doc}
+    end
+  end
+
   def rpc_get_location value
-    return [] if value == ''
-    $r.table('location').filter{|doc| doc['description'].match("(?i).*"+value+".*")}.run(@conn).to_a
+    if value == ''
+      yield []
+    else
+      ret = []
+      docs_with_count($r.table('location').filter{|doc| doc['description'].match("(?i).*"+value+".*")}) do |count, row|
+        ret << row
+        if ret.length == count
+          yield ret
+          #break
+        end
+      end
+    end
   end
 
   def rpc_get_i18n id
-    get 'i18n', id
-    #$r.table('i18n').get(id).run(@conn)
+    get('i18n', id) {|doc| yield doc}
   end
 
   def rpc_get_car id
-    get 'car', id
-    #$r.table('car').get(id).run(@conn)
+    get('car', id){|doc| yield doc}
   end
 
   def watch_car id
-    $r.table('car').get(id) #.changes({include_initial: true})
+    $r.table('car').get(id)
   end
 
-  #def before_watch_by_id_car doc
-  #  user_is_owner? doc
-  #end
-
   def watch_cars_of_color color
-    $r.table('car').filter(color: color) #.changes({include_initial: true})
+    $r.table('car').filter(color: color)
   end
 
   def before_update_car old_val, new_val, merged
     if !ValidateCar.new(conn: @conn).validate merged
-    #if !ValidateCar.new.validate old_val.merge(new_val)
       return false
     end
     u_timestamp! merged

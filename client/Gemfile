@@ -1,3 +1,5 @@
-gem "opal"
+gem "opal", "0.8.0"
 gem "reactive-ruby"
 gem "uglifier"
+gem "bull-autocomplete", git: "https://github.com/miguelalarcos/bull-autocomplete.git"
+gem "bull-date-time-picker", git: "https://github.com/miguelalarcos/bull-date-time-picker.git"

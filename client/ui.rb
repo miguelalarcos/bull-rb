@@ -13,22 +13,14 @@ class Menu < React::Component::Base
 
     def render
         div do
-            button(type: :button, class: 'button-secondary pure-button'){'logout'}.on(:click) do
+            button(type: :button, class: 'btn btn-danger'){'logout'}.on(:click) do
                 params.logout.call
                 $controller.logout
             end
-            div(class: 'pure-menu pure-menu-horizontal') do
-                ul(class: 'pure-menu-list') do
-                    li(class: 'pure-menu-item') do
-                        a(class: 'pure-menu-link', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
-                    end
-                    li(class: 'pure-menu-item') do
-                        a(class: 'pure-menu-link', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
-                    end
-                end
-                a(class: 'pure-menu-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
-                a(class: 'pure-menu-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
-            end
+            a(class: 'btn btn-info', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
+            a(class: 'btn btn-info', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
+            a(class: 'btn btn-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
+            a(class: 'btn btn-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
         end
     end
 end
@@ -189,7 +181,8 @@ class MyForm < Form
             span{'Wheels'}
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}
-            StringInput(change_attr: change_attr('color'), value: state.color)
+            #StringInput(change_attr: change_attr('color'), value: state.color)
+            SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}

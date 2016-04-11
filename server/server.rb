@@ -43,15 +43,26 @@ module Bull
 
         private
 
+            def user_exist? user
+                $r.table('user').filter(user: user).count().em_run(@conn) do |count|
+                    if count == 0
+                        yield false
+                    else
+                        yield true
+                    end
+                end
+            end
+
             def rpc_login user, password
-              #pass = BCrypt::Password.create('secret')
-              pass = $r.table('user').filter(user: user).run(@conn).to_a[0]['password']
-              pass = BCrypt::Password.new(pass)
-              if pass == password
-                @user_id = user
-                true
-              else
-                false
+              $r.table('user').filter(user: user).em_run(@conn) do |response|
+                pass = response['password']
+                pass = BCrypt::Password.new(pass)
+                if pass == password
+                    @user_id = user
+                    yield true
+                else
+                    yield false
+                end
               end
             end
 
@@ -59,12 +70,6 @@ module Bull
                 close
                 @user_id = nil
                 true
-            end
-
-            def rpc_create_user user, password
-                # check if the user exists
-                password = BCrypt::Password.create(password)
-                $r.table('user').insert(user: user, password: password, roles: []).run(@conn)['generated_keys'][0]
             end
 
             def user_is_owner? doc
@@ -90,44 +95,27 @@ module Bull
             def owner! doc
                 doc['owner'] = @user_id
             end
-=begin
-            def rpc_get table, id
-                if table == 'user'
-                    return {}
-                end
-                doc = $r.table(table).get(id).run(@conn)
-                if self.class.method_defined? 'before_get_'+table
-                    if !self.send('before_get_'+table, doc)
-                        return nil
-                    end
-                end
-                doc
-            end
-=end
+
             def rpc_insert(table, value:)
                 new_val = value
-                #if table == 'user'
-                #    return nil
-                #end
                 new_val.delete :i_timestamp
                 new_val.delete :owner
                 new_val.delete :id
-                #if self.class.method_defined? 'before_insert_'+table
+
                 if !self.send('before_insert_'+table, new_val)
-                    return nil
+                    yield nil
                 else
-                    $r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
+                    $r.table(table).insert(new_val).em_run(@conn){|ret| yield ret['generated_keys'][0]}
                 end
-                #end
-                #$r.table(table).insert(new_val).run(@conn)['generated_keys'][0]
             end
 
             def rpc_delete(table, id)
-                doc = get table, id
-                if !self.send('before_delete_'+table, doc)
-                    return 0
-                else
-                    $r.table(table).get(id).delete.run(@conn)['deleted']
+                $r.table(table).get(id).em_run(@conn) do |doc|
+                    if !self.send('before_delete_'+table, doc)
+                        yield 0
+                    else
+                        $r.table(table).get(id).delete.em_run(@conn){|ret| yield ret['deleted']}
+                    end
                 end
             end
 
@@ -137,15 +125,18 @@ module Bull
                 value.delete :i_timestamp
                 value.delete :owner
                 value.delete :id
-                old_val = $r.table(table).get(id).run(@conn)
-                old_val = symbolize_keys old_val
+                #old_val = $r.table(table).get(id).run(@conn)
+                $r.table(table).get(id).em_run(@conn) do |old_val|
+                    old_val = symbolize_keys old_val
 
-                merged = old_val.merge(value)
-                if !(old_val && self.send('before_update_'+table, old_val, value, merged))
-                    return 0
+                    merged = old_val.merge(value)
+                    if !(old_val && self.send('before_update_'+table, old_val, value, merged))
+                        yield 0
+                    else
+                        #$r.table(table).get(id).update(merged).run(@conn)['replaced']
+                        $r.table(table).get(id).update(merged).em_run(@conn){|ret| yield ret['replaced']}
+                    end
                 end
-
-                $r.table(table).get(id).update(merged).run(@conn)['replaced']
             end
 
             def handle_watch command, id, *args, **kwargs
@@ -175,16 +166,23 @@ module Bull
             end
 
             def handle_rpc command, id, *args, **kwargs
-                if kwargs.empty?
-                    ret = self.send command, *args
+                aux = ['rpc_update', 'rpc_get_location', 'rpc_get_i18n', 'rpc_get_car', 'rpc_insert', 'rpc_delete']
+                if aux.include?(command) and kwargs.empty?
+                    self.send(command, *args){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
+                elsif aux.include?(command)
+                    self.send(command, *args, **kwargs){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
                 else
-                    ret = self.send command, *args, **kwargs
+                    if kwargs.empty?
+                        ret = self.send command, *args
+                    else
+                        ret = self.send command, *args, **kwargs
+                    end
+                    @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
                 end
-                @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
             end
 
             def get table, id
-                $r.table(table).get(id).run(@conn)
+                $r.table(table).get(id).em_run(@conn) {|doc| print doc; yield doc}
             end
 
 =begin

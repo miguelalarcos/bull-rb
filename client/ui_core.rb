@@ -207,6 +207,26 @@ class FloatInput < React::Component::Base
   end
 end
 
+def selected val1, val2
+  if val1 == val2
+    {:selected => 'selected'}
+  else
+    {}
+  end
+end
+
+class SelectInput < React::Component::Base
+  param :change_attr
+  param :value
+  param :options
+
+  def render
+    select(class: 'form-control') do
+      params.options.each {|val| option(selected(params.value, val)){val}}
+    end.on(:change) {|event| params.change_attr.call event.target.value}
+  end
+end
+
 class Form < React::Component::Base
   #param :selected
 
