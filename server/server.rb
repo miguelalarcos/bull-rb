@@ -30,6 +30,8 @@ module Bull
             #end
             if command.start_with? 'rpc_'
                 handle_rpc command, msg['id'], *msg['args'], **kwargs
+            elsif command.start_with? 'task_'
+                handle_task command, *msg['args'], **kwargs
             elsif command.start_with? 'watch_'
                 handle_watch command, msg['id'], *msg['args'], **kwargs
             elsif command == 'stop_watch'
@@ -173,6 +175,14 @@ module Bull
             def handle_stop_watch id
                 @watch[id].close
                 @watch.delete id
+            end
+
+            def handle_task command, *args, **kwargs
+                if kwargs.empty?
+                    self.send(command, *args)
+                else
+                    self.send(command, *args, **kwargs)
+                end
             end
 
             def handle_rpc command, id, *args, **kwargs

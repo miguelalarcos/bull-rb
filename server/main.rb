@@ -52,7 +52,7 @@ class MyController < Bull::Controller
   end
 
   def before_update_car old_val, new_val, merged
-    if !ValidateCar.new(conn: @conn).validate merged
+    if !ValidateCar.new.validate merged
       return false
     end
     u_timestamp! merged

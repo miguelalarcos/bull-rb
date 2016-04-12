@@ -223,6 +223,7 @@ class SelectInput < React::Component::Base
 
   def render
     select(class: 'form-control') do
+      option{''}
       params.options.each {|val| option(selected(params.value, val)){val}}
     end.on(:change) {|event| params.change_attr.call event.target.value}
   end

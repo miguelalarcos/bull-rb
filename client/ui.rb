@@ -13,14 +13,18 @@ class Menu < React::Component::Base
 
     def render
         div do
-            button(type: :button, class: 'btn btn-danger'){'logout'}.on(:click) do
-                params.logout.call
-                $controller.logout
-            end
+            #button(type: :button, class: 'btn btn-danger'){'logout'}.on(:click) do
+            #    params.logout.call
+            #    $controller.logout
+            #end
             a(class: 'btn btn-info', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
             a(class: 'btn btn-info', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
             a(class: 'btn btn-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
             a(class: 'btn btn-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
+            a(class: 'btn btn-link', href: '#') {'logout'}.on(:click) do
+                params.logout.call
+                #$controller.logout
+            end
         end
     end
 end
@@ -108,7 +112,7 @@ class App < React::Component::Base
         div do
             if state.user
                 Notification(level: 0)
-                Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
+                Menu(logout: lambda{state.user! false; $controller.logout}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
                 PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
                 PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
                 MyModal(ok: lambda {state.modal! false}) if state.modal
@@ -157,7 +161,8 @@ class MyForm < Form
         state.id! nil
         d = {'x' => nil}
         state.nested! d
-        state.auto = nil
+        state.auto! ''
+        @refs = {}
     end
 
     def render
@@ -166,7 +171,7 @@ class MyForm < Form
             div{state.id}
             span{'Registration'}
             StringInput(change_attr: change_attr('registration'), value: state.registration)
-            span{'not valid registration'} if !state.is_valid_registration
+            div(class: 'red'){'not valid registration'} if !state.is_valid_registration
             span{'Wheels'}
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}

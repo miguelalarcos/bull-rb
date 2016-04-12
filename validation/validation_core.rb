@@ -40,23 +40,34 @@ module Validate
       state.is_valid! ret.all?
     end
 
-    def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil)
-      #@refs.include? [ref, name, value]
+    def is_value_in_refs?(attr)
       @refs[attr]
     end
 
   else
 
-    def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil) # ref, name, value
-      $r.table(ref).filter(name=>value).run(@conn).to_a[0]
+    def is_value_in_refs?(attr)
+      return true
+    #def is_value_in_refs?(attr: nil, ref: nil, name: nil, value: nil) # ref, name, value
+      print ref, name, value
+      x=$r.table(ref).filter(name=>value).run(@conn).to_a # need to be em_run, but, is possible? if not, think about not having validation for refs, nor client nor server side
+      print 'x->', x
+      x= x[0]
+      puts
+      print 'x is nil?', x.nil?
+      x
     end
 
     def validate dct
+      print 'validate', dct
       attrs.each_key do |k|
         if ['id', 'u_timestamp', 'i_timestamp', 'owner'].include? k
           next
         end
         v = get_value_nested k, dct
+        print k, v
+        puts
+        print 'false1' if !v.nil? && !v.is_a?(attrs[k])
         return false if !v.nil? && !v.is_a?(attrs[k])
         k = k.gsub('.', '_')
         if respond_to? 'is_valid_' + k + '?'
@@ -65,9 +76,11 @@ module Validate
           rescue
             b = false
           end
+          print 'false2' if !b
           return false if !b
         end
       end
+      print 'true'
       true
     end
   end

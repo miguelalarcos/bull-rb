@@ -4,7 +4,7 @@ require 'set'
 class ValidateCar
   include Validate
 
-  def initialize refs: nil, conn: nil
+  def initialize refs: nil #, conn: nil
     field 'registration' => String
     field 'color' => String
     field 'wheels' => Integer
@@ -12,7 +12,7 @@ class ValidateCar
     field 'auto' => String
 
     @refs = refs
-    @conn = conn
+    #@conn = conn
   end
 
   def is_valid_registration? (value, doc)
@@ -24,7 +24,8 @@ class ValidateCar
   end
 
   def is_valid_auto? (value, doc)
-    is_value_in_refs?(attr: 'auto', ref: 'location', name: 'description', value: value)
+    #is_value_in_refs?(attr: 'auto', ref: 'location', name: 'description', value: value)
+    is_value_in_refs?('auto')
   end
 end
 

@@ -50,6 +50,10 @@ class Controller
         id
     end
 
+    def task(name, *args)
+        send 'task_' + name, *args
+    end
+
     def get_watch
         @watch
     end
@@ -177,12 +181,6 @@ class Controller
         end
 
         def send(command, id, *args, **kwargs)
-            #times = []
-            #kwargs.each_pair do |k, v|
-            #    if v.instance_of? Time
-            #        times << k
-            #    end
-            #end
             times = encode_times(kwargs)
             msg = {command: command, id: id, args: args, kwargs: kwargs, times: times}.to_json
             @ws.send(msg)
