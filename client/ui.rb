@@ -62,8 +62,6 @@ class Login < React::Component::Base
     before_mount do
         state.user_name! ''
         state.password! ''
-        state.create_user_name! ''
-        state.create_password! ''
     end
 
     def render
@@ -73,14 +71,6 @@ class Login < React::Component::Base
             button(type: :button) { 'login' }.on(:click) do
                 $controller.rpc('login', state.user_name, state.password).then do |response|
                     params.set_user.call response
-                end
-            end
-            div {'Create user'}
-            StringInput(change_attr: lambda {|v| state.create_user_name! v}, value: state.create_user_name)
-            PasswordInput(change_attr: lambda {|v| state.create_password! v}, value: state.create_password)
-            button(type: :button) { 'create' }.on(:click) do
-                $controller.rpc('create_user', state.create_user_name, state.create_password).then do |response|
-                    puts response
                 end
             end
         end
@@ -116,17 +106,18 @@ class App < React::Component::Base
 
     def render
         div do
-            Notification(level: 0)
-            Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
-            PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
-            PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
-            MyModal(ok: lambda {state.modal! false}) if state.modal
+            if state.user
+                Notification(level: 0)
+                Menu(logout: lambda{state.user! false}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
+                PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
+                PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+                MyModal(ok: lambda {state.modal! false}) if state.modal
+            else
+                Login(set_user: lambda{|v| state.user! v})
+                #CreateUserTextCaptcha(set_user: lambda{|v| state.user! v})
+                CreateUserNetCaptcha(set_user: lambda{|v| state.user! v})
+            end
         end
-        #if state.user
-        #    Page()
-        #else
-        #    Login(set_user: lambda {|v| state.user! v})
-        #end
     end    
 end
 
@@ -144,9 +135,7 @@ class DisplayCar < DisplayDoc
     end
 
     def render
-        div do
-            b {state.registration}
-        end
+        div{"The car with registration #{state.registration} is color #{state.color}"}
     end
 end
 

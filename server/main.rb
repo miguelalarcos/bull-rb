@@ -2,34 +2,12 @@ require './server'
 require 'em-synchrony'
 require '../validation/validation'
 require 'bcrypt'
-
-module CreateUserTextCapcha
-
-  def challenge
-    @challenge_response = 'secret'
-    yield 'question?'
-  end
-
-  def create_user_text_challenge user, password, challenge_response
-    if challenge_response != @challenge_response
-      yield false
-    else
-      user_exist?(user) do |flag|
-        if flag
-          yield false
-        else
-          password = BCrypt::Password.create(password)
-          $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn){|response| yield response['generated_keys'][0]}
-        end
-      end
-    end
-  end
-
-end
+require './bcaptcha'
 
 class MyController < Bull::Controller
 
-  include CreateUserTextCapcha
+  #include TextCaptcha
+  include NetCaptcha
 
   def initialize ws, conn
     super ws, conn
@@ -39,12 +17,6 @@ class MyController < Bull::Controller
   def rpc_add a, b
     @mutex.synchronize do
       a + b
-    end
-  end
-
-  def docs_with_count predicate
-    predicate.count().em_run(@conn) do |count|
-      predicate.em_run(@conn) {|doc| yield count, doc}
     end
   end
 

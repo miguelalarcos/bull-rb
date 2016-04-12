@@ -43,12 +43,22 @@ module Bull
 
         private
 
-            def user_exist? user
-                $r.table('user').filter(user: user).count().em_run(@conn) do |count|
-                    if count == 0
-                        yield false
-                    else
-                        yield true
+            def docs_with_count predicate
+                predicate.count().em_run(@conn) do |count|
+                    predicate.em_run(@conn) {|doc| yield count, doc}
+                end
+            end
+
+            def rpc_user_exist? user
+                if user == ''
+                    yield true
+                else
+                    $r.table('user').filter(user: user).count().em_run(@conn) do |count|
+                        if count == 0
+                            yield false
+                        else
+                            yield true
+                        end
                     end
                 end
             end
@@ -166,18 +176,18 @@ module Bull
             end
 
             def handle_rpc command, id, *args, **kwargs
-                aux = ['rpc_update', 'rpc_get_location', 'rpc_get_i18n', 'rpc_get_car', 'rpc_insert', 'rpc_delete']
-                if aux.include?(command) and kwargs.empty?
+                #aux = ['rpc_update', 'rpc_get_location', 'rpc_get_i18n', 'rpc_get_car', 'rpc_insert', 'rpc_delete']
+                if kwargs.empty?
                     self.send(command, *args){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
-                elsif aux.include?(command)
-                    self.send(command, *args, **kwargs){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
                 else
-                    if kwargs.empty?
-                        ret = self.send command, *args
-                    else
-                        ret = self.send command, *args, **kwargs
-                    end
-                    @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
+                    self.send(command, *args, **kwargs){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
+                #else
+                #    if kwargs.empty?
+                #        ret = self.send command, *args
+                #    else
+                #        ret = self.send command, *args, **kwargs
+                #    end
+                #    @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
                 end
             end
 

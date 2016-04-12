@@ -2,6 +2,7 @@ require 'reactive-ruby'
 require 'set'
 require_relative 'reactive_var'
 require_relative 'lib/utils'
+require_relative 'bcaptcha'
 
 class NotificationController
   @@ticket = 0
