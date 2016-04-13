@@ -48,7 +48,7 @@ module MCreateUserCaptcha
         end
       end
       br
-      input(class: password_class, type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
+      input(type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
       br
       input(class: password_class, type: :password, placeholder: 'repeat passsword', value: state.rpassword).on(:change){|event| state.rpassword! event.target.value}
       br

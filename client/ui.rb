@@ -10,15 +10,20 @@ class Menu < React::Component::Base
     param :change_page
     param :change_language
     param :logout
+    param :active_page
+
+    def active? page
+        if page == params.active_page
+            'btn btn-info'
+        else
+            'btn btn-secondary'
+        end
+    end
 
     def render
-        div do
-            #button(type: :button, class: 'btn btn-danger'){'logout'}.on(:click) do
-            #    params.logout.call
-            #    $controller.logout
-            #end
-            a(class: 'btn btn-info', href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
-            a(class: 'btn btn-info', href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
+        div(class: 'no-print') do
+            a(class: active?('pageA'), href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
+            a(class: active?('pageB'), href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
             a(class: 'btn btn-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
             a(class: 'btn btn-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
             a(class: 'btn btn-link', href: '#') {'logout'}.on(:click) do
@@ -33,14 +38,21 @@ class PageA < React::Component::Base
 
     param :car_selected
     param :show_modal
+    param :set_report_page
 
     def render
-        div do
+        div(class: 'no-print') do
             MyForm(selected: params.car_selected)
             hr
             DisplayCar(selected: params.car_selected)
             hr
-            button(type: :button){'show modal'}.on(:click) {params.show_modal.call}
+            button(){'print car'}.on(:click) do
+                $controller.rpc('print_car', params.car_selected.value).then do |report|
+                    `document.getElementById("report").innerHTML = #{report}`
+                end
+                params.set_report_page.call
+            end
+            #button(type: :button){'show modal'}.on(:click) {params.show_modal.call}
         end
     end
 end
@@ -50,13 +62,19 @@ class PageB < React::Component::Base
     param :i18n_map
 
     def render
-        div do
+        div(class: 'no-print') do
             div{i18n params.i18n_map, 'RED_CARS'}
             DisplayCars(color: 'red', selected: params.car_selected)
             hr
             div{i18n params.i18n_map, 'BLUE_CARS'}
             DisplayCars(color: 'blue', selected: params.car_selected)
         end
+    end
+end
+
+class Report < React::Component::Base
+    def render
+        div(id: 'report')
     end
 end
 
@@ -112,9 +130,12 @@ class App < React::Component::Base
         div do
             if state.user
                 Notification(level: 0)
-                Menu(logout: lambda{state.user! false; $controller.logout}, change_page: lambda{|v| state.page! v}, change_language: lambda{|v| @language.value = v})
-                PageA(car_selected: @car_selected, show_modal: lambda{state.modal! true}) if state.page == 'pageA'
+                Menu(logout: lambda{state.user! false; $controller.logout}, change_page: lambda{|v| state.page! v},
+                     change_language: lambda{|v| @language.value = v}, active_page: state.page)
+                PageA(set_report_page: lambda {state.page! 'report'},car_selected: @car_selected,
+                      show_modal: lambda{state.modal! true}) if state.page == 'pageA'
                 PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+                Report() if state.page == 'report'
                 MyModal(ok: lambda {state.modal! false}) if state.modal
             else
                 Login(set_user: lambda{|v| state.user! v})

@@ -3,6 +3,7 @@ require 'em-synchrony'
 require '../validation/validation'
 require 'bcrypt'
 require './bcaptcha'
+require 'liquid'
 
 class MyController < Bull::Controller
 
@@ -12,6 +13,12 @@ class MyController < Bull::Controller
   def initialize ws, conn
     super ws, conn
     @mutex = EM::Synchrony::Thread::Mutex.new
+  end
+
+  def rpc_print_car id
+    report = "The car with registration <b>{{registration}}</b> is color <b>{{color}}</b>."
+    t = Liquid::Template.parse(report)
+    get('car', id){|doc| yield t.render(doc)}
   end
 
   def rpc_add a, b
