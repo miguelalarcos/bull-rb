@@ -3,6 +3,14 @@ require 'em-websocket'
 require './main'
 require 'rethinkdb'
 
+$reports = {}
+Dir.glob(File.join('reports' , '*.html')).each do |file|
+  html = File.read(file)
+  $reports[File.basename(file, '.html')] = Liquid::Template.parse(html)
+end
+
+puts 'reports loaded'
+
 $r = RethinkDB::RQL.new
 conn = $r.connect()
 

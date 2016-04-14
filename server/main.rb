@@ -16,9 +16,15 @@ class MyController < Bull::Controller
   end
 
   def rpc_print_car id
-    report = "The car with registration <b>{{registration}}</b> is color <b>{{color}}</b>."
-    t = Liquid::Template.parse(report)
-    get('car', id){|doc| yield t.render(doc)}
+    check id, String
+    get('car', id) do |doc|
+      if user_is_owner? doc
+        t = $reports['car']
+        yield t.render(doc)
+      else
+        yield ''
+      end
+    end
   end
 
   def rpc_add a, b
@@ -73,6 +79,7 @@ class MyController < Bull::Controller
   end
 
   def before_insert_car doc
+    owner! doc
     return ValidateCar.new.validate(doc)
     if user_roles.include? 'writer' && ValidateCar.new.validate(doc)
       i_timestamp! doc

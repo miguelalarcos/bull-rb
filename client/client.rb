@@ -136,7 +136,9 @@ class Controller
     def start(app)
         begin
             controller = self
-            @ws = Browser::Socket.new 'ws://localhost:3000' do
+            url = 'ws://' + `document.location.hostname` + ':3000'
+            @ws = Browser::Socket.new url do
+            #@ws = Browser::Socket.new 'ws://localhost:3000' do
             #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     controller.connection.value = 'connected'

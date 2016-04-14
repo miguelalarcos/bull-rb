@@ -74,7 +74,10 @@ end
 
 class Report < React::Component::Base
     def render
-        div(id: 'report')
+        div do
+            button(class: 'no-print', style: {position: 'absolute'}){'print'}.on(:click) {`window.print()`}
+            div(id: 'report')
+        end
     end
 end
 
@@ -183,11 +186,10 @@ class MyForm < Form
         d = {'x' => nil}
         state.nested! d
         state.auto! ''
-        @refs = {}
     end
 
     def render
-        ValidateCar.new(refs: @refs).validate state
+        ValidateCar.new.validate state
         div do
             div{state.id}
             span{'Registration'}
@@ -196,16 +198,15 @@ class MyForm < Form
             span{'Wheels'}
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}
-            #StringInput(change_attr: change_attr('color'), value: state.color)
             SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}
             IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             span{'Autocomplete'}
-            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', add_ref: add_ref('auto'),
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', set_validation: lambda{|v| puts v; state.is_valid_auto! v},
                               name: 'description', value: state.auto)
-            button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
+            button(type: :button) { 'save' }.on(:click) {save} if (state.is_valid && state.is_valid_auto)
             button(type: :button) { 'clear' }.on(:click) {clear}
         end        
     end

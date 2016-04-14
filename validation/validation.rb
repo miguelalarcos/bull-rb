@@ -23,9 +23,8 @@ class ValidateCar
     end
   end
 
-  def is_valid_auto? (value, doc)
-    #is_value_in_refs?(attr: 'auto', ref: 'location', name: 'description', value: value)
-    is_value_in_refs?('auto')
-  end
+  #def is_valid_auto? (value, doc)
+  #  is_value_in_refs?('auto')
+  #end
 end
 

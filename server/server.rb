@@ -16,18 +16,12 @@ module Bull
         end
 
         def notify(msg)
-            msg = JSON.parse msg #, symbolize_names: true
+            msg = JSON.parse msg
             print '>', msg, "\n"
             command = msg['command']
-            kwargs = symbolize_keys(msg['kwargs']) # Hash[msg['kwargs'].map { |k, v| [k.to_sym, v] }]
+            kwargs = symbolize_keys(msg['kwargs'])
             resolve_times kwargs, msg['times']
-            #if msg['times']
-            #    kwargs.each do |k, v|
-            #        if msg['times'].include? k.to_s
-            #            kwargs[k] = Time.parse v
-            #        end
-            #    end
-            #end
+
             if command.start_with? 'rpc_'
                 handle_rpc command, msg['id'], *msg['args'], **kwargs
             elsif command.start_with? 'task_'
@@ -44,6 +38,10 @@ module Bull
         end
 
         private
+
+            def check arg, type
+                raise Exception.new("#{arg} is not a #{type}") if !arg.is_a? type
+            end
 
             def docs_with_count predicate
                 predicate.count().em_run(@conn) do |count|
@@ -137,7 +135,7 @@ module Bull
                 value.delete :i_timestamp
                 value.delete :owner
                 value.delete :id
-                #old_val = $r.table(table).get(id).run(@conn)
+
                 $r.table(table).get(id).em_run(@conn) do |old_val|
                     old_val = symbolize_keys old_val
 
@@ -145,7 +143,6 @@ module Bull
                     if !(old_val && self.send('before_update_'+table, old_val, value, merged))
                         yield 0
                     else
-                        #$r.table(table).get(id).update(merged).run(@conn)['replaced']
                         $r.table(table).get(id).update(merged).em_run(@conn){|ret| yield ret['replaced']}
                     end
                 end
@@ -186,18 +183,10 @@ module Bull
             end
 
             def handle_rpc command, id, *args, **kwargs
-                #aux = ['rpc_update', 'rpc_get_location', 'rpc_get_i18n', 'rpc_get_car', 'rpc_insert', 'rpc_delete']
                 if kwargs.empty?
                     self.send(command, *args){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
                 else
                     self.send(command, *args, **kwargs){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
-                #else
-                #    if kwargs.empty?
-                #        ret = self.send command, *args
-                #    else
-                #        ret = self.send command, *args, **kwargs
-                #    end
-                #    @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)
                 end
             end
 
@@ -205,20 +194,6 @@ module Bull
                 $r.table(table).get(id).em_run(@conn) {|doc| print doc; yield doc}
             end
 
-=begin
-            def watch_by_id table, id
-                if table == 'user'
-                    return nil
-                end
-                doc = $r.table(table).get(id).run(@conn)
-                if self.class.method_defined? 'before_watch_by_id_'+table
-                    if !self.send('before_watch_by_id_'+table, doc)
-                        return nil
-                    end
-                end
-                $r.table(table).get(id).changes({include_initial: true})
-            end
-=end
             def times ret
                 if !ret.respond_to? :each_pair
                     if ret.instance_of? Time
@@ -228,13 +203,6 @@ module Bull
                     end
                 else
                     encode_times ret, ''
-                    #times_ = []
-                    #ret.each_pair do |k, v|
-                    #    if v.instance_of? Time
-                    #        times_ << k
-                    #    end
-                    #end
-                    #return times_
                 end
             end
     end
