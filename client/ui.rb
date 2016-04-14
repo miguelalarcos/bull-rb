@@ -14,21 +14,22 @@ class Menu < React::Component::Base
 
     def active? page
         if page == params.active_page
-            'btn btn-info'
+            'button-active'
         else
-            'btn btn-secondary'
+            ''
         end
     end
 
     def render
         div(class: 'no-print') do
-            a(class: active?('pageA'), href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}
-            a(class: active?('pageB'), href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}
-            a(class: 'btn btn-link', href: '#') {'es'}.on(:click) {params.change_language.call 'es'}
-            a(class: 'btn btn-link', href: '#') {'en'}.on(:click) {params.change_language.call 'en'}
-            a(class: 'btn btn-link', href: '#') {'logout'}.on(:click) do
+            ul(class: 'menu') do
+                li(class: 'item-menu'){a(class: active?('pageA'), href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}}
+                li(class: 'item-menu'){a(class: active?('pageB'), href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}}
+            end
+            a(href: '#') {' es '}.on(:click) {params.change_language.call 'es'}
+            a(href: '#') {' en '}.on(:click) {params.change_language.call 'en'}
+            a(href: '#', style: {float: 'right'}) {'logout'}.on(:click) do
                 params.logout.call
-                #$controller.logout
             end
         end
     end
@@ -75,7 +76,7 @@ end
 class Report < React::Component::Base
     def render
         div do
-            button(class: 'no-print', style: {position: 'absolute'}){'print'}.on(:click) {`window.print()`}
+            i(class: "fa fa-print no-print fa-5x", style: {position: 'absolute'}).on(:click) {`window.print()`}
             div(id: 'report')
         end
     end
@@ -117,6 +118,7 @@ end
 class App < React::Component::Base
 
     before_mount do
+        state.create_user! false
         state.modal! false
         state.user! false
         state.page! 'pageA'
@@ -143,7 +145,8 @@ class App < React::Component::Base
             else
                 Login(set_user: lambda{|v| state.user! v})
                 #CreateUserTextCaptcha(set_user: lambda{|v| state.user! v})
-                CreateUserNetCaptcha(set_user: lambda{|v| state.user! v})
+                a(href: '#'){'I want to create an user!'}.on(:click) {state.create_user! true} if !state.create_user
+                CreateUserNetCaptcha(set_user: lambda{|v| state.user! v}) if state.create_user
             end
         end
     end    
@@ -173,7 +176,7 @@ class MyForm < Form
     param :selected
 
     before_mount do
-        @fields_ref = ['auto']
+        #@fields_ref = ['auto']
         get params.selected
     end
 
@@ -199,12 +202,13 @@ class MyForm < Form
             IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}
             SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
+            br
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}
             IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             span{'Autocomplete'}
-            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', set_validation: lambda{|v| puts v; state.is_valid_auto! v},
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', #set_validation: lambda{|v| puts v; state.is_valid_auto! v},
                               name: 'description', value: state.auto)
             button(type: :button) { 'save' }.on(:click) {save} if (state.is_valid && state.is_valid_auto)
             button(type: :button) { 'clear' }.on(:click) {clear}

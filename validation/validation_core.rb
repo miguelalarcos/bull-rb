@@ -40,14 +40,7 @@ module Validate
       state.is_valid! ret.all?
     end
 
-    #def is_value_in_refs?(attr)
-    #  @refs[attr]
-    #end
-
   else
-
-    #def is_value_in_refs?(attr)
-    #  return true
 
     def validate dct
       attrs.each_key do |k|

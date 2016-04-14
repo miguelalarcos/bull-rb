@@ -54,7 +54,7 @@ module MCreateUserCaptcha
       br
       captcha
       br
-      button{'Create user!'}.on(:click) do
+      button(class: 'button-active'){'Create user!'}.on(:click) do
         $controller.rpc(method_create_user, state.user, state.password, state.answer).then do |v|
           params.set_user.call true if v
         end

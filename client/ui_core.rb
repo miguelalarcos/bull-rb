@@ -230,21 +230,19 @@ class SelectInput < React::Component::Base
 end
 
 class Form < React::Component::Base
-  #param :selected
 
   before_mount do
     @dirty = Set.new
-    @refs = {} #Set.new
+    @refs = {}
   end
 
   before_unmount do
     @rvs.each_pair {|k, v| v.remove k} if @rvs
   end
 
-  def add_ref attr
-    #lambda {|ref| @refs.add ref; print '->', ref}
-    lambda {|b| @refs[attr] = b}
-  end
+  #def add_ref attr
+  #  lambda {|b| @refs[attr] = b}
+  #end
 
   def change_attr(attr)
     lambda do |value|
@@ -299,7 +297,7 @@ class Form < React::Component::Base
       @dirty.clear
       clear
       $controller.rpc('get_' + @@table, selected.value).then do|response|
-        @fields_ref.each {|k| @refs[k] = true }#.add([table, field, response[k]])} if @fields_ref
+        #@fields_ref.each {|k| @refs[k] = true }
         response.each do |k, v|
           state.__send__(k+'!', v)
         end

@@ -4,15 +4,14 @@ require 'set'
 class ValidateCar
   include Validate
 
-  def initialize refs: nil #, conn: nil
+  def initialize skip: nil
     field 'registration' => String
     field 'color' => String
     field 'wheels' => Integer
     field 'date' => Time
     field 'auto' => String
 
-    @refs = refs
-    #@conn = conn
+    @skip = skip || []
   end
 
   def is_valid_registration? (value, doc)
@@ -22,9 +21,5 @@ class ValidateCar
       value.start_with? 'B'
     end
   end
-
-  #def is_valid_auto? (value, doc)
-  #  is_value_in_refs?('auto')
-  #end
 end
 
