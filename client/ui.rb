@@ -196,17 +196,17 @@ class MyForm < Form
         div do
             div{state.id}
             span{'Registration'}
-            StringInput(change_attr: change_attr('registration'), value: state.registration)
+            #input(class: valid_class state.is_valid_registration, value: state.registration).on(:click) {|e| state.registration! e.target.value}
+            StringInput(is_valid: state.is_valid_registration, change_attr: change_attr('registration'), value: state.registration)
             div(class: 'red'){'not valid registration'} if !state.is_valid_registration
             span{'Wheels'}
-            IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
+            IntegerInput(is_valid: state.is_valid_wheels, key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}
             SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
-            br
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}
-            IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
+            FloatInput(is_valid: state.is_valid_nested_x, key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             span{'Autocomplete'}
             AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', #set_validation: lambda{|v| puts v; state.is_valid_auto! v},
                               name: 'description', value: state.auto)

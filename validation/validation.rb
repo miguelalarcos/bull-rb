@@ -4,14 +4,14 @@ require 'set'
 class ValidateCar
   include Validate
 
-  def initialize skip: nil
+  def initialize
     field 'registration' => String
     field 'color' => String
     field 'wheels' => Integer
     field 'date' => Time
     field 'auto' => String
-
-    @skip = skip || []
+    field 'nested' => Hash
+    field 'nested.x' => Float
   end
 
   def is_valid_registration? (value, doc)

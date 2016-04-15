@@ -4,6 +4,17 @@ require_relative 'reactive_var'
 require_relative 'lib/utils'
 require_relative 'bcaptcha'
 
+module ValidInput
+  def valid_class
+    return '' if params.is_valid.nil?
+    if params.is_valid
+      'input-successful'
+    else
+      'input-incorrect'
+    end
+  end
+end
+
 class NotificationController
   @@ticket = 0
 
@@ -121,6 +132,7 @@ class DisplayDoc < React::Component::Base
   end
 end
 
+=begin
 class AttrInput < React::Component::Base
 
   def render
@@ -131,12 +143,13 @@ class AttrInput < React::Component::Base
     end
   end
 end
+=end
 
 module AbstractStringInput
-
+  include ValidInput
   def render
     div do
-      input(type: type_attr, value: params.value){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class, type: type_attr, value: params.value){}.on(:change) do |event|
         params.change_attr event.target.value
       end
     end
@@ -148,6 +161,8 @@ class StringInput < React::Component::Base
 
   param :change_attr, type: Proc
   param :value, type: String
+  param :placeholder
+  param :is_valid
 
   def type_attr
     :text
@@ -159,6 +174,8 @@ class PasswordInput < React::Component::Base
 
   param :change_attr, type: Proc
   param :value, type: String
+  param :placeholder
+  param :is_valid
 
   def type_attr
     :password
@@ -166,21 +183,23 @@ class PasswordInput < React::Component::Base
 end
 
 module AbstractNumeric
+  include ValidInput
+
   def render
     value = params.value
     if value.nil?
       value = ''
     end
     div do
-      input(type: :text, value: value.to_s){}.on(:change) do |event|
-        begin
+      input(class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
+        #begin
           if event.target.value == ''
             params.change_attr nil
           else
             update_state event
           end
-        rescue
-        end
+        #rescue
+        #end
       end
     end
   end
@@ -191,9 +210,14 @@ class IntegerInput < React::Component::Base
 
   param :change_attr, type: Proc
   param :value, type: Integer
+  param :is_valid
 
   def update_state event
-    params.change_attr Integer(event.target.value)
+    begin
+      params.change_attr Integer(event.target.value)
+    rescue
+      params.change_attr event.target.value
+    end
   end
 end
 
@@ -202,9 +226,19 @@ class FloatInput < React::Component::Base
 
   param :change_attr, type: Proc
   param :value, type: Float
+  param :is_valid
 
   def update_state event
-    params.change_attr Float(event.target.value)
+    val = event.target.value
+    begin
+      if val == '-0'
+        params.change_attr val
+      else
+        params.change_attr Float(val)
+      end
+    rescue
+      params.change_attr val
+    end
   end
 end
 
@@ -222,10 +256,12 @@ class SelectInput < React::Component::Base
   param :options
 
   def render
-    select(class: 'form-control') do
-      option{''}
-      params.options.each {|val| option(selected(params.value, val)){val}}
-    end.on(:change) {|event| params.change_attr.call event.target.value}
+    div do
+      select(class: 'form-control') do
+        option{''}
+        params.options.each {|val| option(selected(params.value, val)){val}}
+      end.on(:change) {|event| params.change_attr.call event.target.value}
+    end
   end
 end
 
