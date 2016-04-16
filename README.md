@@ -9,7 +9,7 @@ Ruby + Opal + React.rb + EventMachine + Rethinkdb
 
 This is a Meteor like framework, but with Ruby language. (Other example is Volt.)
 
-From client side you can ask the server in two ways:
+From client side you can ask the server in three ways:
 
 * rpc (returns a promise)
 
@@ -18,6 +18,10 @@ From client side you can ask the server in two ways:
 
     other example:
     $controller.rpc('login', user, password)
+
+* task
+
+    like *rpc* but doesn't return value
 
 * watch
 
@@ -44,8 +48,7 @@ class MyForm < Form
     param :selected
 
     before_mount do
-        @fields_ref = ['auto']
-        get params.selected
+           get params.selected
     end
 
     def clear
@@ -56,28 +59,29 @@ class MyForm < Form
         state.id! nil
         d = {'x' => nil}
         state.nested! d
-        state.auto = nil
+        state.auto! ''
     end
 
     def render
-        ValidateCar.new(refs: @refs).validate state
+        ValidateCar.new.validate state
         div do
             div{state.id}
             span{'Registration'}
-            StringInput(change_attr: change_attr('registration'), value: state.registration)
-            span{'not valid registration'} if !state.is_valid_registration
+            #input(class: valid_class state.is_valid_registration, value: state.registration).on(:click) {|e| state.registration! e.target.value}
+            StringInput(is_valid: state.is_valid_registration, change_attr: change_attr('registration'), value: state.registration)
+            div(class: 'red'){'not valid registration'} if !state.is_valid_registration
             span{'Wheels'}
-            IntegerInput(key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
+            IntegerInput(is_valid: state.is_valid_wheels, key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
             span{'Color'}
-            StringInput(change_attr: change_attr('color'), value: state.color)
+            SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
             span{'Date'}
             DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
             span{'Nested'}
-            IntegerInput(key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
+            FloatInput(is_valid: state.is_valid_nested_x, key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             span{'Autocomplete'}
-            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', add_ref: add_ref('auto'),
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', #set_validation: lambda{|v| puts v; state.is_valid_auto! v},
                               name: 'description', value: state.auto)
-            button(type: :button) { 'save' }.on(:click) {save} if state.is_valid
+            button(type: :button) { 'save' }.on(:click) {save} if (state.is_valid && state.is_valid_auto)
             button(type: :button) { 'clear' }.on(:click) {clear}
         end        
     end
@@ -111,7 +115,7 @@ reactive(@language) do
 end
 ```
 
-Several components can watch the rvar and set a value to it. For example a form is editing the rvar
+Several components can watch the rvar and set a value to it. For example a form is editing the document given by the rvar
 car_selected, and a list component of cars can set the car_selected to another id when clicking in one car.
 
 The canonical way of writing a custom component:
@@ -183,14 +187,12 @@ Files
 Client side:
 
 * client.rb: it has the controller class for the client
-* datetime_ui.rb: it has a date time picker
 * i18n.rb: module for i18n
 * index.html: this is the file sent to the browser by the http server
 * main.rb: the entry point for Opal. You must define here the global $controller
 * Rakefile: to make the build.js and build.css
 * reactive_var.rb: here you've got the implementation for reactive vars. Please note that this reactive var does not work
   with the render method of the react.rb components. This works with the provided reactive function.
-* rr.rb: when the 'rake production' will be coded, rr.rb will be used to make the js version of reactive-ruby.
 * ui.rb: here you've got all the React components of the client application.
 * ui_core.rb: useful ui components like Form, PasswordInput, ...
 
@@ -206,25 +208,71 @@ This is an example of a custom Controller:
 require './server'
 require 'em-synchrony'
 require '../validation/validation'
+require './bcaptcha'
+require 'liquid'
 
 class MyController < Bull::Controller
+
+  include NetCaptcha
 
   def initialize ws, conn
     super ws, conn
     @mutex = EM::Synchrony::Thread::Mutex.new
   end
 
-  def rpc_store_item item
-    @mutex.synchronize do
-      ...
+  def rpc_print_car id
+    check id, String
+    get('car', id) do |doc|
+      if user_is_owner? doc
+        t = $reports['car']
+        yield t.render(doc)
+      else
+        yield ''
+      end
     end
   end
 
-  def watch_car doc
-    user_is_owner? doc
+  def rpc_add a, b
+    check a, Integer
+    check b, Integer
+    @mutex.synchronize do
+      a + b
+    end
+  end
+
+  def rpc_get_location value
+    check value, String
+    if value == ''
+      yield []
+    else
+      ret = []
+      docs_with_count($r.table('location').filter{|doc| doc['description'].match("(?i).*"+value+".*")}) do |count, row|
+        ret << row
+        if ret.length == count
+          yield ret
+          #break
+        end
+      end
+    end
+  end
+
+  def rpc_get_i18n id
+    check id, String
+    get('i18n', id) {|doc| yield doc}
+  end
+
+  def rpc_get_car id
+  check id, String
+    get('car', id){|doc| yield doc}
+  end
+
+  def watch_car id
+    check id, String
+    $r.table('car').get(id)
   end
 
   def watch_cars_of_color color
+    check color, String
     $r.table('car').filter(color: color)
   end
 
@@ -236,8 +284,12 @@ class MyController < Bull::Controller
     user_role_in? old_val
   end
 
+  def before_delete_car doc
+    user_is_owner? doc
+  end
+
   def before_insert_car doc
-    if user_roles.include? 'writer' && ValidateCar.new.validate_side(doc)
+    if user_roles.include? 'writer' && ValidateCar.new.validate(doc)
       i_timestamp! doc
       owner! doc
       true
@@ -246,8 +298,6 @@ class MyController < Bull::Controller
     end
   end
 end
-
-
 ```
 
 Both sides:
@@ -255,6 +305,8 @@ Both sides:
 * validation.rb: here is defined the module Validate. You use it the next way:
 
 ```ruby
+require_relative 'validation_core'
+
 class ValidateCar
   include Validate
 
@@ -263,6 +315,9 @@ class ValidateCar
     field 'color' => String
     field 'wheels' => Integer
     field 'date' => Time
+    field 'auto' => String
+    field 'nested' => Hash
+    field 'nested.x' => Float
   end
 
   def is_valid_registration? (value, doc)
@@ -292,8 +347,8 @@ Instructions to install and execute:
 
 * Console in root folder:
 
-    *$ rethinkdb &
     *$ ruby setup_data_base.rb (pending of create the rb file)
+    *$ rethinkdb    
 
 * Console in server folder:
 
