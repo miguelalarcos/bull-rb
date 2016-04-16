@@ -12,7 +12,6 @@ class RVar
         if value != @value
             @value = value
             @blocks.each_value {|b| b.call}
-            #@blocks.each {|b| b.call}
         end
     end
 
@@ -21,7 +20,6 @@ class RVar
         @@ticket += 1
         @blocks[id] = block
         id
-        #@blocks << block
     end
 
     def remove id

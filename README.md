@@ -67,7 +67,6 @@ class MyForm < Form
         div do
             div{state.id}
             span{'Registration'}
-            #input(class: valid_class state.is_valid_registration, value: state.registration).on(:click) {|e| state.registration! e.target.value}
             StringInput(is_valid: state.is_valid_registration, change_attr: change_attr('registration'), value: state.registration)
             div(class: 'red'){'not valid registration'} if !state.is_valid_registration
             span{'Wheels'}
@@ -79,8 +78,7 @@ class MyForm < Form
             span{'Nested'}
             FloatInput(is_valid: state.is_valid_nested_x, key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
             span{'Autocomplete'}
-            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', #set_validation: lambda{|v| puts v; state.is_valid_auto! v},
-                              name: 'description', value: state.auto)
+            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', name: 'description', value: state.auto)
             button(type: :button) { 'save' }.on(:click) {save} if (state.is_valid && state.is_valid_auto)
             button(type: :button) { 'clear' }.on(:click) {clear}
         end        
@@ -115,7 +113,7 @@ reactive(@language) do
 end
 ```
 
-Several components can watch the rvar and set a value to it. For example a form is editing the document given by the rvar
+Several components can watch the doc defined by the rvar and set a value to it. For example a form is editing the document given by the rvar
 car_selected, and a list component of cars can set the car_selected to another id when clicking in one car.
 
 The canonical way of writing a custom component:
@@ -195,12 +193,19 @@ Client side:
   with the render method of the react.rb components. This works with the provided reactive function.
 * ui.rb: here you've got all the React components of the client application.
 * ui_core.rb: useful ui components like Form, PasswordInput, ...
+* bcaptcha.rb: create user ui with textcaptcha or netcaptcha
 
 Server side:
 ------------
 * main.rb: you define the custom controller used in the server
 * server.rb: it has the controller class for the server
 * start.rb: entry point for the server application
+* bcaptcha: functions to provide captcha service
+
+Gems:
+-----
+* bull-autocomplete
+* bull-date-time-picker
 
 This is an example of a custom Controller:
 
@@ -221,7 +226,7 @@ class MyController < Bull::Controller
   end
 
   def rpc_print_car id
-    check id, String
+    check id, String # it raises an exception if id is not a String
     get('car', id) do |doc|
       if user_is_owner? doc
         t = $reports['car']
@@ -240,7 +245,7 @@ class MyController < Bull::Controller
     end
   end
 
-  def rpc_get_location value
+  def rpc_get_location value # yeah, I don't like this way, but still there's no synchronize with rethinkdb
     check value, String
     if value == ''
       yield []
@@ -250,7 +255,6 @@ class MyController < Bull::Controller
         ret << row
         if ret.length == count
           yield ret
-          #break
         end
       end
     end
