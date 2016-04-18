@@ -66,6 +66,24 @@ class MyController < Bull::Controller
     get('car', id){|doc| yield doc}
   end
 
+  def rpc_get_clients code, surname
+    get_array(
+        $r.table('client').filter do |cli|
+          cli['code'] == code | cli['surname'].match("(?i).*"+surname+".*")
+        end
+    ) {|docs| yield docs}
+  end
+
+  def watch_orders code, client_code, date
+    $r.table('order').filter do |v|
+      v['code'] == code | (v['client_code'] == client_code & v['date'] == date)
+    end
+  end
+
+  def watch_lines_of_order code
+    $r.table('line').filter(order_code: code)
+  end
+
   def watch_car id
     $r.table('car').get(id)
   end

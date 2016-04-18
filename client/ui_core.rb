@@ -135,25 +135,16 @@ class DisplayDoc < React::Component::Base
   end
 end
 
-=begin
-class AttrInput < React::Component::Base
-
-  def render
-    div do
-      input(type: :text, value: params.value){}.on(:change) do |event|
-          update_state
-      end
-    end
-  end
-end
-=end
-
 module AbstractStringInput
   include ValidInput
   def render
     div do
       input(placeholder: params.placeholder, class: valid_class, type: type_attr, value: params.value){}.on(:change) do |event|
         params.change_attr event.target.value
+      end.on(:keyDown) do |event|
+        if event.key_code == 13
+          params.on_enter.call event.target.value
+        end
       end
     end
   end
@@ -165,6 +156,7 @@ class StringInput < React::Component::Base
   param :change_attr, type: Proc
   param :value, type: String
   param :placeholder
+  param :on_enter
   param :is_valid
 
   def type_attr
@@ -178,6 +170,7 @@ class PasswordInput < React::Component::Base
   param :change_attr, type: Proc
   param :value, type: String
   param :placeholder
+  param :on_enter
   param :is_valid
 
   def type_attr
@@ -194,7 +187,7 @@ module AbstractNumeric
       value = ''
     end
     div do
-      input(class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
         #begin
           if event.target.value == ''
             params.change_attr nil
@@ -219,6 +212,7 @@ class IntegerInput < React::Component::Base
   param :value, type: Integer
   param :is_valid
   param :on_enter
+  param :placeholder
 
   def update_state event
     begin
@@ -235,6 +229,8 @@ class FloatInput < React::Component::Base
   param :change_attr, type: Proc
   param :value, type: Float
   param :is_valid
+  param :on_enter
+  param :placeholder
 
   def update_state event
     val = event.target.value
@@ -265,7 +261,7 @@ class SelectInput < React::Component::Base
 
   def render
     div do
-      select(class: 'form-control') do
+      select(class: 'select') do
         option{''}
         params.options.each {|val| option(selected(params.value, val)){val}}
       end.on(:change) {|event| params.change_attr.call event.target.value}

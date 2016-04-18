@@ -43,6 +43,14 @@ module Bull
                 raise Exception.new("#{arg} is not a #{type}") if !arg.is_a? type
             end
 
+            def get_array predicate
+                ret = []
+                docs_with_count(predicate) do |count, row|
+                    ret << row
+                    yield ret if ret.length == count
+                end
+            end
+
             def docs_with_count predicate
                 predicate.count().em_run(@conn) do |count|
                     predicate.em_run(@conn) {|doc| yield count, doc}

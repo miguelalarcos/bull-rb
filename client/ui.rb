@@ -122,9 +122,10 @@ class OrderList < DisplayList
                 @order_date.value = state.date
             end
             state.docs.each do |doc|
-                div(key: doc['id']) do
-                    doc['code']
-                end.on(:click) {params.order_code.value=doc['code']; params.order_exists.call true}
+                div(key: doc['id']){doc['code']}.on(:click) do
+                    params.order_code.value=doc['code']
+                    params.order_exists.call true
+                end
             end
         end
     end
@@ -137,6 +138,9 @@ class ClientSearch < React::Component::Base
 
     before_mount do
         state.code! nil
+        state.tmp_code! nil
+        state.surname! nil
+        state.clients! []
     end
 
     def render
@@ -144,12 +148,15 @@ class ClientSearch < React::Component::Base
             div{'Client Code:'}
             input(disabled: 'disabled', value: state.code).on(:click) {state.show! !state.show}
             div do
-                IntegerInput(change_attr: lambda{|v| state.code! v}, value: state.code)
-                # StringInput(...surname...)
+                IntegerInput(placeholder: 'code', change_attr: lambda{|v| state.tmp_code! v}, value: state.tmp_code)
+                StringInput(placeholder: 'surname', change_attr: lambda{|v| state.surname! v}, value: state.surname)
                 button{'search'}.on(:click) do
-                    $controller.rpc('client_search', state.code).then do |response|
-                        params.on_select.call response
+                    $controller.rpc('get_clients', state.tmp_code, state.surname).then do |clients|
+                        state.clients! clients
                     end
+                end
+                state.clients.each do |cli|
+                    div{cli['name']}.on(:click){state.code! cli['code']; params.on_select.call cli['code']}
                 end
             end if state.show
         end
