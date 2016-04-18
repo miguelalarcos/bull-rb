@@ -25,6 +25,7 @@ class Menu < React::Component::Base
             ul(class: 'menu') do
                 li(class: 'item-menu'){a(class: active?('pageA'), href: '#') {'page A'}.on(:click) {params.change_page.call 'pageA'}}
                 li(class: 'item-menu'){a(class: active?('pageB'), href: '#') {'page B'}.on(:click) {params.change_page.call 'pageB'}}
+                li(class: 'item-menu'){a(class: active?('OrderPage'), href: '#') {'order pag'}.on(:click) {params.change_page.call 'OrderPage'}}
             end
             a(href: '#') {' es '}.on(:click) {params.change_language.call 'es'}
             a(href: '#') {' en '}.on(:click) {params.change_language.call 'en'}
@@ -70,6 +71,205 @@ class PageB < React::Component::Base
             div{i18n params.i18n_map, 'BLUE_CARS'}
             DisplayCars(color: 'blue', selected: params.car_selected)
         end
+    end
+end
+
+class Order < React::Component::Base
+
+    before_mount do
+        @order_selected = RVar.new nil
+        @line_selected = RVar.new nil
+        state.code! nil
+        state.code_exists! false
+    end
+
+    def on_enter code
+        $controller.rpc('order_code_exists?', code).then do |response|
+            state.code_exists! response
+            if response
+                @order_selected.value = code
+                @line_selected.value = nil
+            end
+        end
+    end
+
+    def render
+        div do
+            div{'Search by order code:'}
+            IntegerInput(on_enter: lambda{|v| on_enter v}, change_attr: lambda{|v| state.code! v}, value: state.code)
+            OrderForm(order_code: @order_selected, order_exists: lambda{|v| state.code_exists! v})
+            OrderList(order_code: @order_selected)
+            div do
+                LineForm(order_code: @order_selected.value, line_selected: @line_selected)
+                OrderLines(order_code: @order_selected, line_selected: @line_selected)
+            end if state.code_exists
+        end
+    end
+end
+
+class OrderList < DisplayList
+    param :order_code
+
+    before_mount do
+        @client_code = RVar.new nil
+        @order_date = RVar.new nil
+        @rvs = reactive(params.client_code, params.order_date) do
+            watch_ 'orders', params.client_code.value, params.order_date.value
+        end
+    end
+
+    def render
+        div do
+            div{'Order list'}
+            hr
+            ClientSearch(on_select: lambda{|v| @client_code.value = v})
+            hr
+            DateTimeInput(change_attr: lambda{|v| @order_date.value=v})
+            state.docs.each do |doc|
+                div(key: doc['id']) do
+                    doc['code']
+                end.on(:click) {params.order_code.value=doc['code']}
+            end
+        end
+    end
+end
+
+
+class ClientSearch < React::Component::Base
+    param :on_select
+    #param :value
+
+    before_mount do
+        state.code! nil
+    end
+
+    def render
+        div do
+            div{'Client Code:'}
+            input(disabled: 'disabled', value: state.code).on(:click) {state.show! !state.show}
+            div do
+                IntegerInput(change_attr: lambda{|v| state.code! v}, value: state.code)
+                # StringInput(...surname...)
+                button{'search'}.on(:click) do
+                    $controller.rpc('client_search', state.code).then do |response|
+                        params.on_select.call response
+                    end
+                end
+            end if state.show
+        end
+    end
+end
+
+class OrderForm < Form
+    @@table = 'order'
+    param :order_code
+    param :order_exists
+
+    before_mount do
+        get params.order_code
+    end
+
+    def clear
+        state.code! params.order_code.value
+        @dirty << 'code'
+        state.description! ''
+        state.client_code! nil
+        state.date! nil
+    end
+
+    def render
+        div do
+            div{'Order form'}
+            div{state.code}
+            button{'new order'}.on(:click) do
+                $controller.rpc('get_ticket').then do |code|
+                    #state.code! code
+                    params.order_code.value = code
+                    params.order_exists.call false
+                end
+            end
+            hr
+            ClientSearch(on_select: change_attr('client_code'))
+            hr
+            div('Date:')
+            DateTimeInput(change_attr: change_attr('date'), format: '%d-%m-%Y %H:%M')
+            div{'Description:'}
+            StringInput(value: state.description, change_attr: change_attr('description'))
+            button{'save'}.on(:click) do
+                save
+                params.order_exists.call true
+                params.order_code.value = state.code
+            end
+        end
+    end
+end
+
+class LineForm < Form
+    @@table = 'line'
+    param :order_code
+    param :line_selected
+
+    before_mount do
+        get params.line_selected
+    end
+
+    def clear
+        state.order_code! params.order_code
+        @dirty << 'order_code'
+        state.product! nil
+        state.quantity! nil
+        state.price! nil
+    end
+
+    def render
+        div do
+            div{'Line form'}
+            div{'Product'}
+            StringInput(change_attr: change_attr('product'), value: state.product)
+            div{'Quantity'}
+            IntegerInput(change_attr: change_attr('quantity'), value: state.quantity)
+            div{'Price'}
+            FloatInput(change_attr: change_attr('price'), value: state.price)
+            button{ 'save' }.on(:click) {save; clear} #if state.is_valid
+            button{'clear'}.on(:click){clear}
+        end
+    end
+end
+
+class OrderLines < DisplayList
+    param :line_selected
+    param :order_code
+
+    before_mount do
+        @rvs = reactive(params.order_code) do
+            watch_ 'lines_of_order', params.order_code.value
+        end
+    end
+
+    def render
+        total = state.docs.inject(0){|sum, doc| sum + doc['price']}
+        div do
+            div{'Order lines'}
+            state.docs.each do |doc|
+                div(key: doc['id']) do
+                    tr do
+                        td{doc['product']}
+                        td{doc['quantity']}
+                        td{doc['price']}
+                        td{'Edit'}.on(:click) do
+                            params.line_selected.value = doc['id']
+                        end
+                    end
+                end
+            end
+            span{"Total: #{total} €"}
+        end
+    end
+end
+
+class OrderPage < React::Component::Base
+    def render
+        Order()
     end
 end
 
@@ -140,6 +340,7 @@ class App < React::Component::Base
                 PageA(set_report_page: lambda {state.page! 'report'},car_selected: @car_selected,
                       show_modal: lambda{state.modal! true}) if state.page == 'pageA'
                 PageB(car_selected: @car_selected, i18n_map: state.i18n_map) if state.page == 'pageB'
+                OrderPage() if state.page == 'OrderPage'
                 Report() if state.page == 'report'
                 MyModal(ok: lambda {state.modal! false}) if state.modal
             else

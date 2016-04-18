@@ -191,7 +191,7 @@ module Bull
             end
 
             def get table, id
-                $r.table(table).get(id).em_run(@conn) {|doc| print doc; yield doc}
+                $r.table(table).get(id).em_run(@conn) {|doc| yield doc}
             end
 
             def times ret

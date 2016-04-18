@@ -102,6 +102,7 @@ class DisplayList < React::Component::Base
 
   before_unmount do
     $controller.stop_watch @predicate_id if @predicate_id != nil
+    @rvs.each_pair {|k, v| v.remove k} if @rvs
   end
 end
 
@@ -200,6 +201,10 @@ module AbstractNumeric
           end
         #rescue
         #end
+      end.on(:keyDown) do |event|
+        if event.key_code == 13
+          params.on_enter.call event.target.value
+        end
       end
     end
   end
@@ -211,6 +216,7 @@ class IntegerInput < React::Component::Base
   param :change_attr, type: Proc
   param :value, type: Integer
   param :is_valid
+  param :on_enter
 
   def update_state event
     begin

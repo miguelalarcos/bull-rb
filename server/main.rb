@@ -15,6 +15,16 @@ class MyController < Bull::Controller
     @mutex = EM::Synchrony::Thread::Mutex.new
   end
 
+  def rpc_ticket
+    @mutex.synchronize do
+      $r.table('ticket').get('0').em_run(@conn) do|doc|
+        $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn)
+        yield doc['value']
+      end
+    end
+  end
+
+
   def rpc_print_car id
     check id, String
     get('car', id) do |doc|
@@ -27,11 +37,11 @@ class MyController < Bull::Controller
     end
   end
 
-  def rpc_add a, b
-    @mutex.synchronize do
-      a + b
-    end
-  end
+  #def rpc_add a, b
+  #  @mutex.synchronize do
+  #    a + b
+  #  end
+  #end
 
   def rpc_get_location value
     if value == ''
