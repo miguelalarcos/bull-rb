@@ -178,7 +178,6 @@ class OrderForm < Form
             div{state.code}
             button{'new order'}.on(:click) do
                 $controller.rpc('get_ticket').then do |code|
-                    #state.code! code
                     params.order_code.value = code
                     params.order_exists.call false
                 end
@@ -193,7 +192,6 @@ class OrderForm < Form
             button{'save'}.on(:click) do
                 save
                 params.order_exists.call true
-                params.order_code.value = state.code
             end
         end
     end
