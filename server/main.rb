@@ -15,7 +15,7 @@ class MyController < Bull::Controller
     @mutex = EM::Synchrony::Thread::Mutex.new
   end
 
-  def rpc_ticket
+  def rpc_get_ticket
     @mutex.synchronize do
       $r.table('ticket').get('0').em_run(@conn) do|doc|
         $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn) do

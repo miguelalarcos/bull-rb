@@ -79,17 +79,17 @@ class Order < React::Component::Base
     before_mount do
         @order_selected = RVar.new nil
         @line_selected = RVar.new nil
-        state.code_exists! false
+        state.order_exists! false
     end
 
     def render
         div do
-            OrderForm(order_code: @order_selected, order_exists: lambda{|v| state.code_exists! v})
-            OrderList(order_code: @order_selected, order_exists: lambda{|v| state.code_exists! v})
+            OrderForm(order_code: @order_selected, order_exists: lambda{|v| state.order_exists! v})
+            OrderList(order_code: @order_selected, order_exists: lambda{|v| state.order_exists! v})
             div do
                 LineForm(order_code: @order_selected.value, line_selected: @line_selected)
                 OrderLines(order_code: @order_selected, line_selected: @line_selected)
-            end if state.code_exists
+            end if state.order_exists
         end
     end
 end
@@ -111,18 +111,20 @@ class OrderList < DisplayList
     def render
         div do
             div{'Order list'}
-            IntegerInput(change_attr: lambda{|v| state.order_code! v}) #@order_code.value = v})
+            div{'order code'}
+            IntegerInput(change_attr: lambda{|v| state.order_code! v, value: state.order_code})
             hr
-            ClientSearch(on_select: lambda{|v| state.client_code! v}) #@client_code.value = v})
+            ClientSearch(on_select: lambda{|v| state.client_code! v})
             hr
-            DateTimeInput(change_attr: lambda{|v| state.date! v}) #@order_date.value=v})
+            div{'date of order'}
+            DateTimeInput(change_attr: lambda{|v| state.date! v})
             button{'search'}.on(:click) do
                 @order_code.value = state.order_code
                 @client_code.value = state.client_code
                 @order_date.value = state.date
             end
             state.docs.each do |doc|
-                div(key: doc['id']){doc['code']}.on(:click) do
+                div(key: doc['id']){doc['code'] + ':' + doc['description']}.on(:click) do
                     params.order_code.value=doc['code']
                     params.order_exists.call true
                 end
@@ -156,7 +158,7 @@ class ClientSearch < React::Component::Base
                     end
                 end
                 state.clients.each do |cli|
-                    div{cli['name']}.on(:click){state.code! cli['code']; params.on_select.call cli['code']}
+                    div{cli['surname']}.on(:click){state.code! cli['code']; params.on_select.call cli['code']}
                 end
             end if state.show
         end
@@ -165,7 +167,6 @@ end
 
 class OrderForm < Form
     @@table = 'order'
-    @@constants = ['code']
     param :order_code
     param :order_exists
 
@@ -174,6 +175,7 @@ class OrderForm < Form
     end
 
     def clear
+        state.code! nil
         state.description! ''
         state.client_code! nil
         state.date! nil
@@ -185,7 +187,9 @@ class OrderForm < Form
             div{state.code}
             button{'new order'}.on(:click) do
                 $controller.rpc('get_ticket').then do |code|
-                    params.order_code.value = code
+                    clear
+                    state.code! code
+                    #params.order_code.value = code
                     params.order_exists.call false
                 end
             end
@@ -330,6 +334,9 @@ class App < React::Component::Base
 
     def render
         div do
+            Notification(level: 0)
+            OrderPage()
+=begin
             if state.user
                 Notification(level: 0)
                 Menu(logout: lambda{state.user! false; $controller.logout}, change_page: lambda{|v| state.page! v},
@@ -346,6 +353,7 @@ class App < React::Component::Base
                 a(href: '#'){'I want to create an user!'}.on(:click) {state.create_user! true} if !state.create_user
                 CreateUserNetCaptcha(set_user: lambda{|v| state.user! v}) if state.create_user
             end
+=end
         end
     end    
 end
