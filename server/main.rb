@@ -18,8 +18,9 @@ class MyController < Bull::Controller
   def rpc_ticket
     @mutex.synchronize do
       $r.table('ticket').get('0').em_run(@conn) do|doc|
-        $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn)
-        yield doc['value']
+        $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn) do
+          yield doc['value']
+        end
       end
     end
   end
