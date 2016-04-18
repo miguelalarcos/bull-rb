@@ -18,7 +18,7 @@ def set_nested_state attr, value, doc
   end
 end
 
-def get_nested_state! ret, attr
+def get_nested! ret, attr
   ret_ = ret
   path = attr.split '.'
   root = path.shift

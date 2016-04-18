@@ -24,7 +24,7 @@ RSpec.describe '' do
   end
 
   it 'get simple' do
-    ret = get_nested_state!({}, 'a') do
+    ret = get_nested!({}, 'a') do
       d = Hash.new
       d['a'] = 8
       d
@@ -34,7 +34,7 @@ RSpec.describe '' do
   end
 
   it 'get nested' do
-    ret = get_nested_state!({}, 'a.b') do
+    ret = get_nested!({}, 'a.b') do
       d = Hash.new
       d['a'] = {'b' => 5, 'c' => 7}
       d
@@ -44,7 +44,7 @@ RSpec.describe '' do
   end
 
   it 'get nested with existing values' do
-    ret = get_nested_state!({'x' => 'x'}, 'a.b') do
+    ret = get_nested!({'x' => 'x'}, 'a.b') do
       d = Hash.new
       d['a'] = {'b' => 5, 'c' => 7}
       d

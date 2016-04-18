@@ -67,10 +67,12 @@ class DisplayList < React::Component::Base
     @predicate_id = nil
   end
 
-  def watch_(name, *args)
-    clear
-    $controller.stop_watch(@predicate_id) if @predicate_id != nil
-    @predicate_id = $controller.watch(name, *args) {|data| consume data}
+  def watch_(name, *args, reactives)
+    @rvs = reactive(*reactives) do
+      clear
+      $controller.stop_watch(@predicate_id) if @predicate_id != nil
+      @predicate_id = $controller.watch(name, *args) {|data| consume data}
+    end
   end
 
   def consume data
@@ -282,10 +284,6 @@ class Form < React::Component::Base
     @rvs.each_pair {|k, v| v.remove k} if @rvs
   end
 
-  #def add_ref attr
-  #  lambda {|b| @refs[attr] = b}
-  #end
-
   def change_attr(attr)
     lambda do |value|
       @dirty.add attr
@@ -297,7 +295,10 @@ class Form < React::Component::Base
   def hash_from_state
     ret = {}
     @dirty.each do |attr|
-      get_nested_state!(ret, attr) {|r| state.__send__(r)}
+      get_nested!(ret, attr) {|r| state.__send__(r)}
+    end
+    @@constants.each do |cte|
+      get_nested!(ret, cte) {|r| params.__send__(r)}
     end
     ret
   end

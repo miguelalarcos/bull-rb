@@ -79,26 +79,13 @@ class Order < React::Component::Base
     before_mount do
         @order_selected = RVar.new nil
         @line_selected = RVar.new nil
-        state.code! nil
         state.code_exists! false
-    end
-
-    def on_enter code
-        $controller.rpc('order_code_exists?', code).then do |response|
-            state.code_exists! response
-            if response
-                @order_selected.value = code
-                @line_selected.value = nil
-            end
-        end
     end
 
     def render
         div do
-            div{'Search by order code:'}
-            IntegerInput(on_enter: lambda{|v| on_enter v}, change_attr: lambda{|v| state.code! v}, value: state.code)
             OrderForm(order_code: @order_selected, order_exists: lambda{|v| state.code_exists! v})
-            OrderList(order_code: @order_selected)
+            OrderList(order_code: @order_selected, order_exists: lambda{|v| state.code_exists! v})
             div do
                 LineForm(order_code: @order_selected.value, line_selected: @line_selected)
                 OrderLines(order_code: @order_selected, line_selected: @line_selected)
@@ -109,26 +96,35 @@ end
 
 class OrderList < DisplayList
     param :order_code
+    param :order_exists
 
     before_mount do
+        state.order_code! nil
+        state.client_code! nil
+        state.date! nil
         @client_code = RVar.new nil
         @order_date = RVar.new nil
-        @rvs = reactive(params.client_code, params.order_date) do
-            watch_ 'orders', params.client_code.value, params.order_date.value
-        end
+        watch_ 'orders', params.order_code.value, @client_code.value, @order_date.value,
+               [params.order_code, @client_code, @order_date]
     end
 
     def render
         div do
             div{'Order list'}
+            IntegerInput(change_attr: lambda{|v| state.order_code! v}) #@order_code.value = v})
             hr
-            ClientSearch(on_select: lambda{|v| @client_code.value = v})
+            ClientSearch(on_select: lambda{|v| state.client_code! v}) #@client_code.value = v})
             hr
-            DateTimeInput(change_attr: lambda{|v| @order_date.value=v})
+            DateTimeInput(change_attr: lambda{|v| state.date! v}) #@order_date.value=v})
+            button{'search'}.on(:click) do
+                @order_code.value = state.order_code
+                @client_code.value = state.client_code
+                @order_date.value = state.date
+            end
             state.docs.each do |doc|
                 div(key: doc['id']) do
                     doc['code']
-                end.on(:click) {params.order_code.value=doc['code']}
+                end.on(:click) {params.order_code.value=doc['code']; params.order_exists.call true}
             end
         end
     end
@@ -162,6 +158,7 @@ end
 
 class OrderForm < Form
     @@table = 'order'
+    @@constants = ['code']
     param :order_code
     param :order_exists
 
@@ -170,8 +167,6 @@ class OrderForm < Form
     end
 
     def clear
-        state.code! params.order_code.value
-        @dirty << 'code'
         state.description! ''
         state.client_code! nil
         state.date! nil
@@ -206,6 +201,7 @@ end
 
 class LineForm < Form
     @@table = 'line'
+    @@constants = ['order_code']
     param :order_code
     param :line_selected
 
@@ -214,8 +210,6 @@ class LineForm < Form
     end
 
     def clear
-        state.order_code! params.order_code
-        @dirty << 'order_code'
         state.product! nil
         state.quantity! nil
         state.price! nil
@@ -241,9 +235,7 @@ class OrderLines < DisplayList
     param :order_code
 
     before_mount do
-        @rvs = reactive(params.order_code) do
-            watch_ 'lines_of_order', params.order_code.value
-        end
+        watch_ 'lines_of_order', params.order_code.value, [params.order_code]
     end
 
     def render
