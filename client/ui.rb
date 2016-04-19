@@ -85,11 +85,11 @@ class Order < React::Component::Base
     def render
         div do
             OrderForm(order_code: @order_selected, order_exists: lambda{|v| state.order_exists! v})
-            OrderList(order_code: @order_selected, order_exists: lambda{|v| state.order_exists! v})
-            div do
-                LineForm(order_code: @order_selected.value, line_selected: @line_selected)
-                OrderLines(order_code: @order_selected, line_selected: @line_selected)
-            end if state.order_exists
+            #OrderList(order_code: @order_selected, order_exists: lambda{|v| state.order_exists! v})
+            #div do
+            #    LineForm(order_code: @order_selected.value, line_selected: @line_selected)
+            #    OrderLines(order_code: @order_selected, line_selected: @line_selected)
+            #end if state.order_exists
         end
     end
 end
@@ -114,6 +114,7 @@ class OrderList < DisplayList
             div{'order code'}
             IntegerInput(change_attr: lambda{|v| state.order_code! v, value: state.order_code})
             hr
+            div{'client code'}
             ClientSearch(on_select: lambda{|v| state.client_code! v})
             hr
             div{'date of order'}
@@ -147,7 +148,6 @@ class ClientSearch < React::Component::Base
 
     def render
         div do
-            div{'Client Code:'}
             input(disabled: 'disabled', value: state.code).on(:click) {state.show! !state.show}
             div do
                 IntegerInput(placeholder: 'code', change_attr: lambda{|v| state.tmp_code! v}, value: state.tmp_code)
@@ -158,7 +158,7 @@ class ClientSearch < React::Component::Base
                     end
                 end
                 state.clients.each do |cli|
-                    div{cli['surname']}.on(:click){state.code! cli['code']; params.on_select.call cli['code']}
+                    div{cli['code'].to_s + ':' + cli['surname']}.on(:click){state.code! cli['code']; params.on_select.call cli['code']}
                 end
             end if state.show
         end
@@ -194,6 +194,7 @@ class OrderForm < Form
                 end
             end
             hr
+            div{'client code'}
             ClientSearch(on_select: change_attr('client_code'))
             hr
             div('Date:')
@@ -248,7 +249,7 @@ class OrderLines < DisplayList
     end
 
     def render
-        total = state.docs.inject(0){|sum, doc| sum + doc['price']}
+        total = state.docs.inject(0){|sum, doc| sum + doc['price']*doc['quantity']}
         div do
             div{'Order lines'}
             state.docs.each do |doc|

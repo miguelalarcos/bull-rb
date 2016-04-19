@@ -40,7 +40,17 @@ module Bull
         private
 
             def check arg, type
-                raise Exception.new("#{arg} is not a #{type}") if !arg.is_a? type
+                raise Exception.new("#{arg} is not a #{type}") if !arg.nil? && !arg.is_a?(type)
+            end
+
+            def get_filter table, filter
+                $r.table(table).filter(filter).count.em_run(@conn) do |count|
+                    if count == 0
+                        yield Hash.new
+                    else
+                        $r.table(table).filter(filter).em_run(@conn) {|doc| yield doc}
+                    end
+                end
             end
 
             def get_array predicate

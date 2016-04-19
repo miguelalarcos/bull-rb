@@ -25,6 +25,19 @@ class MyController < Bull::Controller
     end
   end
 
+  def rpc_print_order id
+    check id, String
+    get('order', id) do |order|
+      get_array($r.table('line').filter(order_code: id))do |lines|
+        ret = Hash.new
+        ret['order'] = order
+        ret['lines'] = lines
+        ret['total'] = lines.inject(0){|sum, line| sum + line['price']*line['quantity']}
+        t = $reports['order']
+        yield t.render(ret)
+      end
+    end
+  end
 
   def rpc_print_car id
     check id, String
@@ -67,6 +80,17 @@ class MyController < Bull::Controller
     get('car', id){|doc| yield doc}
   end
 
+  def rpc_get_order code
+    check code, String
+    get_filter('order', {code: code}){|doc| yield doc}
+  end
+
+  def rpc_get_line id
+    yield Hash.new if id.nil?
+    check id, String
+    get('line', id){|doc| yield doc}
+  end
+
   def rpc_get_clients code, surname
     get_array(
         $r.table('client').filter do |cli|
@@ -77,7 +101,7 @@ class MyController < Bull::Controller
 
   def watch_orders code, client_code, date
     $r.table('order').filter do |v|
-      v['code'] == code | (v['client_code'] == client_code & v['date'] == date)
+      v['code'] == code | (v['client_code'] == client_code & (v['date'] == date))
     end
   end
 
@@ -91,6 +115,22 @@ class MyController < Bull::Controller
 
   def watch_cars_of_color color
     $r.table('car').filter(color: color)
+  end
+
+  def before_insert_order
+    true
+  end
+
+  def before_update_order
+    true
+  end
+
+  def before_insert_line
+    true
+  end
+
+  def before_update_line
+    true
   end
 
   def before_update_car old_val, new_val, merged

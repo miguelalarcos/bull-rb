@@ -67,7 +67,8 @@ class DisplayList < React::Component::Base
     @predicate_id = nil
   end
 
-  def watch_(name, *args, reactives)
+  def watch_(name, *args)
+    reactives = args.pop
     @rvs = reactive(*reactives) do
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil

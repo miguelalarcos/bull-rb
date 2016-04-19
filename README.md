@@ -4,10 +4,11 @@ Bull-rb
 Ruby full stack for real time web apps:
 ---------------------------------------
 
-Ruby + Opal + React.rb + EventMachine + Rethinkdb
+[Ruby](https://www.ruby-lang.org/es/) + [Opal](http://opalrb.org/) + [React.rb](http://reactrb.org/) + [EventMachine](https://github.com/eventmachine/eventmachine) + [Rethinkdb](https://www.rethinkdb.com/)
 
+This is a [Meteor](https://www.meteor.com/) like framework, but with Ruby language. (Other example is [Volt](http://voltframework.com/))
 
-This is a Meteor like framework, but with Ruby language. (Other example is Volt.)
+There's also a [blog](http://codrspace.com/miguelalarcos/) where I'm going to post about *Bull-rb*
 
 From client side you can ask the server in three ways:
 
@@ -32,59 +33,31 @@ From client side you can ask the server in three ways:
     * a red car changes
     * a red car changes the color
 
-The serve will send to the client a *return message* in the first case and *data* messages for a watch request.
-Behind the scenes: a ticket (integer) is sent with each request to the server and sent back to the client, so the client knows who
-notify with the data received.
-
-Forms:
-------
-
 The framework comes with a Form class:
 
 ```ruby
-class MyForm < Form
-
-    @@table = 'car'
-    param :selected
-
-    before_mount do
-           get params.selected
-    end
-
-    def clear
-        state.registration! ''
-        state.color! ''
-        state.wheels! nil
-        state.date! nil
-        state.id! nil
-        d = {'x' => nil}
-        state.nested! d
-        state.auto! ''
-    end
-
-    def render
-        ValidateCar.new.validate state
-        div do
-            div{state.id}
-            span{'Registration'}
-            StringInput(is_valid: state.is_valid_registration, change_attr: change_attr('registration'), value: state.registration)
-            div(class: 'red'){'not valid registration'} if !state.is_valid_registration
-            span{'Wheels'}
-            IntegerInput(is_valid: state.is_valid_wheels, key: 'my_key', change_attr: change_attr('wheels'), value: state.wheels)
-            span{'Color'}
-            SelectInput(change_attr: change_attr('color'), value: state.color, options: ['red', 'blue'])
-            span{'Date'}
-            DateTimeInput(change_date: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date, time: true)
-            span{'Nested'}
-            FloatInput(is_valid: state.is_valid_nested_x, key: 'my_key2', change_attr: change_attr('nested.x'), value: state.nested['x'])
-            span{'Autocomplete'}
-            AutocompleteInput(change_attr: change_attr('auto'), ref_: 'location', name: 'description', value: state.auto)
-            button(type: :button) { 'save' }.on(:click) {save} if (state.is_valid && state.is_valid_auto)
-            button(type: :button) { 'clear' }.on(:click) {clear}
-        end        
-    end
+class OrderForm < Form
+...
 end
 ```
+
+The framework comes with a DisplayDoc class:
+
+```ruby
+class OrderDoc < DisplayDoc
+...
+end
+```
+
+And it comes with a DisplayList class:
+
+```
+class OrderList < DisplayList
+...
+end
+```
+
+We are going to see those features.
 
 RVar
 ----
@@ -112,9 +85,54 @@ reactive(@language) do
     end
 end
 ```
+Every time language is set (language.value = 'es') the `$controller.rpc('get',...` is rerun.
 
-Several components can watch the doc defined by the rvar and set a value to it. For example a form is editing the document given by the rvar
-car_selected, and a list component of cars can set the car_selected to another id when clicking in one car.
+Rvars are useful when you are editing a form and you click in another form of a list to edit this one. The form would be:
+
+```ruby
+class OrderForm < Form
+    @@table = 'order'
+    param :order_code #this is a RVar
+    param :order_exists
+
+    before_mount do
+        get params.order_code  # get does reactive inside. If we set order_code in another place, the code inside get will be rerun_
+    end
+
+    def clear
+        state.code! nil
+        state.description! ''
+        state.client_code! nil
+        state.date! nil
+    end
+
+    def render
+        ValidateOrder.new.validate state
+        div do
+            div{'Order form'}
+            div{state.code}
+            button{'new order'}.on(:click) do
+                $controller.rpc('get_ticket').then do |code|
+                    clear
+                    state.code! code
+                    params.order_exists.call false
+                end
+            end
+            hr
+            ClientSearch(on_select: change_attr('client_code'))
+            hr
+            div('Date:')
+            DateTimeInput(change_attr: change_attr('date'), format: '%d-%m-%Y %H:%M')
+            div{'Description:'}
+            StringInput(value: state.description, change_attr: change_attr('description'))
+            button{'save'}.on(:click) do
+                save
+                params.order_exists.call true
+            end if state.valid
+        end
+    end
+end
+```
 
 The canonical way of writing a custom component:
 ------------------------------------------------
@@ -162,7 +180,7 @@ class DisplayCar < DisplayDoc
     param :selected
 
     before_mount do
-        watch_ params.selected
+        watch_ params.selected.value, [params.selected]
     end
 
     def clear
@@ -178,7 +196,38 @@ class DisplayCar < DisplayDoc
 end
 ```
 
-See client/ui.rb for more details.
+Lets see a component List like:
+
+```ruby
+class OrderLines < DisplayList
+    param :line_selected # this is a RVar
+    param :order_code    # this is a RVar
+
+    before_mount do
+        watch_ 'lines_of_order', params.order_code.value, [params.order_code]
+    end
+
+    def render
+        total = state.docs.inject(0){|sum, doc| sum + doc['price']}
+        div do
+            div{'Order lines'}
+            state.docs.each do |doc|
+                div(key: doc['id']) do
+                    tr do
+                        td{doc['product']}
+                        td{doc['quantity']}
+                        td{doc['price']}
+                        td{'Edit'}.on(:click) do
+                            params.line_selected.value = doc['id']
+                        end
+                    end
+                end
+            end
+            span{"Total: #{total} €"}
+        end
+    end
+end
+```
 
 Files
 -----
@@ -207,7 +256,7 @@ Gems:
 * bull-autocomplete
 * bull-date-time-picker
 
-This is an example of a custom Controller:
+This is an example of a custom server Controller:
 
 ```ruby
 require './server'
@@ -225,11 +274,11 @@ class MyController < Bull::Controller
     @mutex = EM::Synchrony::Thread::Mutex.new
   end
 
-  def rpc_print_car id
+  def rpc_print_order id
     check id, String # it raises an exception if id is not a String
-    get('car', id) do |doc|
+    get('order', id) do |doc| # to be strict, this should be a join between *order* and *lines* tables
       if user_is_owner? doc
-        t = $reports['car']
+        t = $reports['order']
         yield t.render(doc)
       else
         yield ''
@@ -237,63 +286,59 @@ class MyController < Bull::Controller
     end
   end
 
-  def rpc_add a, b
-    check a, Integer
-    check b, Integer
-    @mutex.synchronize do
-      a + b
-    end
-  end
-
-  def rpc_get_location value # yeah, I don't like this way, but still there's no synchronize with rethinkdb
-    check value, String
-    if value == ''
-      yield []
-    else
-      ret = []
-      docs_with_count($r.table('location').filter{|doc| doc['description'].match("(?i).*"+value+".*")}) do |count, row|
-        ret << row
-        if ret.length == count
-          yield ret
+    def rpc_get_ticket
+      @mutex.synchronize do
+        $r.table('ticket').get('0').em_run(@conn) do|doc|
+          $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn) do
+            yield doc['value']
+          end
         end
       end
     end
-  end
+
+    def rpc_get_clients code, surname
+      check code, Integer
+      check surname, String
+      get_array(
+          $r.table('client').filter do |cli|
+            cli['code'] == code | cli['surname'].match("(?i).*"+surname+".*")
+          end
+      ) {|docs| yield docs}
+    end
 
   def rpc_get_i18n id
     check id, String
     get('i18n', id) {|doc| yield doc}
   end
 
-  def rpc_get_car id
-  check id, String
-    get('car', id){|doc| yield doc}
+  def watch_orders code, client_code, date
+    check code, Integer
+    check client_code, Integer
+    check date, Time
+    $r.table('order').filter do |v|
+      v['code'] == code | (v['client_code'] == client_code & (v['date'] == date))
+    end
   end
 
-  def watch_car id
-    check id, String
-    $r.table('car').get(id)
+  def watch_lines_of_order code
+    check code, Integer
+    $r.table('line').filter(order_code: code)
   end
 
-  def watch_cars_of_color color
-    check color, String
-    $r.table('car').filter(color: color)
-  end
-
-  def before_update_car old_val, new_val, merged
-    if !ValidateCar.new.validate merged
+  def before_update_order old_val, new_val, merged
+    if !ValidateOrder.new.validate merged
       return false
     end
     u_timestamp! merged
     user_role_in? old_val
   end
 
-  def before_delete_car doc
+  def before_delete_order doc
     user_is_owner? doc
   end
 
-  def before_insert_car doc
-    if user_roles.include? 'writer' && ValidateCar.new.validate(doc)
+  def before_insert_order doc
+    if user_roles.include? 'writer' && ValidateOrder.new.validate(doc)
       i_timestamp! doc
       owner! doc
       true
@@ -311,28 +356,23 @@ Both sides:
 ```ruby
 require_relative 'validation_core'
 
-class ValidateCar
+class ValidateOrder
   include Validate
 
   def initialize
-    field 'registration' => String
-    field 'color' => String
-    field 'wheels' => Integer
+    field 'code' => String
+    field 'description' => String
+    field 'client_code_' => Integer
     field 'date' => Time
-    field 'auto' => String
-    field 'nested' => Hash
-    field 'nested.x' => Float
   end
 
-  def is_valid_registration? (value, doc)
-    if doc[:wheels] <= 4
-      value.start_with? 'A'
-    else
-      value.start_with? 'B'
-    end
+  def is_valid_description? (value, doc)
+    value.start_with? 'Description: '
   end
 end
 ```
+
+You can have nested fields: `field 'nested.power' => Float`
 
 Instructions to install and execute:
 ------------------------------------
@@ -373,13 +413,14 @@ Controller client side:
 
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
+* delete(table, id)
 * logout
 * start(app)
 
 Controller server side:
 * user_is_owner? doc -> boolean
 * user_roles -> list of roles
-* def user_role_in? doc -> user has a role that is included in doc\['update_roles']
+* user_role_in? doc -> user has a role that is included in doc\['update_roles']
 * i_timestamp! doc # sets the inserted timestamp
 * u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc

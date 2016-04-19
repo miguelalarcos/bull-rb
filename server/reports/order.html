@@ -1,0 +1,11 @@
+<div>
+    <tr><td>Order</td><td><b>{{order['code']}}</b></td></tr>
+    <tr><td>Client code</td><td><b>{{order['client_code']}}</b></td></tr>
+    <tr><td>Description</td><td><b>{{order['description']}}</b></td></tr>
+    <tr><td>Date</td><td><b>{{order['date']}}</b></td></tr>
+    <div>Lines</div>
+    {% for line in lines %}
+    <tr><td>{{ line['product'] }}</td><td>{{ line['quantity'] }}</td><td>{{ line['price'] }}</td></tr>
+    {% endfor %}
+    <div>Total: {{total}}€</div>
+</div>
