@@ -391,8 +391,8 @@ Instructions to install and execute:
 
 * Console in root folder:
 
-    *$ ruby setup_data_base.rb (pending of create the rb file)
-    *$ rethinkdb    
+    *$ rethinkdb
+    *$ rethinkdb restore filename-dump.tar.gz
 
 * Console in server folder:
 
