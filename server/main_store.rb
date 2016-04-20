@@ -23,7 +23,7 @@ class MyController < Bull::Controller
     @mutex_store.synchronize do
       $r.table('item').get(id).update do |doc|
         {:quantity=>doc['quantity']+quantity, :price=>price, :unit=>unit}
-      end.em_run(@conn)
+      end.em_run(@conn){}
     end
   end
 

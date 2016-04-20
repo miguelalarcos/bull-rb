@@ -51,7 +51,7 @@ class Controller
     end
 
     def task(name, *args)
-        send 'task_' + name, *args
+        send 'task_' + name, -1, *args
     end
 
     def get_watch

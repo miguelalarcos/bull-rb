@@ -7,22 +7,25 @@ class Item < React::Component::Base
   param :is_store
 
   before_mount do
-    state.quantity! 1
-    state.price! nil
-    state.unit! ''
+    state.quantity! params.item['quantity']
+    state.price! params.item['price']
+    state.unit! params.item['unit']
   end
 
   def render
-    span(class: 'item') do
-      div{params.item['name']}
-      div{b{params.item['quantity']}}
-      IntegerInput(placeholder: 'quantity', on_change: lambda{|v| state.quantity! v}, value: state.quantity)
-      span{params.item['price'].to_s+'€, ' + params.item['unit']}
-      div do
-        FloatInput(placeholder: 'price', on_change: lambda{|v| state.price! v}, value: state.price)
-        StringInput(placeholder: 'unit', on_change: lambda{|v| state.unit! v}, value: state.unit)
-      end if params.is_store
-    end.on(:click){params.on_select.call params.item, sate.quantity, state.price, state.unit}
+    span do
+      div(class: 'item') do
+        div{params.item['name']}
+        div{b{params.item['quantity'].to_s}}
+        IntegerInput(placeholder: 'quantity', on_change: lambda{|v| state.quantity! v}, value: state.quantity)
+        div{params.item['price'].to_s+' €, ' + params.item['unit']}
+        div do
+          FloatInput(placeholder: 'price', on_change: lambda{|v| state.price! v}, value: state.price)
+          StringInput(placeholder: 'unit', on_change: lambda{|v| state.unit! v}, value: state.unit)
+        end if params.is_store
+        button{'guardar'}.on(:click){params.on_select.call params.item, state.quantity, state.price, state.unit}
+      end
+    end
   end
 end
 
@@ -57,13 +60,13 @@ class Sales < DisplayList
   def render
     div do
       state.docs.each do |item|
-        Item(is_store: false, item: item, on_select: lambda {|i, q| on_select i, q})
+        Item(is_store: false, item: item, on_select: lambda {|i, q, p, u| on_select i, q})
       end
       Lines()
     end
   end
 
-  def on_select item, quantity, price, unit
+  def on_select item, quantity
     $controller.task('sale', item['id'], quantity)
   end
 end
@@ -84,7 +87,7 @@ class Store < DisplayList
   def render
     div do
       state.docs.each do |item|
-        Item(is_store: true, item: item, on_select: lambda{|i, q| on_select i, q, price, unit})
+        Item(is_store: true, item: item, on_select: lambda{|i, q, price, unit| on_select i, q, price, unit})
       end
       StringInput(placeholder: 'name', on_change: lambda{|v| state.name! v}, value: state.name)
       FloatInput(placeholder: 'price', on_change: lambda{|v| state.price! v}, value: state.price)
