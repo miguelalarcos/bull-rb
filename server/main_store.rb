@@ -36,8 +36,8 @@ class MyController < Bull::Controller
         if doc['quantity'] >= quantity
           $r.table('item').get(id).update do |doc|
             {:quantity=>doc['quantity']-quantity}
-          end.em_run(@conn)
-          $r.table('line').insert(:item_id=>id, :item_name=>doc['name'], :quantity=>quantity).em_run(@conn)
+          end.em_run(@conn){}
+          $r.table('line').insert(:item_id=>id, :item_name=>doc['name'], :quantity=>quantity).em_run(@conn){}
         end
       end
     end
@@ -49,8 +49,8 @@ class MyController < Bull::Controller
       $r.table('line').get(id).em_run(@conn) do |line|
         $r.table('item').update do |item|
           {:quantity=>item['quantity']+line['quantity']}
-        end.em_run(@conn)
-        $r.table('line').get('id').delete.em_run(@conn)
+        end.em_run(@conn){}
+        $r.table('line').get(id).delete.em_run(@conn){}
       end
     end
   end

@@ -7,7 +7,7 @@ class Item < React::Component::Base
   param :is_store
 
   before_mount do
-    state.quantity! params.item['quantity']
+    state.quantity! 0
     state.price! params.item['price']
     state.unit! params.item['unit']
   end
@@ -23,7 +23,7 @@ class Item < React::Component::Base
           FloatInput(placeholder: 'price', on_change: lambda{|v| state.price! v}, value: state.price)
           StringInput(placeholder: 'unit', on_change: lambda{|v| state.unit! v}, value: state.unit)
         end if params.is_store
-        button{'guardar'}.on(:click){params.on_select.call params.item, state.quantity, state.price, state.unit}
+        button{'guardar'}.on(:click){params.on_select.call params.item, state.quantity, state.price, state.unit; state.quantity! 0}
       end
     end
   end
@@ -40,10 +40,10 @@ class Lines < DisplayList
       state.docs.each do |doc|
         tr do
           td{doc['name']}
-          td{doc['quantity']}
+          td{doc['quantity'].to_s}
           td{doc['unit']}
-          td{doc['price']}
-          td{doc['unit']*doc['price']}
+          #td{doc['price'].to_s}
+          #td{(doc['quantity']*doc['price']).to_s}
           td{button{'cancel'}.on(:click){$controller.task('cancel_line', doc['id'])}}
         end
       end
@@ -80,7 +80,7 @@ class Store < DisplayList
 
   def clear_form
     state.name! ''
-    state.price! 0
+    state.price! nil
     state.unit! ''
   end
 
@@ -93,7 +93,7 @@ class Store < DisplayList
       FloatInput(placeholder: 'price', on_change: lambda{|v| state.price! v}, value: state.price)
       StringInput(placeholder: 'unit', on_change: lambda{|v| state.unit! v}, value: state.unit)
       button{'create item'}.on(:click)do
-        $controller.insert('item', {name: state.name, price: state.price, unit: state.unit})
+        $controller.insert('item', {name: state.name, price: state.price, unit: state.unit, quantity: 0})
         clear_form
       end
     end
@@ -108,7 +108,7 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
-      #Sales()
+      Sales()
       hr
       Store()
     end
