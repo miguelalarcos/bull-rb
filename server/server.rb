@@ -17,7 +17,7 @@ module Bull
 
         def notify(msg)
             msg = JSON.parse msg
-            print '>', msg, "\n"
+            print '>>', msg, "\n"
             command = msg['command']
             kwargs = symbolize_keys(msg['kwargs'])
             resolve_times kwargs, msg['times']

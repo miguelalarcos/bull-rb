@@ -142,17 +142,22 @@ class Controller
             #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     controller.connection.value = 'connected'
+                    if !controller.get_watch.empty?
+                        controller.get_watch.each do |id, value|
+                            controller.send 'watch_' + value[:name], id, *value[:args]
+                        end
+                    end
                     if !controller.app_rendered # if !app.nil?
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
                           controller.app_rendered = true #
                         end
                     end
-                    if !controller.get_watch.empty?
-                        controller.get_watch.each do |id, value|
-                            controller.send 'watch_' + value[:name], id, *value[:args]
-                        end
-                    end
+                    #if !controller.get_watch.empty?
+                    #    controller.get_watch.each do |id, value|
+                    #        controller.send 'watch_' + value[:name], id, *value[:args]
+                    #    end
+                    #end
                 end
                 on :message do |e|
                     begin

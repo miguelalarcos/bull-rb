@@ -1,6 +1,6 @@
 require 'eventmachine'
 require 'em-websocket'
-require './main'
+require './main_store'
 require 'rethinkdb'
 
 $reports = {}

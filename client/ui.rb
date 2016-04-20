@@ -144,6 +144,7 @@ class ClientSearch < React::Component::Base
         state.tmp_code! nil
         state.surname! nil
         state.clients! []
+        state.show! false
     end
 
     def render

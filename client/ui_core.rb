@@ -68,8 +68,10 @@ class DisplayList < React::Component::Base
   end
 
   def watch_(name, *args)
+    puts 'dentro de watch_'
     reactives = args.pop
     @rvs = reactive(*reactives) do
+      puts 'dentro de reactive'
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
       @predicate_id = $controller.watch(name, *args) {|data| consume data}
@@ -141,7 +143,7 @@ module AbstractStringInput
   def render
     div do
       input(placeholder: params.placeholder, class: valid_class, type: type_attr, value: params.value){}.on(:change) do |event|
-        params.change_attr event.target.value
+        params.on_change event.target.value
       end.on(:keyDown) do |event|
         if event.key_code == 13
           params.on_enter.call event.target.value
@@ -154,7 +156,7 @@ end
 class StringInput < React::Component::Base
   include AbstractStringInput
 
-  param :change_attr, type: Proc
+  param :on_change, type: Proc
   param :value, type: String
   param :placeholder
   param :on_enter
@@ -209,7 +211,7 @@ end
 class IntegerInput < React::Component::Base
   include AbstractNumeric
 
-  param :change_attr, type: Proc
+  param :on_change, type: Proc
   param :value, type: Integer
   param :is_valid
   param :on_enter
@@ -217,9 +219,9 @@ class IntegerInput < React::Component::Base
 
   def update_state event
     begin
-      params.change_attr Integer(event.target.value)
+      params.on_change Integer(event.target.value)
     rescue
-      params.change_attr event.target.value
+      params.on_change event.target.value
     end
   end
 end
@@ -227,7 +229,7 @@ end
 class FloatInput < React::Component::Base
   include AbstractNumeric
 
-  param :change_attr, type: Proc
+  param :on_change, type: Proc
   param :value, type: Float
   param :is_valid
   param :on_enter
@@ -237,12 +239,12 @@ class FloatInput < React::Component::Base
     val = event.target.value
     begin
       if val == '-0'
-        params.change_attr val
+        params.on_changer val
       else
-        params.change_attr Float(val)
+        params.on_change Float(val)
       end
     rescue
-      params.change_attr val
+      params.on_change val
     end
   end
 end
