@@ -13,7 +13,7 @@ class Item < React::Component::Base
   end
 
   def render
-    span do
+    span(style: {float: 'left'}) do
       div(class: 'item') do
         div{params.item['name']}
         div{b{params.item['quantity'].to_s}}
@@ -36,15 +36,24 @@ class Lines < DisplayList
   end
 
   def render
-    div do
-      state.docs.each do |doc|
+    div(style: {clear: 'both'}) do
+      table do
         tr do
-          td{doc['name']}
-          td{doc['quantity'].to_s}
-          td{doc['unit']}
-          #td{doc['price'].to_s}
-          #td{(doc['quantity']*doc['price']).to_s}
-          td{button{'cancel'}.on(:click){$controller.task('cancel_line', doc['id'])}}
+          th{'Product'}
+          th{'Quantity'}
+          th{'Unit'}
+          th{'Price'}
+          th{'Total'}
+        end
+        state.docs.each do |doc|
+          tr do
+            td{doc['item_name']}
+            td{doc['quantity'].to_s}
+            td{doc['unit']}
+            td{doc['price'].to_s}
+            td{(doc['quantity']*doc['price']).to_s}
+            td{button{'cancel'}.on(:click){$controller.task('cancel_line', doc['id'])}}
+          end
         end
       end
     end
@@ -60,14 +69,14 @@ class Sales < DisplayList
   def render
     div do
       state.docs.each do |item|
-        Item(is_store: false, item: item, on_select: lambda {|i, q, p, u| on_select i, q})
+        Item(is_store: false, item: item, on_select: lambda {|i, q, p, u| on_select i, q, p, u})
       end
       Lines()
     end
   end
 
-  def on_select item, quantity
-    $controller.task('sale', item['id'], quantity)
+  def on_select item, quantity, price, unit
+    $controller.task('sale', item['id'], quantity, price, unit)
   end
 end
 

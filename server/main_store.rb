@@ -27,9 +27,11 @@ class MyController < Bull::Controller
     end
   end
 
-  def task_sale id, quantity
+  def task_sale id, quantity, price, unit
     check id, String
     check quantity, Integer
+    check price, Float
+    check unit, String
 
     @mutex_store.synchronize do
       $r.table('item').get(id).em_run(@conn) do |doc|
@@ -37,7 +39,8 @@ class MyController < Bull::Controller
           $r.table('item').get(id).update do |doc|
             {:quantity=>doc['quantity']-quantity}
           end.em_run(@conn){}
-          $r.table('line').insert(:item_id=>id, :item_name=>doc['name'], :quantity=>quantity).em_run(@conn){}
+          $r.table('line').insert(:item_id=>id, :item_name=>doc['name'],
+                                  :quantity=>quantity, :price=>price, :unit=>unit).em_run(@conn){}
         end
       end
     end
