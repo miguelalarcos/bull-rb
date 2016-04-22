@@ -362,17 +362,20 @@ end
 
 module AbstractPopover
   def render
-    klass = 'inactive'
+    klass = 'inactive animated fadeOut'
     if params.show == 'visible'
-      klass = 'active'
-      h = $document[params.target_id].height
-      x = $document[params.target_id].position.x
-      y = $document[params.target_id].position.y
+      klass = 'active animated fadeIn'
+
+      h = $document[params.target].height
+      x = $document[params.target].position.x
+      y = $document[params.target].position.y
+
       $document[params.id].offset.x = x
       $document[params.id].offset.y = y+h
+      $window.after(5){params.close.call}
     end
     div(id: params.id) do
-      div(class: 'popup ' + klass) do
+      div(class: 'popover ' + klass) do
         div(class: 'arrow-up')
         div(class: 'box') do
           div(class: 'close'){i(class: 'fa fa-times')}.on(:click){params.close.call}
@@ -390,7 +393,7 @@ class Popover < React::Component::Base
   param :close
   param :id
   param :target_id
-  include AbstractPopup
+  include AbstractPopover
 
   def content
     div do
@@ -400,6 +403,6 @@ class Popover < React::Component::Base
   end
 end
 
-Popup(id:'popup', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
+Popover(id:'popover', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
 #where show_popup can be 'visible' or 'hidden'
 =end

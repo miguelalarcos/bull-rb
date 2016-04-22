@@ -1,6 +1,21 @@
 require 'ui_core'
 require 'reactive-ruby'
 
+class Popover < React::Component::Base
+  param :show
+  param :close
+  param :id
+  param :target
+  include AbstractPopover
+
+  def content
+    div do
+      b{'hello'}
+      div{' there'}
+    end
+  end
+end
+
 class Item < React::Component::Base
   param :item
   param :on_select
@@ -10,12 +25,16 @@ class Item < React::Component::Base
     state.quantity! 0
     state.price! params.item['price']
     state.unit! params.item['unit']
+
+    state.show_popover! 'hidden'
+    state.target! nil
   end
 
   def render
     span(style: {float: 'left'}) do
+      Popover(id:'popover'+params.item['id'], target: state.target, show: state.show_popover, close: lambda{state.show_popover! 'hidden'})
       div(class: 'item') do
-        div{params.item['name']}
+        div(id:'target'+params.item['id']){params.item['name']}.on(:click) {|event| state.target! 'target'+params.item['id']; state.show_popover! 'visible'}
         div{b{params.item['quantity'].to_s}}
         IntegerInput(placeholder: 'quantity', on_change: lambda{|v| state.quantity! v}, value: state.quantity)
         div{params.item['price'].to_s+' €, ' + params.item['unit']}
@@ -114,12 +133,18 @@ class Store < DisplayList
 end
 
 class App < React::Component::Base
+  before_mount do
+    state.show_popup! 'hidden'
+    state.target! nil
+  end
+
   def render
     div do
       Notification(level: 0)
       Sales()
       hr
       Store()
+      #Popover(id:'popover', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
     end
   end
 end
