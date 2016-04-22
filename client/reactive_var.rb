@@ -1,17 +1,33 @@
+require 'set'
+
 class RVar
 
     attr_reader :value
     @@ticket = 0
+    @@group = nil
 
     def initialize value
         @value = value
         @blocks = {}
     end
 
+    def self.with_group
+        @@group = Set.new
+        yield
+        @@group.each do |blk|
+            blk.call
+        end
+        @@group = nil
+    end
+
     def value= value
         if value != @value
             @value = value
-            @blocks.each_value {|b| b.call}
+            if @@group.nil?
+                @blocks.each_value {|b| b.call}
+            else
+                @blocks.each_value {|b| @@group.add b}
+            end
         end
     end
 

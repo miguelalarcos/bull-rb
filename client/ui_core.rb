@@ -123,11 +123,13 @@ class DisplayDoc < React::Component::Base
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
       @predicate_id = $controller.watch(@@table, value) do |data|
-        if data.nil?
-          clear
-        else
-          data['new_val'].each {|k, v| state.__send__(k+'!', v)}
-        end
+        clear
+        data['new_val'].each {|k, v| state.__send__(k+'!', v)} if !data.nil?
+        #if data.nil?
+        #  clear
+        #else
+        #  data['new_val'].each {|k, v| state.__send__(k+'!', v)}
+        #end
       end
     end
   end
@@ -170,7 +172,7 @@ end
 class PasswordInput < React::Component::Base
   include AbstractStringInput
 
-  param :change_attr, type: Proc
+  param :on_change, type: Proc
   param :value, type: String
   param :placeholder
   param :on_enter
@@ -193,7 +195,7 @@ module AbstractNumeric
       input(placeholder: params.placeholder, class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
         #begin
           if event.target.value == ''
-            params.change_attr nil
+            params.on_change nil
           else
             update_state event
           end
@@ -258,7 +260,7 @@ def selected val1, val2
 end
 
 class SelectInput < React::Component::Base
-  param :change_attr
+  param :on_change
   param :value
   param :options
 
@@ -267,7 +269,7 @@ class SelectInput < React::Component::Base
       select(class: 'select') do
         option{''}
         params.options.each {|val| option(selected(params.value, val)){val}}
-      end.on(:change) {|event| params.change_attr.call event.target.value}
+      end.on(:change) {|event| params.on_change.call event.target.value}
     end
   end
 end
@@ -357,3 +359,47 @@ module Modal
     end
   end
 end
+
+module AbstractPopover
+  def render
+    klass = 'inactive'
+    if params.show == 'visible'
+      klass = 'active'
+      h = $document[params.target_id].height
+      x = $document[params.target_id].position.x
+      y = $document[params.target_id].position.y
+      $document[params.id].offset.x = x
+      $document[params.id].offset.y = y+h
+    end
+    div(id: params.id) do
+      div(class: 'popup ' + klass) do
+        div(class: 'arrow-up')
+        div(class: 'box') do
+          div(class: 'close'){i(class: 'fa fa-times')}.on(:click){params.close.call}
+          div(class: 'content'){content}
+        end
+      end
+    end
+  end
+end
+
+#example
+=begin
+class Popover < React::Component::Base
+  param :show
+  param :close
+  param :id
+  param :target_id
+  include AbstractPopup
+
+  def content
+    div do
+      b{'hello'}
+      div{' there'}
+    end
+  end
+end
+
+Popup(id:'popup', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
+#where show_popup can be 'visible' or 'hidden'
+=end
