@@ -68,10 +68,8 @@ class DisplayList < React::Component::Base
   end
 
   def watch_(name, *args)
-    puts 'dentro de watch_'
     reactives = args.pop
     @rvs = reactive(*reactives) do
-      puts 'dentro de reactive'
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
       @predicate_id = $controller.watch(name, *args) {|data| consume data}
@@ -282,7 +280,11 @@ class Form < React::Component::Base
   end
 
   before_unmount do
-    @rvs.each_pair {|k, v| v.remove k} if @rvs
+    @rvs.each_pair {|k, v| v.remove k; v.remove_form self} if @rvs
+  end
+
+  def dirty?
+    !@dity.empty?
   end
 
   def change_attr(attr)
@@ -337,11 +339,11 @@ class Form < React::Component::Base
   end
 
   def get selected
+    selected.add_form self
     @rvs = reactive(selected) do
       @dirty.clear
       clear
       $controller.rpc('get_' + @@table, selected.value).then do|response|
-        #@fields_ref.each {|k| @refs[k] = true }
         response.each do |k, v|
           state.__send__(k+'!', v)
         end

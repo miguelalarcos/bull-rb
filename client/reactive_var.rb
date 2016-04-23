@@ -5,28 +5,47 @@ class RVar
     attr_reader :value
     @@ticket = 0
     @@group = nil
+    @@backup = {}
 
     def initialize value
         @value = value
         @blocks = {}
+        @forms = Set.new
     end
 
-    def self.with_group
+    def self.alert_if_dirty
         @@group = Set.new
-        yield
-        @@group.each do |blk|
-            blk.call
+        @@backup = []
+        begin
+            yield
+        rescue
+            @@backup.each do |v|
+                v.call
+            end
+            raise
+        else
+            @@group.each do |blk|
+                blk.call
+            end
+        ensure
+            @@group = nil
+            @@backup = []
         end
-        @@group = nil
+    end
+
+    def self.rgrouping
+        self.alert_if_dirty
     end
 
     def value= value
+        @forms.each { |form| raise Exception if form.dirty?}
+        old_value = @value
         if value != @value
             @value = value
             if @@group.nil?
                 @blocks.each_value {|b| b.call}
             else
-                @blocks.each_value {|b| @@group.add b}
+                @blocks.each_value {|b| @@group.add b; @@backup << lambda{@value = old_val}}
             end
         end
     end
@@ -40,6 +59,14 @@ class RVar
 
     def remove id
         @blocks.delete id
+    end
+
+    def add_form form
+        @forms.add form
+    end
+
+    def remove_form form
+        @forms.delete form
     end
 end
 
