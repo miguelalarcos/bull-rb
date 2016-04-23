@@ -284,7 +284,7 @@ class Form < React::Component::Base
   end
 
   def dirty?
-    !@dity.empty?
+    !@dirty.empty?
   end
 
   def change_attr(attr)
@@ -302,7 +302,7 @@ class Form < React::Component::Base
     end
     @@constants.each do |cte|
       get_nested!(ret, cte) {|r| params.__send__(r)}
-    end
+    end if @@constants
     ret
   end
 
@@ -317,6 +317,7 @@ class Form < React::Component::Base
   def discard
     clear
     @dirty.clear
+    @selected.value = nil
   end
 
   def insert
@@ -344,6 +345,7 @@ class Form < React::Component::Base
   end
 
   def get selected
+    @selected = selected
     selected.add_form self
     @rvs = reactive(selected) do
       @dirty.clear

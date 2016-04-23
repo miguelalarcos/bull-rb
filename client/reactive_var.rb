@@ -16,18 +16,25 @@ class RVar
     def self.alert_if_dirty
         @@group = Set.new
         @@backup = []
+        raised = false
         begin
             yield
         rescue
             @@backup.each do |v|
                 v.call
             end
+            raised = true
             raise
-        else
-            @@group.each do |blk|
-                blk.call
-            end
+        #else
+        #    @@group.each do |blk|
+        #        blk.call
+        #    end
         ensure
+            if !raised
+                @@group.each do |blk|
+                    blk.call
+                end
+            end
             @@group = nil
             @@backup = []
         end

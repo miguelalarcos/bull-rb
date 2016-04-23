@@ -15,9 +15,11 @@ class MyForm < Form
   end
 
   def render
-    StringInput(value: state.a, on_change: change_attr('a'))
-    button{'save'}.on(:click){save}
-    button('discard').on(:click){discard}
+    div do
+      StringInput(value: state.a, on_change: change_attr('a'))
+      button{'save'}.on(:click){save}
+      button{'discard'}.on(:click){discard}
+    end
   end
 end
 
@@ -30,14 +32,16 @@ class MyList < DisplayList
   end
 
   def render
-    state.docs.each do |doc|
-      div(key: doc['id']){doc['a']}.on(:click) do
-        begin
-          RVar.alert_if_dirty do
-            params.selected.value = doc['id']
+    div do
+      state.docs.each do |doc|
+        div(key: doc['id']){doc['a']}.on(:click) do
+          begin
+            RVar.alert_if_dirty do
+              params.selected.value = doc['id']
+            end
+          rescue
+            params.show_modal.call
           end
-        rescue
-          params.show_modal.call
         end
       end
     end
@@ -51,7 +55,7 @@ class MyModal < React::Component::Base
   def content
     div do
       h2{'There are data not saved. Save or discard the data.'}
-      button{'acept'}.on(:click) {params.ok.call}
+      button{'accept'}.on(:click) {params.ok.call}
     end
   end
 end
@@ -64,9 +68,11 @@ class App < React::Component::Base
   end
 
   def render
-    Notification(level: 0)
-    MyForm(selected: @selected)
-    MyList(selected: @selected, show_modal: lambda{state.modal! true})
-    MyModal(ok: lambda {state.modal! false}) if state.modal
+    div do
+      Notification(level: 0)
+      MyForm(selected: @selected)
+      MyList(selected: @selected, show_modal: lambda{state.modal! true})
+      MyModal(ok: lambda {state.modal! false}) if state.modal
+    end
   end
 end
