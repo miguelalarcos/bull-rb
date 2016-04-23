@@ -122,9 +122,9 @@ class OrderForm < Form
             ClientSearch(on_select: change_attr('client_code'))
             hr
             div('Date:')
-            DateTimeInput(change_attr: change_attr('date'), format: '%d-%m-%Y %H:%M')
+            DateTimeInput(on_change: change_attr('date'), format: '%d-%m-%Y %H:%M')
             div{'Description:'}
-            StringInput(value: state.description, change_attr: change_attr('description'))
+            StringInput(value: state.description, on_change: change_attr('description'))
             button{'save'}.on(:click) do
                 save
                 params.order_exists.call true

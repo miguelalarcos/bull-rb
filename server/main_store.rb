@@ -74,4 +74,10 @@ class MyController < Bull::Controller
     true
   end
 
+  def rpc_get_location loc
+    ret = [{description: 'Almería'}, {description: 'Alicante'}, {description: 'Alcantarilla'}]
+    ret = ret.select{|v| v[:description] =~ /#{loc}/i}
+    yield ret
+  end
+
 end

@@ -1,6 +1,6 @@
-.xdatetime {
+.date-time-box {
     position: relative;
-    display: inline;
+
 }
 
 
@@ -43,6 +43,13 @@
 
 .xdatetime-day:hover {
     background-color: #e8e9ed;
+}
+
+.minus-minute, .plus-minute, .minus-hour, .plus-hour,
+.minus-month, .plus-month, .minus-year, .plus-year
+{
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .minus-minute:hover, .plus-minute:hover, .minus-hour:hover, .plus-hour:hover,

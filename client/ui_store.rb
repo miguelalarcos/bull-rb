@@ -1,5 +1,7 @@
 require 'ui_core'
 require 'reactive-ruby'
+require 'bull-autocomplete'
+require 'bull-date-time-picker'
 
 class Popover < React::Component::Base
   param :show
@@ -136,6 +138,8 @@ class App < React::Component::Base
   before_mount do
     state.show_popup! 'hidden'
     state.target! nil
+    state.location! ''
+    state.date! nil
   end
 
   def render
@@ -144,7 +148,11 @@ class App < React::Component::Base
       Sales()
       hr
       Store()
-      #Popover(id:'popover', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
+      hr(style: {clear: 'both'})
+      span{'Location: ' + state.location}
+      AutocompleteInput(ref_: 'location', name: 'description', value: state.location, on_change: lambda{|v| state.location! v})
+      span{'Date: ' + state.date.to_s}
+      DateTimeInput(time: true, value: state.date, on_change: lambda{|v| state.date! v}, format: '%d-%m-%Y %H:%M')
     end
   end
 end
