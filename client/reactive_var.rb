@@ -45,7 +45,7 @@ class RVar
             if @@group.nil?
                 @blocks.each_value {|b| b.call}
             else
-                @blocks.each_value {|b| @@group.add b; @@backup << lambda{@value = old_val}}
+                @blocks.each_value {|b| @@group.add b; @@backup << lambda{@value = old_value}}
             end
         end
     end

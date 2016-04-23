@@ -314,6 +314,11 @@ class Form < React::Component::Base
     end
   end
 
+  def discard
+    clear
+    @dirty.clear
+  end
+
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
       if response.nil?
