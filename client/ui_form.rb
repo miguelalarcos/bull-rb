@@ -37,7 +37,7 @@ class MyList < DisplayList
             params.selected.value = doc['id']
           end
         rescue
-          params.show_modal.call true
+          params.show_modal.call
         end
       end
     end

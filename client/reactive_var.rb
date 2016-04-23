@@ -38,9 +38,9 @@ class RVar
     end
 
     def value= value
-        @forms.each { |form| raise Exception if form.dirty?}
-        old_value = @value
         if value != @value
+            @forms.each { |form| raise Exception if form.dirty?}
+            old_value = @value
             @value = value
             if @@group.nil?
                 @blocks.each_value {|b| b.call}
