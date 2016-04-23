@@ -5,7 +5,7 @@ class RVar
     attr_reader :value
     @@ticket = 0
     @@group = nil
-    @@backup = {}
+    @@backup = []
 
     def initialize value
         @value = value
