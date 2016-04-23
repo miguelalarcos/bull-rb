@@ -60,18 +60,15 @@ module TextCaptcha
     print md5
     print @challenge_response
     if !@challenge_response.any? {|v| md5 == v}
-      print 'primer yield false'
       yield false
     else
       rpc_user_exist?(user) do |flag|
         if flag
-          print 'segundo yield false'
           yield false
         else
           password = BCrypt::Password.create(password)
           $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
             @user_id = user
-            print 'yield true'
             yield true
           end
         end

@@ -298,8 +298,11 @@ class Login < React::Component::Base
             StringInput(change_attr: lambda {|v| state.user_name! v}, value: state.user_name)
             PasswordInput(change_attr: lambda {|v| state.password! v}, value: state.password)
             button(type: :button) { 'login' }.on(:click) do
-                $controller.rpc('login', state.user_name, state.password).then do |response|
-                    params.set_user.call response
+                $controller.rpc('login', state.user_name, state.password).then do |roles|
+                    if roles
+                        params.set_user.call true
+                        $roles = roles
+                    end
                 end
             end
         end

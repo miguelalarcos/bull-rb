@@ -143,7 +143,7 @@ end
 module AbstractStringInput
   include ValidInput
   def render
-    div do
+    span do
       input(placeholder: params.placeholder, class: valid_class, type: type_attr, value: params.value){}.on(:change) do |event|
         params.on_change event.target.value
       end.on(:keyDown) do |event|
@@ -191,7 +191,7 @@ module AbstractNumeric
     if value.nil?
       value = ''
     end
-    div do
+    span do
       input(placeholder: params.placeholder, class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
         #begin
           if event.target.value == ''
@@ -265,7 +265,7 @@ class SelectInput < React::Component::Base
   param :options
 
   def render
-    div do
+    span do
       select(class: 'select') do
         option{''}
         params.options.each {|val| option(selected(params.value, val)){val}}

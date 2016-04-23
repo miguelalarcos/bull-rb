@@ -48,7 +48,10 @@ module Bull
                     if count == 0
                         yield Hash.new
                     else
-                        $r.table(table).filter(filter).em_run(@conn) {|doc| yield doc}
+                        $r.table(table).filter(filter).em_run(@conn) do |doc|
+                            doc['owner'] = user_is_owner? doc
+                            yield doc
+                        end
                     end
                 end
             end
@@ -63,7 +66,10 @@ module Bull
 
             def docs_with_count predicate
                 predicate.count().em_run(@conn) do |count|
-                    predicate.em_run(@conn) {|doc| yield count, doc}
+                    predicate.em_run(@conn) do |doc|
+                        doc['owner'] = user_is_owner? doc
+                        yield count, doc
+                    end
                 end
             end
 
@@ -87,7 +93,7 @@ module Bull
                 pass = BCrypt::Password.new(pass)
                 if pass == password
                     @user_id = user
-                    yield true
+                    yield response['roles'] #true
                 else
                     yield false
                 end
@@ -176,7 +182,8 @@ module Bull
                 w = w.changes({include_initial: true})
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
-                        puts doc
+                        #puts doc
+                        doc['owner'] = user_is_owner? doc
                         ret = {}
                         ret[:response] = 'watch'
                         ret[:id] = id
@@ -209,7 +216,10 @@ module Bull
             end
 
             def get table, id
-                $r.table(table).get(id).em_run(@conn) {|doc| yield doc}
+                $r.table(table).get(id).em_run(@conn) do |doc|
+                    doc['owner'] = user_is_owner? doc
+                    yield doc
+                end
             end
 
             def times ret
