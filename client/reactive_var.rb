@@ -50,12 +50,13 @@ class RVar
 
     def value= value
         if value != @value
-            @forms.each { |form| raise Exception if form.dirty?}
-            old_value = @value
-            @value = value
             if @@group.nil?
+                @value = value
                 @blocks.each_value {|b| b.call}
             else
+                @forms.each { |form| raise Exception.new('dirty form') if form.dirty?}
+                old_value = @value
+                @value = value
                 @blocks.each_value {|b| @@group.add b; @@backup << lambda{@value = old_value}}
             end
         end

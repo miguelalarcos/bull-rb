@@ -15,7 +15,7 @@ module ClassesInput
   end
 
   def dirty_class
-    if params.dirty && (params.is_valid || params.is_valid.nil?)
+    if params.dirty #&& (params.is_valid || params.is_valid.nil?)
       'input-dirty'
     else
       ''
@@ -353,6 +353,7 @@ class Form < React::Component::Base
   def discard
     @selected.value = nil
     clear
+    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
     @dirty.clear
     state.discard! false
   end

@@ -16,11 +16,7 @@ class MyController < BullServerController
 
   def rpc_get_my_table id
     check id, String
-    #if id.nil?
-    #  yield Hash.new
-    #else
     get('my_table', id) {|doc| yield doc}
-    #end
   end
 
   def watch_my_table
