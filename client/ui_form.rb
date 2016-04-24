@@ -17,7 +17,7 @@ class MyForm < Form
 
   def render
     div do
-      StringInput(value: state.a, on_change: change_attr('a'))
+      StringInput(value: state.a, on_change: change_attr('a'), dirty: state.dirty_a)
       button{'save'}.on(:click){save}
       button{'discard'}.on(:click) {state.discard! true}
       button{'really discard!'}.on(:click) {discard} if state.discard

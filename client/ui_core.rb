@@ -4,13 +4,21 @@ require_relative 'reactive_var'
 require_relative 'lib/utils'
 require_relative 'bcaptcha'
 
-module ValidInput
+module ClassesInput
   def valid_class
     return '' if params.is_valid.nil?
     if params.is_valid
       'input-successful'
     else
       'input-incorrect'
+    end
+  end
+
+  def dirty_class
+    if params.dirty
+      'input-dirty'
+    else
+      ''
     end
   end
 end
@@ -134,10 +142,11 @@ class DisplayDoc < React::Component::Base
 end
 
 module AbstractStringInput
-  include ValidInput
+  include ClassesInput
   def render
     span do
-      input(placeholder: params.placeholder, class: valid_class, type: type_attr, value: params.value){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class,
+            type: type_attr, value: params.value){}.on(:change) do |event|
         params.on_change event.target.value
       end.on(:keyDown) do |event|
         if event.key_code == 13
@@ -156,6 +165,7 @@ class StringInput < React::Component::Base
   param :placeholder
   param :on_enter
   param :is_valid
+  param :dirty
 
   def type_attr
     :text
@@ -170,6 +180,7 @@ class PasswordInput < React::Component::Base
   param :placeholder
   param :on_enter
   param :is_valid
+  param :dirty
 
   def type_attr
     :password
@@ -177,7 +188,7 @@ class PasswordInput < React::Component::Base
 end
 
 module AbstractNumeric
-  include ValidInput
+  include ClassesInput
 
   def render
     value = params.value
@@ -185,7 +196,7 @@ module AbstractNumeric
       value = ''
     end
     span do
-      input(placeholder: params.placeholder, class: valid_class, type: :text, value: value.to_s){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: value.to_s){}.on(:change) do |event|
         #begin
           if event.target.value == ''
             params.on_change nil
@@ -211,6 +222,7 @@ class IntegerInput < React::Component::Base
   param :is_valid
   param :on_enter
   param :placeholder
+  param :dirty
 
   def update_state event
     begin
@@ -229,6 +241,7 @@ class FloatInput < React::Component::Base
   param :is_valid
   param :on_enter
   param :placeholder
+  param :dirty
 
   def update_state event
     val = event.target.value
@@ -256,10 +269,13 @@ class SelectInput < React::Component::Base
   param :on_change
   param :value
   param :options
+  param :dirty
+
+  include ClassesInput
 
   def render
     span do
-      select(class: 'select') do
+      select(class: 'select ' + dirty_class) do
         option{''}
         params.options.each {|val| option(selected(params.value, val)){val}}
       end.on(:change) {|event| params.on_change.call event.target.value}
@@ -288,6 +304,7 @@ class Form < React::Component::Base
       @dirty.add attr
       doc = state.__send__(attr.split('.')[0])
       set_nested_state(attr, value, doc){|r, v| state.__send__(r+'!', v)}
+      state.__send__('dirty_' + attr+'!', true)
     end
   end
 
@@ -327,6 +344,7 @@ class Form < React::Component::Base
         $notifications.add ['ok', 'form: data inserted', 1] if $notifications
       end
     end
+    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
     @dirty.clear
   end
 
@@ -338,14 +356,15 @@ class Form < React::Component::Base
         $notifications.add ['ok', 'form: data updated', 1] if $notifications
       end
     end
+    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
     @dirty.clear
-    #ret
   end
 
   def get selected
     @selected = selected
     selected.add_form self
     @rvs = reactive(selected) do
+      @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
       @dirty.clear
       clear
       $controller.rpc('get_' + @@table, selected.value).then do|response|
