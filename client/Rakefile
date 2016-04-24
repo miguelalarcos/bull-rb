@@ -13,9 +13,11 @@ task :development do
   builder = Opal::Builder.new
   #builder = Opal::Builder.new(:stubs => ['opal', 'reactive-ruby'])
   build_js = builder.build("main").to_s
-  source_map = builder.source_map
-  build_js << '//# sourceMappingURL=main.js.map'
-  File.write('main.js.map', source_map)
+
+  #source_map = builder.source_map
+  #build_js << '//# sourceMappingURL=main.js.map'
+  #File.write('main.js.map', source_map)
+
   File.write('build.js', build_js)
   #File.binwrite "build.js", Opal::Builder.build("main").to_s
 end

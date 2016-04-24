@@ -122,7 +122,7 @@ class OrderForm < Form
             StringInput(value: state.description, on_change: change_attr('description'), dirty: state.dirty_description)
             button{'save'}.on(:click) do
                 save
-            end if state.valid
+            end if state.valid && state.dirty
         end
     end
 end
