@@ -119,7 +119,7 @@ class OrderForm < Form
             div('Date:')
             DateTimeInput(on_change: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date)
             div{'Description:'}
-            StringInput(value: state.description, on_change: change_attr('description'))
+            StringInput(value: state.description, on_change: change_attr('description'), dirty: state.dirty_description)
             button{'save'}.on(:click) do
                 save
             end if state.valid
@@ -273,7 +273,7 @@ Client side:
 * reactive_var.rb: here you've got the implementation for reactive vars. Please note that this reactive var does not work
   with the render method of the react.rb components. This works with the provided reactive function.
 * ui.rb: here you've got all the React components of the client application.
-* ui_core.rb: useful ui components like Form, PasswordInput, ...
+* ui_core.rb: useful ui components like DisplayDoc, DisplayList, Form, StringInput, PasswordInput, MultiLineInput, IntegerInput, FloatInput and SelectInput.
 * bcaptcha.rb: create user ui with textcaptcha or netcaptcha
 
 Server side:

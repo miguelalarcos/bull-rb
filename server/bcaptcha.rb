@@ -45,7 +45,7 @@ end
 module TextCaptcha
 
   def rpc_text_challenge
-    http = EventMachine::HttpRequest.new('http://api.textcaptcha.com/miguel.alarcos@gmail.com.json').get
+    http = EventMachine::HttpRequest.new('http://api.textcaptcha.com/miguel@mail.com.json').get
 
     http.callback do
       response = JSON.parse http.response
