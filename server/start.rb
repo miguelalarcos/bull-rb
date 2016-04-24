@@ -1,6 +1,6 @@
 require 'eventmachine'
 require 'em-websocket'
-require './main_store'
+require './main_form'
 require 'rethinkdb'
 require 'liquid'
 

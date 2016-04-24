@@ -15,7 +15,7 @@ module ClassesInput
   end
 
   def dirty_class
-    if params.dirty
+    if params.dirty && (params.is_valid || params.is_valid.nil?)
       'input-dirty'
     else
       ''
