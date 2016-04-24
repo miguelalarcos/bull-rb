@@ -187,6 +187,28 @@ class PasswordInput < React::Component::Base
   end
 end
 
+class MultiLineInput < React::Component::Base
+  param :on_change, type: Proc
+  param :on_enter
+  param :value
+  param :placeholder
+  param :is_valid
+  param :dirty
+
+  include ClassesInput
+
+  def render
+    textarea(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class,
+             value: params.value){}.on(:change) do |event|
+      params.on_change event.target.value
+    end.on(:keyDown) do |event|
+      if event.key_code == 13
+        params.on_enter.call event.target.value
+      end
+    end
+  end
+end
+
 module AbstractNumeric
   include ClassesInput
 

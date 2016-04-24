@@ -5,7 +5,6 @@ require 'reactive_var'
 class MyForm < Form
   @@table = 'my_table'
   param :selected
-  param :show_modal
 
   before_mount do
     get params.selected
@@ -13,14 +12,19 @@ class MyForm < Form
 
   def clear
     state.a! ''
+    state.m! ''
   end
 
   def render
     div do
       StringInput(value: state.a, on_change: change_attr('a'), dirty: state.dirty_a)
-      button{'save'}.on(:click){save}
-      button{'discard'}.on(:click) {state.discard! true}
-      button{'really discard!'}.on(:click) {discard} if state.discard
+      div
+      MultiLineInput(value: state.m, on_change: change_attr('m'), dirty: state.dirty_m)
+      div do
+        button{'save'}.on(:click){save}
+        button{'discard'}.on(:click) {state.discard! true}
+        button{'really discard!'}.on(:click) {discard} if state.discard
+      end
     end
   end
 end
@@ -72,7 +76,7 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
-      MyForm(selected: @selected, show_modal: lambda{state.modal! true})
+      MyForm(selected: @selected)
       MyList(selected: @selected, show_modal: lambda{state.modal! true})
       MyModal(ok: lambda {state.modal! false}) if state.modal
     end
