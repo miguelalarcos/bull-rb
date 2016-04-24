@@ -272,6 +272,7 @@ class Form < React::Component::Base
   before_mount do
     @dirty = Set.new
     @refs = {}
+    state.discard! false
   end
 
   before_unmount do
@@ -307,14 +308,14 @@ class Form < React::Component::Base
     else
       insert
     end
+    state.discard! false
   end
 
   def discard
-    RVar.raise_if_dirty do
-      @selected.value = nil
-      clear
-      @dirty.clear
-    end
+    @selected.value = nil
+    clear
+    @dirty.clear
+    state.discard! false
   end
 
   def insert

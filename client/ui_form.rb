@@ -19,13 +19,8 @@ class MyForm < Form
     div do
       StringInput(value: state.a, on_change: change_attr('a'))
       button{'save'}.on(:click){save}
-      button{'discard'}.on(:click) do
-        begin
-          discard
-        rescue
-          params.show_modal.call
-        end
-      end
+      button{'discard'}.on(:click) {state.discard! true}
+      button{'really discard!'}.on(:click) {discard} if state.discard
     end
   end
 end
