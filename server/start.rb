@@ -2,6 +2,7 @@ require 'eventmachine'
 require 'em-websocket'
 require './main_store'
 require 'rethinkdb'
+require 'liquid'
 
 $reports = {}
 Dir.glob(File.join('reports' , '*.html')).each do |file|

@@ -2,7 +2,7 @@ require 'opal'
 require 'client'
 require_relative 'ui_store'
 
-$controller = Controller.new
+$controller = BullClientController.new
 $controller.start App
 
 

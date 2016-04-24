@@ -1,7 +1,7 @@
 require './server'
-require 'liquid'
+#require 'liquid'
 
-class MyController < Bull::Controller
+class MyController < BullServerController
   def initialize ws, conn
     super ws, conn
   end

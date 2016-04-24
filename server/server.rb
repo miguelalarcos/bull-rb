@@ -6,8 +6,8 @@ require 'bcrypt'
 require 'lib/encode_times' #..
 require 'lib/symbolize'    #..
 
-module Bull
-    class Controller
+#module Bull
+    class BullServerController
         def initialize(ws, conn)
             @ws = ws
             @conn = conn
@@ -238,4 +238,4 @@ module Bull
                 end
             end
     end
-end
+#end

@@ -20,7 +20,7 @@ reactive($connection) do
 end
 =end
 
-class Controller
+class BullClientController
 
     attr_accessor :app_rendered
     attr_accessor :ws
