@@ -114,9 +114,9 @@ module Bull
                 $r.table('user').get(@user_id).run(@conn)['roles']
             end
 
-            def user_role_in? doc
-                doc['update_roles'].to_set.intersect?(user_roles.to_set)
-            end
+            #def user_role_in? doc
+            #    doc['update_roles'].to_set.intersect?(user_roles.to_set)
+            #end
 
             def i_timestamp! doc
                 doc['i_timestamp'] = Time.now
@@ -216,9 +216,13 @@ module Bull
             end
 
             def get table, id
-                $r.table(table).get(id).em_run(@conn) do |doc|
-                    doc['owner'] = user_is_owner? doc
-                    yield doc
+                if id.nil?
+                    yield Hash.new
+                else
+                    $r.table(table).get(id).em_run(@conn) do |doc|
+                        doc['owner'] = user_is_owner? doc
+                        yield doc
+                    end
                 end
             end
 

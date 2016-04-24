@@ -51,7 +51,7 @@ end
 
 And it comes with a DisplayList class:
 
-```
+```ruby
 class OrderList < DisplayList
 ...
 end
@@ -85,24 +85,23 @@ reactive(@language) do
     end
 end
 ```
-Every time language is set (language.value = 'es') the `$controller.rpc('get',...` is rerun.
+Every time language is set (language.value = 'en') the `$controller.rpc('get',...` is rerun.
 
-Rvars are useful when you are editing a form and you click in another form of a list to edit this one. The form would be:
+Rvars are useful when you are editing a form and you click in an item of a list of form to edit this one. The form would be:
 
 ```ruby
 class OrderForm < Form
     @@table = 'order'
+    @@constants = ['client_code'] #client code comes as a param: params.client_code
     param :order_code #this is a RVar
-    param :order_exists
 
     before_mount do
-        get params.order_code  # get does reactive inside. If we set order_code in another place, the code inside get will be rerun_
+        get params.order_code  # get does the reactive inside. If we set order_code in another place, the code inside get will be rerun
     end
 
     def clear
         state.code! nil
         state.description! ''
-        state.client_code! nil
         state.date! nil
     end
 
@@ -115,24 +114,56 @@ class OrderForm < Form
                 $controller.rpc('get_ticket').then do |code|
                     clear
                     state.code! code
-                    params.order_exists.call false
                 end
             end
-            hr
-            ClientSearch(on_select: change_attr('client_code'))
-            hr
             div('Date:')
-            DateTimeInput(on_change: change_attr('date'), format: '%d-%m-%Y %H:%M')
+            DateTimeInput(on_change: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date)
             div{'Description:'}
             StringInput(value: state.description, on_change: change_attr('description'))
             button{'save'}.on(:click) do
                 save
-                params.order_exists.call true
             end if state.valid
         end
     end
 end
 ```
+
+What happens if I click in an item of a list of forms to edit this one, and the form is dirty? Well, we don't want to lose the data.
+```ruby
+class MyList < DisplayList
+   param :selected
+   param :show_modal
+
+   before_mount do
+     watch_ 'my_table', []
+   end
+
+   def render
+     div do
+       state.docs.each do |doc|
+         div(key: doc['id']){doc['a']}.on(:click) do
+           begin
+             RVar.raise_if_dirty do
+               params.selected.value = doc['id']
+             end
+           rescue
+             params.show_modal.call
+           end
+         end
+       end
+     end
+   end
+ end
+```
+
+Also there's a *rgrouping* function when you want to group the changes of several Rvars:
+```ruby
+RVAr.rgrouping do
+  var1.value = 5
+  var2.value = 7
+end
+```
+Then the blocks involved will be executed at the end of this block, and not at every RVar change.
 
 The canonical way of writing a custom component:
 ------------------------------------------------
@@ -149,6 +180,7 @@ class DisplayCar < React::Component::Base
             clear
             $controller.stop_watch(@predicate_id) if @predicate_id
             @predicate_id = $controller.watch('by_id', @@table, value) do |data|
+                clear
                 data['new_val'].each {|k, v| state.__send__(k+'!', v)}
             end
         end
@@ -196,7 +228,7 @@ class DisplayCar < DisplayDoc
 end
 ```
 
-Lets see a component List like:
+Lets see a component List
 
 ```ruby
 class OrderLines < DisplayList
@@ -286,15 +318,11 @@ class MyController < Bull::Controller
     end
   end
 
-    def rpc_get_ticket
-      @mutex.synchronize do
-        $r.table('ticket').get('0').em_run(@conn) do|doc|
-          $r.table('ticket').get('0').update({value: doc['value'] + 1}).em_run(@conn) do
-            yield doc['value']
-          end
-        end
-      end
-    end
+  def rpc_get_ticket
+    $r.table('ticket').get('0').update(:return_changes => true) do |doc|
+      :value => doc['value'] + 1
+    end.em_run(@conn) {|x| x['changes'][0]['new_val']['value']}
+  end
 
     def rpc_get_clients code, surname
       check code, Integer
@@ -330,7 +358,7 @@ class MyController < Bull::Controller
       return false
     end
     u_timestamp! merged
-    user_role_in? old_val
+    true
   end
 
   def before_delete_order doc
@@ -360,7 +388,7 @@ class ValidateOrder
   include Validate
 
   def initialize
-    field 'code' => String
+    field 'code' => Integer
     field 'description' => String
     field 'client_code_' => Integer
     field 'date' => Time
@@ -409,7 +437,7 @@ Controller client side:
 
   you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
-  way I construct Times in the other side.
+  way I construct Times in the other side. From the server side, in a rpc method, you can return a Time.
 
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
@@ -431,7 +459,6 @@ TODO
   ui.core.rb --> ui_utils.rb
   ui.rb --> app_ui.rb
   server.rb --> server_controller.rb
-* login and create user API controller client side.
 * lots of things
 * Do you like the code name of the project? --> Bull
 

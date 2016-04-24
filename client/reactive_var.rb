@@ -13,7 +13,7 @@ class RVar
         @forms = Set.new
     end
 
-    def self.alert_if_dirty
+    def self.raise_if_dirty
         @@group = Set.new
         @@backup = []
         raised = false
@@ -41,7 +41,11 @@ class RVar
     end
 
     def self.rgrouping
-        self.alert_if_dirty
+        @@group = Set.new
+        yield
+        @@group.each {|blk| blk.call}
+        @@group = nil
+        @@backup = []
     end
 
     def value= value

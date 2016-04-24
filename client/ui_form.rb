@@ -5,6 +5,7 @@ require 'reactive_var'
 class MyForm < Form
   @@table = 'my_table'
   param :selected
+  param :show_modal
 
   before_mount do
     get params.selected
@@ -18,7 +19,13 @@ class MyForm < Form
     div do
       StringInput(value: state.a, on_change: change_attr('a'))
       button{'save'}.on(:click){save}
-      button{'discard'}.on(:click){discard}
+      button{'discard'}.on(:click) do
+        begin
+          discard
+        rescue
+          params.show_modal.call
+        end
+      end
     end
   end
 end
@@ -36,7 +43,7 @@ class MyList < DisplayList
       state.docs.each do |doc|
         div(key: doc['id']){doc['a']}.on(:click) do
           begin
-            RVar.alert_if_dirty do
+            RVar.raise_if_dirty do
               params.selected.value = doc['id']
             end
           rescue
@@ -70,7 +77,7 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
-      MyForm(selected: @selected)
+      MyForm(selected: @selected, show_modal: lambda{state.modal! true})
       MyList(selected: @selected, show_modal: lambda{state.modal! true})
       MyModal(ok: lambda {state.modal! false}) if state.modal
     end

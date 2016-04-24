@@ -123,11 +123,6 @@ class DisplayDoc < React::Component::Base
       @predicate_id = $controller.watch(@@table, value) do |data|
         clear
         data['new_val'].each {|k, v| state.__send__(k+'!', v)} if !data.nil?
-        #if data.nil?
-        #  clear
-        #else
-        #  data['new_val'].each {|k, v| state.__send__(k+'!', v)}
-        #end
       end
     end
   end
@@ -315,9 +310,11 @@ class Form < React::Component::Base
   end
 
   def discard
-    clear
-    @dirty.clear
-    @selected.value = nil
+    RVar.raise_if_dirty do
+      @selected.value = nil
+      clear
+      @dirty.clear
+    end
   end
 
   def insert
