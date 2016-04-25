@@ -117,12 +117,6 @@ class BullClientController
         data = msg['data'] || msg['result']
         if data.instance_of?(String) && msg['times'] && msg['times'][0] == 'result'
             data = Time.parse data
-            #elsif msg['times'] and data.respond_to?(:each_pair)
-            #    data.each_pair do |k, v|
-            #        if msg['times'].include? k
-            #            data[k] = Time.parse v
-            #        end
-            #    end
         else
             resolve_times data, msg['times']
         end
@@ -147,17 +141,19 @@ class BullClientController
                             controller.send 'watch_' + value[:name], id, *value[:args]
                         end
                     end
-                    if !controller.app_rendered # if !app.nil?
+                    if !controller.app_rendered
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
-                          controller.app_rendered = true #
+                          controller.app_rendered = true
                         end
                     end
-                    #if !controller.get_watch.empty?
-                    #    controller.get_watch.each do |id, value|
-                    #        controller.send 'watch_' + value[:name], id, *value[:args]
-                    #    end
-                    #end
+                    if app.user_id
+                        controller.rpc('login', app.user_id, app.password).then do |roles|
+                            if roles
+                                $roles = roles
+                            end
+                        end
+                    end
                 end
                 on :message do |e|
                     begin
@@ -169,6 +165,7 @@ class BullClientController
                 end
                 on :close do |e|
                     controller.connection.value = 'disconnected'
+                    $roles = []
                     $window.after(5) {controller.reset}
                 end
             end            
