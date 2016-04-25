@@ -274,7 +274,7 @@ Client side:
   with the render method of the react.rb components. This works with the provided reactive function.
 * ui.rb: here you've got all the React components of the client application.
 * ui_core.rb: useful ui components like DisplayDoc, DisplayList, Form, StringInput, PasswordInput, MultiLineInput, IntegerInput, FloatInput and SelectInput.
-* bcaptcha.rb: create user ui with textcaptcha or netcaptcha
+* login.rb: login, create user ui with textcaptcha or netcaptcha
 
 Server side:
 ------------
@@ -303,7 +303,7 @@ class MyController < Bull::Controller
 
   def initialize ws, conn
     super ws, conn
-    @mutex = EM::Synchrony::Thread::Mutex.new
+    #@mutex = EM::Synchrony::Thread::Mutex.new # I used it in *rpc_get_ticket* but I prefer the current implementation
   end
 
   def rpc_print_order id
@@ -319,6 +319,7 @@ class MyController < Bull::Controller
   end
 
   def rpc_get_ticket
+    #@mutex.synchronize do
     $r.table('ticket').get('0').update(:return_changes => true) do |doc|
       :value => doc['value'] + 1
     end.em_run(@conn) {|x| x['changes'][0]['new_val']['value']}
@@ -413,14 +414,16 @@ Instructions to install and execute:
     *$ rake css
     *$ rake development
 
-* Console in client folder:
+* Console in client/http folder:
 
-    * $ python -m SimpleHTTPServer
+    * $ ruby http_server.rb_
 
 * Console in root folder:
-
+    *$ you must create a *mail_conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
+        $key='https://api:key-...'
+        $from='Mailgun Sandbox <postmaster@sandbox...'
     *$ rethinkdb
-    *$ rethinkdb restore filename-dump.tar.gz
+    *$ rethinkdb restore filename-dump.tar.gz (if you haven't done)
 
 * Console in server folder:
 
