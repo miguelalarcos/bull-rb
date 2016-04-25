@@ -68,6 +68,8 @@ end
 
 
 class App < React::Component::Base
+  attr_reader :user_id, :password
+
   before_mount do
     @selected = RVar.new nil
     state.modal! false

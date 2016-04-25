@@ -57,7 +57,17 @@ class OrderList < DisplayList
 end
 ```
 
-We are going to see those features.
+We are going to see those features in a moment.
+
+And this is the root app:
+```ruby
+class App < React::Component::Base
+  attr_reader :user_id, :password
+
+  def render
+    ...
+  end
+````
 
 RVar
 ----

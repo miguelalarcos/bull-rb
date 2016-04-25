@@ -148,11 +148,7 @@ class BullClientController
                         end
                     end
                     if app.user_id
-                        controller.rpc('login', app.user_id, app.password).then do |roles|
-                            if roles
-                                $roles = roles
-                            end
-                        end
+                        controller.rpc('login', app.user_id, app.password)
                     end
                 end
                 on :message do |e|
@@ -165,7 +161,6 @@ class BullClientController
                 end
                 on :close do |e|
                     controller.connection.value = 'disconnected'
-                    $roles = []
                     $window.after(5) {controller.reset}
                 end
             end            
