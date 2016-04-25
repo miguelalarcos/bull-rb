@@ -91,13 +91,25 @@ require 'lib/symbolize'    #..
               $r.table('user').filter(user: user).em_run(@conn) do |response|
                 pass = response['password']
                 pass = BCrypt::Password.new(pass)
-                if pass == password
+                if response['secondary_password']
+                    secondary_password = response['secondary_password']
+                    secondary_password = BCrypt::Password.new(secondary_password)
+                end
+                if pass == password || (response['secondary_password'] && pass == secondary_password)
                     @user_id = user
                     yield response['roles'] #true
                 else
                     yield false
                 end
               end
+            end
+
+            def rpc_forgotten_password user
+                secondary_password = ('a'..'z').to_a.sample(8).join
+                puts secondary_password
+                #send email (user must be an email)
+                pass = BCrypt::Password.new(secondary_password)
+                $r.table('user').filter(user: user).update(secondary_password: pass).em_run(@conn){}
             end
 
             def rpc_logout

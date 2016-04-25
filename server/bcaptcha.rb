@@ -2,7 +2,25 @@ require 'digest'
 require 'eventmachine'
 require 'em-http-request'
 
+module CreateUserIfNotExist
+  def create_user_if_not_exist user, password
+    rpc_user_exist?(user) do |flag|
+      if flag
+        yield false
+      else
+        password = BCrypt::Password.create(password)
+        $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
+          @user_id = user
+          yield true
+        end
+      end
+    end
+  end
+end
+
 module NetCaptcha
+  include CreateUserIfNotExist
+
   def get_text secret, random, alphabet='abcdefghijklmnopqrstuvwxyz', character_count = 6
 
     if character_count < 1 || character_count > 16
@@ -34,15 +52,28 @@ module NetCaptcha
 
   def rpc_create_user_net_challenge user, password, challenge_response
     if @challenge_response == challenge_response
-      yield true
+      create_user_if_not_exist(user, password) do |response|
+        yield response
+      end
+      #rpc_user_exist?(user) do |flag|
+      #  if flag
+      #    yield false
+      #  else
+      #    password = BCrypt::Password.create(password)
+      #    $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
+      #      @user_id = user
+      #      yield true
+      #    end
+      #  end
+      #end
     else
       yield false
     end
   end
-
 end
 
 module TextCaptcha
+  include CreateUserIfNotExist
 
   def rpc_text_challenge
     http = EventMachine::HttpRequest.new('http://api.textcaptcha.com/miguel@mail.com.json').get
@@ -62,17 +93,20 @@ module TextCaptcha
     if !@challenge_response.any? {|v| md5 == v}
       yield false
     else
-      rpc_user_exist?(user) do |flag|
-        if flag
-          yield false
-        else
-          password = BCrypt::Password.create(password)
-          $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
-            @user_id = user
-            yield true
-          end
-        end
+      create_user_if_not_exist(user, password) do |response|
+        yield response
       end
+      #rpc_user_exist?(user) do |flag|
+      #  if flag
+      #    yield false
+      #  else
+      #    password = BCrypt::Password.create(password)
+      #    $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
+      #      @user_id = user
+      #      yield true
+      #    end
+      #  end
+      #end
     end
   end
 end
