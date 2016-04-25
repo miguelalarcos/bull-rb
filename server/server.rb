@@ -5,6 +5,7 @@ require 'time'
 require 'bcrypt'
 require 'lib/encode_times' #..
 require 'lib/symbolize'    #..
+require 'em-http-request'
 
 #module Bull
     class BullServerController
@@ -104,10 +105,12 @@ require 'lib/symbolize'    #..
               end
             end
 
-            def rpc_forgotten_password user
+            def task_forgotten_password user
                 secondary_password = ('a'..'z').to_a.sample(8).join
                 puts secondary_password
-                #send email (user must be an email)
+                t = $reports['mail_forgotten_password_template']
+                html = t.render(password: secondary_password)
+                EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'new password', html: html
                 pass = BCrypt::Password.new(secondary_password)
                 $r.table('user').filter(user: user).update(secondary_password: pass).em_run(@conn){}
             end
