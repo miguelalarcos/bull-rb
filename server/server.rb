@@ -105,6 +105,11 @@ require 'em-http-request'
               end
             end
 
+            def rpc_change_password new_password
+                pass = BCrypt::Password.new(new_password)
+                $r.table('user').filter(user: @user_id).update(password: pass, secondary_password: nil).em_run(@conn){|ret| yield ret['replaced']}
+            end
+
             def task_forgotten_password user
                 secondary_password = ('a'..'z').to_a.sample(8).join
                 puts secondary_password

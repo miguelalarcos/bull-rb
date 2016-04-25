@@ -1,3 +1,5 @@
+require 'ui_core'
+
 class Login < React::Component::Base
   param :set_user
 
@@ -9,8 +11,8 @@ class Login < React::Component::Base
 
   def render
     div do
-      StringInput(change_attr: lambda {|v| state.user_name! v}, value: state.user_name)
-      PasswordInput(change_attr: lambda {|v| state.password! v}, value: state.password)
+      StringInput(on_change: lambda {|v| state.user_name! v}, value: state.user_name)
+      PasswordInput(on_change: lambda {|v| state.password! v}, value: state.password)
       button(type: :button) { 'login' }.on(:click) do
         $controller.rpc('login', state.user_name, state.password).then do |roles|
           if roles
@@ -23,6 +25,21 @@ class Login < React::Component::Base
         end
       end
       div(class: 'red'){'Incorrect user or password.'}
+    end
+  end
+end
+
+class ForgottenPassword < React::Component::Base
+
+  before_mount do
+    state.email! ''
+  end
+
+  def render
+    div do
+      div{'Have you forgotten the password?'}
+      StringInput(placeholder: 'email', on_change: lambda{|v| state.email! v}, value: state.email)
+      button{'Send me a new passoword'}.on(:click){$controller.task('forgotten_password', state.email)} if state.email
     end
   end
 end
