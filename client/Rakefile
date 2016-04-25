@@ -32,23 +32,21 @@ end
 desc "clean"
 task :clean do
   File.delete File.join('http', 'build.css') if File.exist? File.join('http', 'build.css')
-  File.delete File.join('http', 'build.styl.css') if File.exist? File.join('http', 'build.styl.css')
+  File.delete File.join('..', 'style', 'build.styl.css') if File.exist? File.join('..', 'style', 'build.styl.css')
 end
 
 desc "stylus compile"
 task :stylus => [:clean] do
   files = Dir.glob(File.join("..", "style", "**", "*.styl"))
+  dest = File.join('..', 'style', 'build.styl.css')
   files.each do |f|
-    dest = File.join('http', 'build.styl.css')
-    #`stylus < #{f} >> build.styl.css`
     `stylus < #{f} >> #{dest}`
   end
 end
 
 desc "concatenate css to build.css"
 task :css => [:stylus] do
-  files = (Dir.glob(File.join("http", "**", "*.css")) + Dir.glob(File.join("..", "style", "**", "*.css")) ).join(' ')
+  files = Dir.glob(File.join("..", "style", "**", "*.css")).join(' ')
   dest = File.join('http', 'build.css')
-  #`cat #{files} > build.css` if files != ''
   `cat #{files} > #{dest}` if files != ''
 end
