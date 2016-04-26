@@ -429,11 +429,11 @@ Instructions to install and execute:
     * $ ruby http_server.rb_
 
 * Console in root folder:
-    *$ you must create a *mail_conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
-        $key='https://api:key-...'
+    *$ you must create a *conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
+        $mail_key='https://api:key-...'
         $from='Mailgun Sandbox <postmaster@sandbox...'
     *$ rethinkdb
-    *$ rethinkdb restore filename-dump.tar.gz (if you haven't done)
+    *$ rethinkdb restore filename-dump.tar.gz (if you haven't done yet)
 
 * Console in server folder:
 
