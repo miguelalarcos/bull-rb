@@ -1,4 +1,5 @@
 require 'reactive-ruby'
+require 'ui_common'
 
 class AutocompleteInput < React::Component::Base
 
@@ -6,6 +7,10 @@ class AutocompleteInput < React::Component::Base
   param :on_change
   param :ref_
   param :name
+  param :valid
+  param :dirty
+
+  include ClassesInput
 
   before_mount do
     state.options! []
@@ -22,7 +27,7 @@ class AutocompleteInput < React::Component::Base
 
   def render
     span(class: 'autocomplete-box') do
-      input(type: :text, value: params.value).on(:change) do |event|
+      input(type: :text, value: params.value, class: valid_class + ' ' + dirty_class).on(:change) do |event|
         params.on_change.call event.target.value
         $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
           state.options! result.map {|x| x[params.name]}

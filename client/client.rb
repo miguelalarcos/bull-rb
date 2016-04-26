@@ -114,6 +114,7 @@ class BullClientController
     def relogin password
         login($user_id, password).then do
             $relogin.call false
+            $notifications.add ['ok', 'relogged', 0] if $notifications
             @watch.each do |id, value|
                 send 'watch_' + value[:name], id, *value[:args]
             end

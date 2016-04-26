@@ -123,22 +123,24 @@ module CreateUserCaptcha
           state.user_exist! response
         end
       end
-      br
-      input(type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
-      br
-      input(class: password_class, type: :password, placeholder: 'repeat passsword', value: state.rpassword).on(:change){|event| state.rpassword! event.target.value}
-      br
+      div{
+        input(type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
+      }
+      div{
+        input(class: password_class, type: :password, placeholder: 'repeat passsword', value: state.rpassword).on(:change){|event| state.rpassword! event.target.value}
+      }
       captcha
-      br
-      button(class: 'button-active'){'Create user!'}.on(:click) do
-        $controller.rpc(method_create_user, state.user, state.password, state.answer).then do |v|
-          if v
-            params.set_user.call true
-            params.set_roles.call []
-            $user_id = state.user
+      div do
+        button(class: 'button-active'){'Create user!'}.on(:click) do
+          $controller.rpc(method_create_user, state.user, state.password, state.answer).then do |v|
+            if v
+              params.set_user.call true
+              params.set_roles.call []
+              $user_id = state.user
+            end
           end
-        end
-      end if !state.user_exist && state.password == state.rpassword && state.password != ''
+        end if !state.user_exist && state.password == state.rpassword && state.password != ''
+      end
     end
   end
 end
@@ -147,6 +149,7 @@ class CreateUserTextCaptcha < React::Component::Base
   include CreateUserCaptcha
 
   param :set_user
+  param :set_roles
 
   before_mount do
     state.user! ''
@@ -170,6 +173,7 @@ class CreateUserNetCaptcha < React::Component::Base
   include CreateUserCaptcha
 
   param :set_user
+  param :set_roles
 
   before_mount do
     state.user! ''

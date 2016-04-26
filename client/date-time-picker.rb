@@ -1,5 +1,6 @@
 require 'reactive-ruby'
 require 'time'
+require 'ui_common'
 
 def day_row week, date
   ret = []
@@ -55,6 +56,10 @@ class DateTimeInput < React::Component::Base
   param :time
   param :value
   param :format, type: String
+  param :valid
+  param :dirty
+
+  include ClassesInput
 
   before_mount do
     state.show! false
@@ -76,7 +81,7 @@ class DateTimeInput < React::Component::Base
             ''
           end
     span(class: 'date-time-box') do
-      input(type: :text, value: val, disabled: 'disabled').on(:click) {|event| state.show! !state.show}
+      input(type: :text, value: val, disabled: 'disabled', class: valid_class + ' ' + dirty_class).on(:click) {|event| state.show! !state.show}
       div(class: 'xdatetime-popover') do
         div(class: 'xdatetime-header') do
           i(class: 'minus-month fa fa-minus').on(:click) {state.day! state.day - 30*24*60*60}

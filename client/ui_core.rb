@@ -3,7 +3,9 @@ require 'set'
 require_relative 'reactive_var'
 require_relative 'lib/utils'
 require_relative 'bcaptcha'
+require 'ui_common'
 
+=begin
 module ClassesInput
   def valid_class
     return '' if params.valid.nil?
@@ -22,6 +24,7 @@ module ClassesInput
     end
   end
 end
+=end
 
 class NotificationController
   @@ticket = 0
