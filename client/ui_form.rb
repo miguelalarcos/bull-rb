@@ -22,9 +22,9 @@ class MyForm < Form
       div
       MultiLineInput(value: state.m, on_change: change_attr('m'), dirty: state.dirty_m)
       div do
-        button{'save'}.on(:click){save}
-        button{'discard'}.on(:click) {state.discard! true}
-        button{'really discard!'}.on(:click) {discard} if state.discard
+        i(class: 'save fa fa-floppy-o fa-2x').on(:click){save}
+        i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true}
+        i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
       end
     end
   end
