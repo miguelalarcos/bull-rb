@@ -147,8 +147,8 @@ class BullClientController
                           controller.app_rendered = true
                         end
                     end
-                    if app.user_id
-                        controller.rpc('login', app.user_id, app.password)
+                    if $user_id
+                        controller.rpc('login', $user_id, $password)
                     end
                 end
                 on :message do |e|

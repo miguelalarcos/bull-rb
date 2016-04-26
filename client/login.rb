@@ -16,9 +16,11 @@ class Login < React::Component::Base
       button(type: :button) { 'login' }.on(:click) do
         $controller.rpc('login', state.user_name, state.password).then do |roles|
           if roles
-            params.set_user.call true
             $roles = roles
             state.incorrect = false
+            $user_id = state.user_name
+            $password = state.password
+            params.set_user.call true
           else
             state.incorrect = true
           end
