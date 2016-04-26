@@ -1,7 +1,15 @@
 require 'ui_core'
 
+class Relogin < React::Component::Base
+  def render
+    PasswordInput(on_change: lambda{|v| state.password = v}, value: state.password)
+    button{'relogin'}.on(:click){$controller.relogin state.password}
+  end
+end
+
 class Login < React::Component::Base
   param :set_user
+  param :set_roles
 
   before_mount do
     state.user_name! ''
@@ -16,11 +24,10 @@ class Login < React::Component::Base
       button(type: :button) { 'login' }.on(:click) do
         $controller.rpc('login', state.user_name, state.password).then do |roles|
           if roles
-            $roles = roles
             state.incorrect = false
             $user_id = state.user_name
-            $password = state.password
             params.set_user.call true
+            params.set_roles.call roles
           else
             state.incorrect = true
           end
@@ -127,9 +134,8 @@ module CreateUserCaptcha
         $controller.rpc(method_create_user, state.user, state.password, state.answer).then do |v|
           if v
             params.set_user.call true
-            $roles = []
+            params.set_roles.call []
             $user_id = state.user
-            $password = state.password
           end
         end
       end if !state.user_exist && state.password == state.rpassword && state.password != ''

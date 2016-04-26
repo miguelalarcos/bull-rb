@@ -466,6 +466,18 @@ Controller server side:
 * u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc
 
+Globals
+-------
+Client side:
+* $controller
+* $user_id
+* $notifications
+* $relogin
+
+Server side:
+* $r
+* $reports
+
 TODO
 ----
 * change the name of files. For example rename client.rb for client_controller.rb

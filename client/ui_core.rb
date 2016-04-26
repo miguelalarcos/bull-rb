@@ -326,8 +326,8 @@ class Form < React::Component::Base
     lambda do |value|
       @dirty.add attr
       doc = state.__send__(attr.split('.')[0])
-      set_nested_state(attr, value, doc){|r, v| state.__send__(r+'!', v)}
-      state.__send__('dirty_' + attr+'!', true)
+      set_nested(attr, value, doc){|r, v| state.__send__(r+'!', v)}
+      state.__send__('dirty_' + attr.gsub('.', '_') + '!', true)
       state.dirty! true
     end
   end

@@ -1,6 +1,7 @@
 require 'ui_core'
 require 'reactive-ruby'
 require 'reactive_var'
+require 'login'
 
 class MyForm < Form
   @@table = 'my_table'
@@ -73,11 +74,14 @@ class App < React::Component::Base
   before_mount do
     @selected = RVar.new nil
     state.modal! false
+    state.relogin! false
+    $relogin = lambda{|v| state.relogin v}
   end
 
   def render
     div do
       Notification(level: 0)
+      Relogin() if state.relogin
       MyForm(selected: @selected)
       MyList(selected: @selected, show_modal: lambda{state.modal! true})
       MyModal(ok: lambda {state.modal! false}) if state.modal

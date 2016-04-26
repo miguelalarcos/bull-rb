@@ -107,6 +107,19 @@ class BullClientController
         prom
     end
 
+    def login user, password
+        rpc('login', user, password)
+    end
+
+    def relogin password
+        login($user_id, password).then do
+            $relogin.call false
+            @watch.each do |id, value|
+                send 'watch_' + value[:name], id, *value[:args]
+            end
+        end
+    end
+
     def logout
         rpc('logout')
         clear
@@ -133,15 +146,8 @@ class BullClientController
             controller = self
             url = 'ws://' + `document.location.hostname` + ':3000'
             @ws = Browser::Socket.new url do
-            #@ws = Browser::Socket.new 'ws://localhost:3000' do
-            #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     controller.connection.value = 'connected'
-                    #if !controller.get_watch.empty?
-                    #    controller.get_watch.each do |id, value|
-                    #        controller.send 'watch_' + value[:name], id, *value[:args]
-                    #    end
-                    #end
                     if !controller.app_rendered
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
@@ -149,11 +155,7 @@ class BullClientController
                         end
                     else
                         if $user_id
-                            controller.rpc('login', $user_id, $password).then do
-                                controller.get_watch.each do |id, value|
-                                    controller.send 'watch_' + value[:name], id, *value[:args]
-                                end
-                            end
+                            $relogin.call true
                         else
                             controller.get_watch.each do |id, value|
                                 controller.send 'watch_' + value[:name], id, *value[:args]
@@ -163,7 +165,7 @@ class BullClientController
                 end
                 on :message do |e|
                     begin
-                        controller.notify e.data #JSON.parse(e.data)
+                        controller.notify e.data
                     rescue Exception => e
                         print e.message
                         print e.backtrace.inspect
@@ -212,9 +214,7 @@ class BullClientController
                 value[:who].call nil
             end
             @promises = {}
-            $roles = []
             $user_id = nil
-            $password = nil
             @watch = {} ###
         end
 
