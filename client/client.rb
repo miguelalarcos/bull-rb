@@ -110,6 +110,7 @@ class BullClientController
     def logout
         rpc('logout')
         clear
+        yield
     end
 
     def notify msg
@@ -211,11 +212,18 @@ class BullClientController
                 value[:who].call nil
             end
             @promises = {}
-            #@watch = {}
+            $roles = []
+            $user_id = nil
+            $password = nil
+            @watch = {} ###
         end
 
         def reset
-            clear
+            #clear
+            @watch.each_value do |value|
+                value[:who].call nil
+            end
+            @promises = {}
             start nil
         end
 end
