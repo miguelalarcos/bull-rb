@@ -405,7 +405,7 @@ class ValidateOrder
     field 'date' => Time
   end
 
-  def is_valid_description? (value, doc)
+  def valid_description? (value, doc)
     value.start_with? 'Description: '
   end
 end

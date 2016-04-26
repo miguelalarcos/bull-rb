@@ -6,8 +6,8 @@ require_relative 'bcaptcha'
 
 module ClassesInput
   def valid_class
-    return '' if params.is_valid.nil?
-    if params.is_valid
+    return '' if params.valid.nil?
+    if params.valid
       'input-successful'
     else
       'input-incorrect'
@@ -15,7 +15,7 @@ module ClassesInput
   end
 
   def dirty_class
-    if params.dirty #&& (params.is_valid || params.is_valid.nil?)
+    if params.dirty
       'input-dirty'
     else
       ''
@@ -164,7 +164,7 @@ class StringInput < React::Component::Base
   param :value, type: String
   param :placeholder
   param :on_enter
-  param :is_valid
+  param :valid
   param :dirty
 
   def type_attr
@@ -179,7 +179,7 @@ class PasswordInput < React::Component::Base
   param :value, type: String
   param :placeholder
   param :on_enter
-  param :is_valid
+  param :valid
   param :dirty
 
   def type_attr
@@ -192,7 +192,7 @@ class MultiLineInput < React::Component::Base
   param :on_enter
   param :value
   param :placeholder
-  param :is_valid
+  param :valid
   param :dirty
 
   include ClassesInput
@@ -241,7 +241,7 @@ class IntegerInput < React::Component::Base
 
   param :on_change, type: Proc
   param :value, type: Integer
-  param :is_valid
+  param :valid
   param :on_enter
   param :placeholder
   param :dirty
@@ -260,7 +260,7 @@ class FloatInput < React::Component::Base
 
   param :on_change, type: Proc
   param :value, type: Float
-  param :is_valid
+  param :valid
   param :on_enter
   param :placeholder
   param :dirty
