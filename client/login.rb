@@ -128,6 +128,8 @@ module CreateUserCaptcha
           if v
             params.set_user.call true
             $roles = []
+            $user_id = state.user
+            $password = state.password
           end
         end
       end if !state.user_exist && state.password == state.rpassword && state.password != ''

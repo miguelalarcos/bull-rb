@@ -40,7 +40,7 @@ class MyList < DisplayList
   def render
     div do
       state.docs.each do |doc|
-        div(key: doc['id']){doc['a']}.on(:click) do
+        div(key: doc['id']){doc['id']+':'+doc['a']}.on(:click) do
           begin
             RVar.raise_if_dirty do
               params.selected.value = doc['id']
