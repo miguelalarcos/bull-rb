@@ -1,7 +1,7 @@
 require 'ui_core'
 require 'reactive-ruby'
 require 'reactive_var'
-require 'bull-date-time-picker'
+require 'date-time-picker'
 
 class TriageList < DisplayList
   param :selected
@@ -82,6 +82,7 @@ class TriageAdministrativeForm < Form
   before_mount do
     get params.selected
     state.ini_date! Time.new
+    state.valid! true
   end
 
   def clear
@@ -91,9 +92,7 @@ class TriageAdministrativeForm < Form
   def render
     div do
       div{DateTimeInput(value: state.ini_date, format: '%d-%m-%Y %H:%M', on_change: change_attr('ini_date'))}
-      button{'save'}.on(:click){save} if state.dirty
-      button{'discard'}.on(:click){state.discard! true}
-      button{'really discard'}.on(:click){discard} if state.discard
+      FormButtons()
     end
   end
 end
@@ -104,6 +103,7 @@ class TriageClinicalForm < Form
 
   before_mount do
     get params.selected
+    state.valid! true
   end
 
   def clear
@@ -113,9 +113,7 @@ class TriageClinicalForm < Form
   def render
     div do
       div{MultiLineInput(value: state.observations, on_change: change_attr('observations'))}
-      button{'save'}.on(:click){save} if state.dirty
-      button{'discard'}.on(:click){state.discard! true}
-      button{'really discard'}.on(:click){discard} if state.discard
+      FormButtons()
     end
   end
 end

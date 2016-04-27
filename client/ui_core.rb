@@ -282,6 +282,84 @@ class FloatInput < React::Component::Base
   end
 end
 
+class HashInput < React::Component::Base
+  param :value
+  param :on_enter
+
+  before_mount do
+    state.key! ''
+    state.value! ''
+  end
+
+  def render
+    div do
+      input(placeholder: 'key', value: state.key)
+      input(placeholder: 'value',value: state.key)
+      button{'add'}.on(:click) do
+        hsh = params.value.dup
+        hsh[state.key] = state.value
+        params.on_enter.call hsh
+      end
+      table do
+        tr do
+          th{'key'}
+          th{'value'}
+          tg{' '}
+        end
+        tr do
+          params.value.each_pair do |k, v|
+            td{k}
+            td{v}
+            td{i(class: 'fa fa-times fa-2x')}.on(:click) do
+              hsh = params.value.dup
+              hsh.delete k
+              params.on_enter.call hsh
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+class ArrayInput < React::Component::Base
+  param :value
+  param :on_enter
+
+  before_mount do
+    state.tmp! ''
+  end
+
+  def render
+    div do
+      input(value: state.tmp).on(:keyDown) do |event|
+        if event.key_code == 13
+          list = params.value.dup
+          list << event.target.value
+          params.on_enter.call list
+          state.tmp! ''
+        end
+      end
+      table do
+        tr do
+          th{'        '}
+          th{'  '}
+        end
+        tr do
+          params.value.each do |v|
+            td{v}
+            td{i(class: 'fa fa-times fa-2x')}.on(:click) do
+              list = params.value.dup
+              list.delete v
+              params.on_enter.call list
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 def selected val1, val2
   if val1 == val2
     {:selected => 'selected'}
