@@ -3,11 +3,13 @@ require 'set'
 require_relative 'reactive_var'
 require_relative 'lib/utils'
 require_relative 'bcaptcha'
+require 'ui_common'
 
+=begin
 module ClassesInput
   def valid_class
-    return '' if params.is_valid.nil?
-    if params.is_valid
+    return '' if params.valid.nil?
+    if params.valid
       'input-successful'
     else
       'input-incorrect'
@@ -15,13 +17,14 @@ module ClassesInput
   end
 
   def dirty_class
-    if params.dirty #&& (params.is_valid || params.is_valid.nil?)
+    if params.dirty
       'input-dirty'
     else
       ''
     end
   end
 end
+=end
 
 class NotificationController
   @@ticket = 0
@@ -164,7 +167,7 @@ class StringInput < React::Component::Base
   param :value, type: String
   param :placeholder
   param :on_enter
-  param :is_valid
+  param :valid
   param :dirty
 
   def type_attr
@@ -179,7 +182,7 @@ class PasswordInput < React::Component::Base
   param :value, type: String
   param :placeholder
   param :on_enter
-  param :is_valid
+  param :valid
   param :dirty
 
   def type_attr
@@ -192,7 +195,7 @@ class MultiLineInput < React::Component::Base
   param :on_enter
   param :value
   param :placeholder
-  param :is_valid
+  param :valid
   param :dirty
 
   include ClassesInput
@@ -241,7 +244,7 @@ class IntegerInput < React::Component::Base
 
   param :on_change, type: Proc
   param :value, type: Integer
-  param :is_valid
+  param :valid
   param :on_enter
   param :placeholder
   param :dirty
@@ -260,7 +263,7 @@ class FloatInput < React::Component::Base
 
   param :on_change, type: Proc
   param :value, type: Float
-  param :is_valid
+  param :valid
   param :on_enter
   param :placeholder
   param :dirty
@@ -305,6 +308,16 @@ class SelectInput < React::Component::Base
   end
 end
 
+class FormButtons < React::Component::Base
+  def render
+    div do
+      i(class: 'save fa fa-floppy-o fa-2x').on(:click){save} if state.valid && state.dirty
+      i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if state.dirty && !state.discard
+      i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
+    end
+  end
+end
+
 class Form < React::Component::Base
 
   before_mount do
@@ -326,8 +339,8 @@ class Form < React::Component::Base
     lambda do |value|
       @dirty.add attr
       doc = state.__send__(attr.split('.')[0])
-      set_nested_state(attr, value, doc){|r, v| state.__send__(r+'!', v)}
-      state.__send__('dirty_' + attr+'!', true)
+      set_nested(attr, value, doc){|r, v| state.__send__(r+'!', v)}
+      state.__send__('dirty_' + attr.gsub('.', '_') + '!', true)
       state.dirty! true
     end
   end

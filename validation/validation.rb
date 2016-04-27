@@ -14,7 +14,7 @@ class ValidateCar
     field 'nested.x' => Float
   end
 
-  def is_valid_registration? (value, doc)
+  def valid_registration? (value, doc)
     if doc[:wheels] <= 4
       value.start_with? 'A'
     else

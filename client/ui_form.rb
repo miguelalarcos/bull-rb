@@ -1,6 +1,7 @@
 require 'ui_core'
 require 'reactive-ruby'
 require 'reactive_var'
+require 'login'
 
 class MyForm < Form
   @@table = 'my_table'
@@ -8,6 +9,7 @@ class MyForm < Form
 
   before_mount do
     get params.selected
+    state.valid! true
   end
 
   def clear
@@ -20,11 +22,7 @@ class MyForm < Form
       StringInput(value: state.a, on_change: change_attr('a'), dirty: state.dirty_a)
       div
       MultiLineInput(value: state.m, on_change: change_attr('m'), dirty: state.dirty_m)
-      div do
-        button{'save'}.on(:click){save}
-        button{'discard'}.on(:click) {state.discard! true}
-        button{'really discard!'}.on(:click) {discard} if state.discard
-      end
+      FormButtons()
     end
   end
 end
@@ -40,7 +38,7 @@ class MyList < DisplayList
   def render
     div do
       state.docs.each do |doc|
-        div(key: doc['id']){doc['a']}.on(:click) do
+        div(key: doc['id']){doc['id']+':'+doc['a']}.on(:click) do
           begin
             RVar.raise_if_dirty do
               params.selected.value = doc['id']
@@ -68,14 +66,19 @@ end
 
 
 class App < React::Component::Base
+  attr_reader :user_id, :password
+
   before_mount do
     @selected = RVar.new nil
     state.modal! false
+    state.relogin! false
+    $relogin = lambda{|v| state.relogin v}
   end
 
   def render
     div do
       Notification(level: 0)
+      Relogin() if state.relogin
       MyForm(selected: @selected)
       MyList(selected: @selected, show_modal: lambda{state.modal! true})
       MyModal(ok: lambda {state.modal! false}) if state.modal

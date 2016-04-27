@@ -8,8 +8,8 @@ task :development do
   Opal.append_path "."
   Opal.append_path ".."
 
-  Opal.use_gem 'bull-autocomplete'
-  Opal.use_gem 'bull-date-time-picker'
+  #Opal.use_gem 'bull-autocomplete'
+  #Opal.use_gem 'bull-date-time-picker'
   builder = Opal::Builder.new
   #builder = Opal::Builder.new(:stubs => ['opal', 'reactive-ruby'])
   build_js = builder.build("main").to_s

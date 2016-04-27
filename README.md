@@ -57,7 +57,17 @@ class OrderList < DisplayList
 end
 ```
 
-We are going to see those features.
+We are going to see those features in a moment.
+
+And this is the root app:
+```ruby
+class App < React::Component::Base
+  attr_reader :user_id, :password
+
+  def render
+    ...
+  end
+````
 
 RVar
 ----
@@ -274,7 +284,7 @@ Client side:
   with the render method of the react.rb components. This works with the provided reactive function.
 * ui.rb: here you've got all the React components of the client application.
 * ui_core.rb: useful ui components like DisplayDoc, DisplayList, Form, StringInput, PasswordInput, MultiLineInput, IntegerInput, FloatInput and SelectInput.
-* bcaptcha.rb: create user ui with textcaptcha or netcaptcha
+* login.rb: login, create user ui with textcaptcha or netcaptcha
 
 Server side:
 ------------
@@ -303,7 +313,7 @@ class MyController < Bull::Controller
 
   def initialize ws, conn
     super ws, conn
-    @mutex = EM::Synchrony::Thread::Mutex.new
+    #@mutex = EM::Synchrony::Thread::Mutex.new # I used it in *rpc_get_ticket* but I prefer the current implementation
   end
 
   def rpc_print_order id
@@ -319,6 +329,7 @@ class MyController < Bull::Controller
   end
 
   def rpc_get_ticket
+    #@mutex.synchronize do
     $r.table('ticket').get('0').update(:return_changes => true) do |doc|
       :value => doc['value'] + 1
     end.em_run(@conn) {|x| x['changes'][0]['new_val']['value']}
@@ -394,7 +405,7 @@ class ValidateOrder
     field 'date' => Time
   end
 
-  def is_valid_description? (value, doc)
+  def valid_description? (value, doc)
     value.start_with? 'Description: '
   end
 end
@@ -413,14 +424,16 @@ Instructions to install and execute:
     *$ rake css
     *$ rake development
 
-* Console in client folder:
+* Console in client/http folder:
 
-    * $ python -m SimpleHTTPServer
+    * $ ruby http_server.rb_
 
 * Console in root folder:
-
+    *$ you must create a *conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
+        $mail_key='https://api:key-...'
+        $from='Mailgun Sandbox <postmaster@sandbox...'
     *$ rethinkdb
-    *$ rethinkdb restore filename-dump.tar.gz
+    *$ rethinkdb restore filename-dump.tar.gz (if you haven't done yet)
 
 * Console in server folder:
 
@@ -452,6 +465,18 @@ Controller server side:
 * i_timestamp! doc # sets the inserted timestamp
 * u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc
+
+Globals
+-------
+Client side:
+* $controller
+* $user_id
+* $notifications
+* $relogin
+
+Server side:
+* $r
+* $reports
 
 TODO
 ----

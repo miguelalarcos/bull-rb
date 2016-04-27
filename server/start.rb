@@ -3,7 +3,7 @@ require 'em-websocket'
 require './main_form'
 require 'rethinkdb'
 require 'liquid'
-require '../mail_conf'
+require '../conf'
 
 $reports = {}
 Dir.glob(File.join('reports' , '*.html')).each do |file|

@@ -107,9 +107,24 @@ class BullClientController
         prom
     end
 
+    def login user, password
+        rpc('login', user, password)
+    end
+
+    def relogin password
+        login($user_id, password).then do
+            $relogin.call false
+            $notifications.add ['ok', 'relogged', 0] if $notifications
+            @watch.each do |id, value|
+                send 'watch_' + value[:name], id, *value[:args]
+            end
+        end
+    end
+
     def logout
         rpc('logout')
         clear
+        yield
     end
 
     def notify msg
@@ -117,12 +132,6 @@ class BullClientController
         data = msg['data'] || msg['result']
         if data.instance_of?(String) && msg['times'] && msg['times'][0] == 'result'
             data = Time.parse data
-            #elsif msg['times'] and data.respond_to?(:each_pair)
-            #    data.each_pair do |k, v|
-            #        if msg['times'].include? k
-            #            data[k] = Time.parse v
-            #        end
-            #    end
         else
             resolve_times data, msg['times']
         end
@@ -138,30 +147,26 @@ class BullClientController
             controller = self
             url = 'ws://' + `document.location.hostname` + ':3000'
             @ws = Browser::Socket.new url do
-            #@ws = Browser::Socket.new 'ws://localhost:3000' do
-            #@ws = Browser::Socket.new 'wss://localhost:3000' do
                 on :open do |e|
                     controller.connection.value = 'connected'
-                    if !controller.get_watch.empty?
-                        controller.get_watch.each do |id, value|
-                            controller.send 'watch_' + value[:name], id, *value[:args]
-                        end
-                    end
-                    if !controller.app_rendered # if !app.nil?
+                    if !controller.app_rendered
                         $document.ready do
                           React.render(React.create_element(app), `document.getElementById('container')`)
-                          controller.app_rendered = true #
+                          controller.app_rendered = true
+                        end
+                    else
+                        if $user_id
+                            $relogin.call true
+                        else
+                            controller.get_watch.each do |id, value|
+                                controller.send 'watch_' + value[:name], id, *value[:args]
+                            end
                         end
                     end
-                    #if !controller.get_watch.empty?
-                    #    controller.get_watch.each do |id, value|
-                    #        controller.send 'watch_' + value[:name], id, *value[:args]
-                    #    end
-                    #end
                 end
                 on :message do |e|
                     begin
-                        controller.notify e.data #JSON.parse(e.data)
+                        controller.notify e.data
                     rescue Exception => e
                         print e.message
                         print e.backtrace.inspect
@@ -210,11 +215,16 @@ class BullClientController
                 value[:who].call nil
             end
             @promises = {}
-            #@watch = {}
+            $user_id = nil
+            @watch = {} ###
         end
 
         def reset
-            clear
+            #clear
+            @watch.each_value do |value|
+                value[:who].call nil
+            end
+            @promises = {}
             start nil
         end
 end

@@ -96,17 +96,6 @@ module TextCaptcha
       create_user_if_not_exist(user, password) do |response|
         yield response
       end
-      #rpc_user_exist?(user) do |flag|
-      #  if flag
-      #    yield false
-      #  else
-      #    password = BCrypt::Password.create(password)
-      #    $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
-      #      @user_id = user
-      #      yield true
-      #    end
-      #  end
-      #end
     end
   end
 end

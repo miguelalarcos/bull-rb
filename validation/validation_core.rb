@@ -18,9 +18,9 @@ module Validate
       k_r = k.gsub('.', '_')
       if !v.nil? && !v.is_a?(attrs[k])
         val = false
-      elsif respond_to? 'is_valid_' + k_r + '?'
+      elsif respond_to? 'valid_' + k_r + '?'
         begin
-          val = send('is_valid_' + k_r + '?', v, dct)
+          val = send('valid_' + k_r + '?', v, dct)
         rescue
           val = false
         end
@@ -36,8 +36,8 @@ module Validate
   if RUBY_ENGINE == 'opal'
 
     def validate state
-      ret = validate_(state_to_hash(state)){|k, v| state.__send__('is_valid_' + k + '!', v)}
-      state.is_valid! ret.all?
+      ret = validate_(state_to_hash(state)){|k, v| state.__send__('valid_' + k + '!', v)}
+      state.valid! ret.all?
     end
 
   else
@@ -51,9 +51,9 @@ module Validate
 
         return false if !v.nil? && !v.is_a?(attrs[k])
         k = k.gsub('.', '_')
-        if respond_to? 'is_valid_' + k + '?'
+        if respond_to? 'valid_' + k + '?'
           begin
-            b = send 'is_valid_' + k + '?', v, dct
+            b = send 'valid_' + k + '?', v, dct
           rescue
             b = false
           end

@@ -11,7 +11,7 @@ class ValidateA
     field 'c.x' => Integer
   end
 
-  def is_valid_a? (value, doc)
+  def valid_a? (value, doc)
     if doc[:b] <= 4
       value.start_with? 'A'
     else
@@ -19,7 +19,7 @@ class ValidateA
     end
   end
 
-  def is_valid_b? (value, doc)
+  def valid_b? (value, doc)
     !value.nil?
   end
 end
