@@ -1,7 +1,7 @@
 require 'eventmachine'
 require 'em-websocket'
 #require './main_form'
-require 'main_triage'
+require 'main_demo'
 require 'rethinkdb'
 require 'liquid'
 require '../conf'
@@ -29,7 +29,7 @@ EM.run do
                     ) do |ws|
     controller = nil
 
-    ws.onopen { |handshake| controller = MyController.new ws, conn}
+    ws.onopen { |handshake| controller = AppController.new ws, conn}
 
     ws.onmessage do |msg|
       begin

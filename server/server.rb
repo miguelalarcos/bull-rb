@@ -51,7 +51,7 @@ require 'em-http-request'
                     else
                         $r.table(table).filter(filter).em_run(@conn) do |doc|
                             doc['owner'] = user_is_owner? doc
-                            yield doc
+                            yield symbolize_keys doc
                         end
                     end
                 end
@@ -60,7 +60,7 @@ require 'em-http-request'
             def get_array predicate
                 ret = []
                 docs_with_count(predicate) do |count, row|
-                    ret << row
+                    ret << symbolize_keys(row)
                     yield ret if ret.length == count
                 end
             end
@@ -138,31 +138,23 @@ require 'em-http-request'
             end
 
             def user_is_owner? doc
-                doc['owner'] == @user_id
+                doc[:owner] == @user_id
             end
 
             def before_update_user old, new, merged
                 @roles.include? 'admin'
             end
 
-            #def user_roles
-            #    $r.table('user').get(@user_id).run(@conn)['roles']
-            #end
-
-            #def user_role_in? doc
-            #    doc['update_roles'].to_set.intersect?(user_roles.to_set)
-            #end
-
             def i_timestamp! doc
-                doc['i_timestamp'] = Time.now
+                doc[:i_timestamp] = Time.now
             end
 
             def u_timestamp! doc
-                doc['u_timestamp'] = Time.now
+                doc[:u_timestamp] = Time.now
             end
 
             def owner! doc
-                doc['owner'] = @user_id
+                doc[:owner] = @user_id
             end
 
             def rpc_insert(table, value:)
@@ -217,7 +209,6 @@ require 'em-http-request'
                 w = w.changes({include_initial: true})
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
-                        #puts doc
                         doc['owner'] = user_is_owner? doc
                         ret = {}
                         ret[:response] = 'watch'
@@ -256,7 +247,7 @@ require 'em-http-request'
                 else
                     $r.table(table).get(id).em_run(@conn) do |doc|
                         doc['owner'] = user_is_owner? doc
-                        yield doc
+                        yield symbolize_keys doc
                     end
                 end
             end
