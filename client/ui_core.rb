@@ -284,7 +284,7 @@ end
 
 class HashInput < React::Component::Base
   param :value
-  param :on_enter
+  param :on_change
 
   before_mount do
     state.key! ''
@@ -298,7 +298,7 @@ class HashInput < React::Component::Base
       button{'add'}.on(:click) do
         hsh = params.value.dup
         hsh[state.key] = state.value
-        params.on_enter.call hsh
+        params.on_change.call hsh
       end
       table do
         tr do
@@ -313,7 +313,7 @@ class HashInput < React::Component::Base
             td{i(class: 'fa fa-times fa-2x')}.on(:click) do
               hsh = params.value.dup
               hsh.delete k
-              params.on_enter.call hsh
+              params.on_change.call hsh
             end
           end
         end
@@ -324,7 +324,7 @@ end
 
 class ArrayInput < React::Component::Base
   param :value
-  param :on_enter
+  param :on_change
 
   before_mount do
     state.tmp! ''
@@ -336,7 +336,7 @@ class ArrayInput < React::Component::Base
         if event.key_code == 13
           list = params.value.dup
           list << event.target.value
-          params.on_enter.call list
+          params.on_change.call list
           state.tmp! ''
         end
       end
@@ -351,7 +351,7 @@ class ArrayInput < React::Component::Base
             td{i(class: 'fa fa-times fa-2x')}.on(:click) do
               list = params.value.dup
               list.delete v
-              params.on_enter.call list
+              params.on_change.call list
             end
           end
         end
