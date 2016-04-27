@@ -113,6 +113,7 @@ require 'em-http-request'
 
             def task_send_code_to_email user
                 code = ('a'..'z').to_a.sample(8).join
+                @email_code = code
                 puts code
                 t = $reports['mail_code_new_user']
                 html = t.render(code: code)
