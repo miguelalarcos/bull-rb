@@ -308,8 +308,8 @@ class HashInput < React::Component::Base
           th{'value'}
           th{' '}
         end
-        tr do
-          params.value.each_pair do |k, v|
+        params.value.each_pair do |k, v|
+          tr do
             td{k}
             td{v}
             td{i(class: 'fa fa-times fa-2x')}.on(:click) do
@@ -349,8 +349,8 @@ class ArrayInput < React::Component::Base
           th{'        '}
           th{'  '}
         end
-        tr do
-          params.value.each do |v|
+        params.value.each do |v|
+          tr do
             td{v}
             td{i(class: 'fa fa-times fa-2x')}.on(:click) do
               list = params.value.dup
