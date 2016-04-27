@@ -22,8 +22,8 @@ class MyForm < Form
       div
       MultiLineInput(value: state.m, on_change: change_attr('m'), dirty: state.dirty_m)
       div do
-        i(class: 'save fa fa-floppy-o fa-2x').on(:click){save}
-        i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true}
+        i(class: 'save fa fa-floppy-o fa-2x').on(:click){save} if state.dirty
+        i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if state.dirty && !state.discard
         i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
       end
     end
