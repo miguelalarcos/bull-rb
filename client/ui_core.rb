@@ -282,6 +282,32 @@ class FloatInput < React::Component::Base
   end
 end
 
+class CheckInput < React::Component::Base
+  param :value
+  param :on_change
+
+  def render
+   input(type: :checkbox, checked: params.value).on(:click){params.on_change.call !params.value}
+  end
+end
+
+class RadioInput < React::Component::Base
+  param :value
+  param :values
+  param :name
+  param :on_change
+
+  def checked radio_value, value
+    radio_value == value
+  end
+
+  def render
+    params.values.each do |v|
+      input(type: :radio, name: params.name, checked: checked(v, params.value)){v}.on(:click){params.on_change.call v}
+    end
+  end
+end
+
 class HashInput < React::Component::Base
   param :value
   param :on_change
