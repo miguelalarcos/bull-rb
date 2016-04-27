@@ -287,7 +287,7 @@ class CheckInput < React::Component::Base
   param :on_change
 
   def render
-   input(type: :checkbox, checked: params.value).on(:click){params.on_change.call !params.value}
+   input(type: :checkbox, checked: params.value).on(:change){params.on_change.call !params.value}
   end
 end
 
@@ -297,13 +297,9 @@ class RadioInput < React::Component::Base
   param :name
   param :on_change
 
-  def checked radio_value, value
-    radio_value == value
-  end
-
   def render
     params.values.each do |v|
-      input(type: :radio, name: params.name, checked: checked(v, params.value)){v}.on(:click){params.on_change.call v}
+      input(type: :radio, name: params.name, value: v, checked: v == params.value){v}.on(:change){params.on_change.call v}
     end
   end
 end
@@ -390,14 +386,6 @@ class ArrayInput < React::Component::Base
   end
 end
 
-def selected val1, val2
-  if val1 == val2
-    {:selected => 'selected'}
-  else
-    {}
-  end
-end
-
 class SelectInput < React::Component::Base
   param :on_change
   param :value
@@ -405,6 +393,14 @@ class SelectInput < React::Component::Base
   param :dirty
 
   include ClassesInput
+
+  def selected val1, val2
+    if val1 == val2
+      {:selected => 'selected'}
+    else
+      {}
+    end
+  end
 
   def render
     span do
