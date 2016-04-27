@@ -298,8 +298,10 @@ class RadioInput < React::Component::Base
   param :on_change
 
   def render
-    params.values.each do |v|
-      input(type: :radio, name: params.name, value: v, checked: v == params.value){v}.on(:change){params.on_change.call v}
+    span do
+      params.values.each do |v|
+        input(type: :radio, name: params.name, value: v, checked: v == params.value){v}.on(:change){params.on_change.call v}
+      end
     end
   end
 end
@@ -314,7 +316,7 @@ class HashInput < React::Component::Base
   end
 
   def render
-    div do
+    span do
       input(placeholder: 'key', value: state.key).on(:change){|event| state.key! event.target.value}
       input(placeholder: 'value',value: state.key).on(:change){|event| state.value! event.target.value}
       button{'add'}.on(:click) do
@@ -355,7 +357,7 @@ class ArrayInput < React::Component::Base
   end
 
   def render
-    div do
+    span do
       input(value: state.v).on(:change) do |event|
           state.v! event.target.value
         end.on(:keyDown) do |event|
@@ -394,20 +396,56 @@ class SelectInput < React::Component::Base
 
   include ClassesInput
 
-  def selected val1, val2
-    if val1 == val2
-      {:selected => 'selected'}
-    else
-      {}
-    end
-  end
+  #def selected val1, val2
+  #  if val1 == val2
+  #    {:selected => 'selected'}
+  #  else
+  #    {}
+  #  end
+  #end
 
   def render
     span do
       select(class: 'select ' + dirty_class) do
         option{''}
-        params.options.each {|val| option(selected(params.value, val)){val}}
+        #params.options.each {|val| option(selected(params.value, val)){val}}
+        params.options.each {|val| option(selected: params.value == val){val}}
       end.on(:change) {|event| params.on_change.call event.target.value}
+    end
+  end
+end
+
+class MultipleSelectInput < React::Component::Base
+  param :on_change
+  param :options
+  param :values
+
+  def render
+    span do
+      select(class: 'select ') do
+        option{''}
+        params.options.each {|val| option(selected: params.values.include? val){val}}
+      end.on(:change) do |event|
+        list = params.values.dup
+        list << event.target.value if !list.include? event.target.value
+        params.on_change.call list
+      end
+      table do
+        tr do
+          th{'        '}
+          th{'  '}
+        end
+        params.values.each do |v|
+          tr do
+            td{v}
+            td{i(class: 'fa fa-times fa-2x')}.on(:click) do
+              list = params.values.dup
+              list.delete v
+              params.on_change.call list
+            end
+          end
+        end
+      end
     end
   end
 end
