@@ -135,7 +135,7 @@ class UserForm < Form
   param :selected
 
   before_mount do
-    get_unique user: 'miguel'
+    get_unique user: params.selected
   end
 
   def render

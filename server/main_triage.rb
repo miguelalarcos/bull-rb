@@ -9,7 +9,7 @@ class MyController < BullServerController
     check user, String
     check value, String
     if @roles.include? 'admin'
-      get_unique('user', {"#{user}" => value}){|doc| yield doc}
+      get_unique('user', {"#{user}" => value}){|doc| doc.delete 'password'; yield doc}
     else
       yield Hash.new
     end
