@@ -50,22 +50,11 @@ module NetCaptcha
     yield url
   end
 
-  def rpc_create_user_net_challenge user, password, challenge_response
-    if @challenge_response == challenge_response
+  def rpc_create_user_net_challenge user, password, challenge_response, code
+    if @challenge_response == challenge_response && @email_code == code
       create_user_if_not_exist(user, password) do |response|
         yield response
       end
-      #rpc_user_exist?(user) do |flag|
-      #  if flag
-      #    yield false
-      #  else
-      #    password = BCrypt::Password.create(password)
-      #    $r.table('user').insert(user: user, password: password, roles: []).em_run(@conn) do |response|
-      #      @user_id = user
-      #      yield true
-      #    end
-      #  end
-      #end
     else
       yield false
     end
@@ -85,12 +74,12 @@ module TextCaptcha
     end
   end
 
-  def rpc_create_user_text_challenge user, password, challenge_response
+  def rpc_create_user_text_challenge user, password, challenge_response, code
     md5 = Digest::MD5.new
     md5 << challenge_response
     print md5
     print @challenge_response
-    if !@challenge_response.any? {|v| md5 == v}
+    if (!@challenge_response.any? {|v| md5 == v}) || @email_code != code
       yield false
     else
       create_user_if_not_exist(user, password) do |response|

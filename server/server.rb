@@ -111,6 +111,14 @@ require 'em-http-request'
                 $r.table('user').filter(user: @user_id).update(password: pass, secondary_password: nil).em_run(@conn){|ret| yield ret['replaced']}
             end
 
+            def task_send_code_to_email user
+                code = ('a'..'z').to_a.sample(8).join
+                puts code
+                t = $reports['mail_code_new_user']
+                html = t.render(code: code)
+                EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'code', html: html
+            end
+
             def task_forgotten_password user
                 secondary_password = ('a'..'z').to_a.sample(8).join
                 puts secondary_password
