@@ -329,19 +329,19 @@ class ArrayInput < React::Component::Base
   param :on_change
 
   before_mount do
-    state.tmp! ''
+    state.v! ''
   end
 
   def render
     div do
-      input(value: state.tmp).on(:change) do |event|
-          state.tmp! event.target.value
+      input(value: state.v).on(:change) do |event|
+          state.v! event.target.value
         end.on(:keyDown) do |event|
         if event.key_code == 13
           list = params.value.dup
           list << event.target.value
           params.on_change.call list
-          state.tmp! ''
+          state.v! ''
         end
       end
       table do
