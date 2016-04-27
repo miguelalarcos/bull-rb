@@ -400,7 +400,7 @@ class SelectInput < React::Component::Base
     span do
       select(class: 'select ' + dirty_class, value: params.value) do
         option{''}
-        params.options.each {|val| option{val}}
+        params.options.each {|val| option(value: val){val}}
       end.on(:change) {|event| params.on_change.call event.target.value}
     end
   end
@@ -415,7 +415,7 @@ class MultipleSelectInput < React::Component::Base
     span do
       select(class: 'select ', multiple: true, value: params.values) do
         option{''}
-        params.options.each {|val| option{val}} #(selected: params.values.include? val){val}}
+        params.options.each {|val| option(value: val){val}} #(selected: params.values.include? val){val}}
       end.on(:change) do |event|
         list = params.values.dup
         list << event.target.value if !list.include? event.target.value
