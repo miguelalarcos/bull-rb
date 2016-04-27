@@ -421,6 +421,7 @@ class MultipleSelectInput < React::Component::Base
         list << event.target.value if !list.include? event.target.value
         params.on_change.call list
       end
+=begin
       table do
         tr do
           th{'        '}
@@ -437,6 +438,7 @@ class MultipleSelectInput < React::Component::Base
           end
         end
       end
+=end
     end
   end
 end
