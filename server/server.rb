@@ -98,6 +98,7 @@ require 'em-http-request'
                 end
                 if pass == password || (response['secondary_password'] && pass == secondary_password)
                     @user_id = user
+                    @roles = response['roles']
                     yield response['roles'] #true
                 else
                     yield false
@@ -123,6 +124,7 @@ require 'em-http-request'
             def rpc_logout
                 close
                 @user_id = nil
+                @roles = nil
                 true
             end
 
@@ -130,9 +132,13 @@ require 'em-http-request'
                 doc['owner'] == @user_id
             end
 
-            def user_roles
-                $r.table('user').get(@user_id).run(@conn)['roles']
+            def before_update_user old, new, merged
+                @roles.include? 'admin'
             end
+
+            #def user_roles
+            #    $r.table('user').get(@user_id).run(@conn)['roles']
+            #end
 
             #def user_role_in? doc
             #    doc['update_roles'].to_set.intersect?(user_roles.to_set)

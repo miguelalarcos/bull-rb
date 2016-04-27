@@ -29,7 +29,7 @@ class TriageList < DisplayList
         end
         state.docs.each do |doc|
           tr(class: tr_class(doc)) do
-            td{doc['nhc']}
+            td{doc['nhc'].to_s}
             td{doc['name']}
             td{doc['ini_date'].strftime('%d-%m-%Y %H:%M')}
             td{'select'}.on(:click){selected.value = doc['id']}
@@ -41,24 +41,71 @@ class TriageList < DisplayList
   end
 end
 
-class TriageForm < Form
+class PatientSearch < React::Component::Base
+  param :on_select
+
+  before_mount do
+    state.nhc! nil
+    state.name! ''
+    state.patients! []
+  end
+
+  def search
+    $controller.rpc('search_patient', state.nhc, state.name).then do |docs|
+      state.patients! docs
+    end
+  end
+
+  def render
+    div do
+      div{IntegerInput(value: state.nhc, on_change: lambda{|v| state.nhc! v})}
+      div{StringInput(value: state.name, on_change: lambda{|v| state.name! v})}
+      button{'search'}.on(:click){search} if state.nhc || state.name != ''
+      state.patients.each do |patient|
+        div{patient['nhc'].to_s + ':' + patient['name']}.on(:click){params.on_select.call patient}
+      end
+    end
+  end
+end
+
+class TriageAdministrativeForm < Form
+  param :selected
+  @@table = 'triage'
+  @@constants = ['patient_id', 'nhc', 'name']
+
+  before_mount do
+    get params.selected
+    state.ini_date! Time.new
+  end
+
+  def clear
+    state.ini_date! Time.new
+  end
+
+  def render
+    div do
+      div{DateTimeInput(value: state.ini_date, format: '%d-%m-%Y %H:%M', on_change: change_attr('ini_date'))}
+      button{'save'}.on(:click){save} if state.dirty
+      button{'discard'}.on(:click){state.discard! true}
+      button{'really discard'}.on(:click){discard} if state.discard
+    end
+  end
+end
+
+class TriageClinicalForm < Form
   @@table = 'triage'
   param :selected
-  @@constants = ['nhc', 'name']
 
   before_mount do
     get params.selected
   end
 
   def clear
-    state.nhc! nil
-    state.name! ''
-    state.ini_date! nil
     state.observations! ''
   end
+
   def render
     div do
-      div{DateTimeInput(value: state.ini_date, format: '%d-%m-%Y %H:%M', on_change: change_attr('ini_date'))}
       div{MultiLineInput(value: state.observations, on_change: change_attr('observations'))}
       button{'save'}.on(:click){save} if state.dirty
       button{'discard'}.on(:click){state.discard! true}
@@ -83,12 +130,17 @@ class App < React::Component::Base
   before_mount do
     @selected = RVar.new nil
     state.modal! false
+    state.patient! nil
   end
 
   def render
     div do
       Notification(level: 0)
-      TriageForm(selected: @selected)
+      PatientSearch(on_select: lambda{|v| state.patiene! v})
+      TriageAdministrativeForm(selected: @selected, patient_id: state.patient['patient_id'],
+                                                    nhc: state.patient['nhc'],
+                                                    name: state.patient['name'])
+      TriageClinicalForm(selected: @selected)
       TriageList(selected: @selected, show_modal: lambda{state.modal! true})
       MyModal(ok: lambda {state.modal! false}) if state.modal
     end
