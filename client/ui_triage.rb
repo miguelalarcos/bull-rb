@@ -32,8 +32,8 @@ class TriageList < DisplayList
             td{doc['nhc'].to_s}
             td{doc['name']}
             td{doc['ini_date'].strftime('%d-%m-%Y %H:%M')}
-            td{'select'}.on(:click){selected.value = doc['id']}
-            td{'close'}.on(:click){$controller.update('triage', doc['id'], {end_date: Time.new})}
+            td{a(href: '#'){'select'}.on(:click){selected.value = doc['id']}}
+            td{a(href: '#'){'close'}.on(:click){$controller.update('triage', doc['id'], {end_date: Time.new})}}
           end
         end
       end
@@ -61,8 +61,14 @@ class PatientSearch < React::Component::Base
       div{IntegerInput(value: state.nhc, on_change: lambda{|v| state.nhc! v})}
       div{StringInput(value: state.name, on_change: lambda{|v| state.name! v})}
       button{'search'}.on(:click){search} if state.nhc || state.name != ''
-      state.patients.each do |patient|
-        div{patient['nhc'].to_s + ':' + patient['name']}.on(:click){params.on_select.call patient}
+      table do
+        th{'nhc'}
+        th{'name'}
+        state.patients.each do |patient|
+          td{patient['nhc'].to_s}
+          td{patient['name']}
+          td{a(href: '#'){'select'}.on(:click){params.on_select.call patient}}
+        end
       end
     end
   end
@@ -136,7 +142,7 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
-      PatientSearch(on_select: lambda{|v| state.patiene! v})
+      PatientSearch(on_select: lambda{|v| state.patient! v})
       TriageAdministrativeForm(selected: @selected, patient_id: state.patient['patient_id'],
                                                     nhc: state.patient['nhc'],
                                                     name: state.patient['name'])

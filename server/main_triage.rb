@@ -19,7 +19,14 @@ class MyController < BullServerController
 
   def rpc_get_triage id
     check id, String
-    get('triage', id) {|doc| yield doc}
+    get('triage', id)  do |doc|
+      if @roles.include? 'nurse'
+        yield doc
+      else
+        doc.delete 'observations'
+        yield doc
+      end
+    end
   end
 
   def watch_triage
@@ -36,3 +43,4 @@ class MyController < BullServerController
     ){|docs| yield docs}
   end
 end
+
