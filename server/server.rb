@@ -44,7 +44,7 @@ require 'em-http-request'
                 raise Exception.new("#{arg} is not a #{type}") if !arg.nil? && !arg.is_a?(type)
             end
 
-            def get_filter table, filter
+            def get_unique table, filter
                 $r.table(table).filter(filter).count.em_run(@conn) do |count|
                     if count == 0
                         yield Hash.new

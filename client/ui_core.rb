@@ -496,6 +496,22 @@ class Form < React::Component::Base
       end
     end
   end
+
+  def get_unique kw
+    k, selected = kw.shift
+    @selected = selected
+    selected.add_form self
+    @rvs = reactive(selected) do
+      @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
+      @dirty.clear
+      clear
+      $controller.rpc('get_unique_' + @@table, k, selected.value).then do|response|
+        response.each do |k, v|
+          state.__send__(k+'!', v)
+        end
+      end
+    end
+  end
 end
 
 module Modal

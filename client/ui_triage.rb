@@ -130,9 +130,25 @@ class MyModal < React::Component::Base
   end
 end
 
+class UserForm < Form
+  @@table = 'user'
+  param :selected
+
+  before_mount do
+    get_unique user: 'miguel'
+  end
+
+  def render
+    ArrayInput(value: state.roles, on_change: lambda{|v| state.roles! v})
+    FormButtons()
+  end
+
+end
+
 class App < React::Component::Base
   before_mount do
     @selected = RVar.new nil
+    @user_selected = RVar.new 'miguel'
     state.modal! false
     state.patient! nil
   end
@@ -140,6 +156,7 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
+      UserForm(selected: @user_selected)
       PatientSearch(on_select: lambda{|v| state.patient! v})
       TriageAdministrativeForm(selected: @selected, patient_id: state.patient['patient_id'],
                                                     nhc: state.patient['nhc'],

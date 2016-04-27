@@ -5,13 +5,23 @@ class MyController < BullServerController
   #  super ws, conn
   #end
 
+  def get_unique_user user, value
+    check user, String
+    check value, String
+    if @roles.include? 'admin'
+      get_unique('user', {"#{user}" => value}){|doc| yield doc}
+    else
+      yield Hash.new
+    end
+  end
+
   def before_insert_triage doc
-    @roles.include? 'administrativo'
+    @roles.include? 'administrative'
   end
 
   def before_update_triage old, new, merged
     if new[:observations].nil?
-      @roles.include? 'administrativo'
+      @roles.include? 'administrative'
     else
       @roles.include? 'nurse'
     end
