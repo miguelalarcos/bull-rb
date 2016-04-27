@@ -5,11 +5,11 @@ class MyController < BullServerController
   #  super ws, conn
   #end
 
-  def get_unique_user user, value
-    check user, String
+  def get_unique_user key, value
+    check key, String
     check value, String
     if @roles.include? 'admin'
-      get_unique('user', {"#{user}" => value}){|doc| doc.delete 'password'; yield doc}
+      get_unique('user', {"#{key}" => value}){|doc| doc.delete 'password'; yield doc}
     else
       yield Hash.new
     end
