@@ -293,8 +293,8 @@ class HashInput < React::Component::Base
 
   def render
     div do
-      input(placeholder: 'key', value: state.key)
-      input(placeholder: 'value',value: state.key)
+      input(placeholder: 'key', value: state.key).on(:change){|event| state.key! event.target.value}
+      input(placeholder: 'value',value: state.key).on(:change){|event| state.value! event.target.value}
       button{'add'}.on(:click) do
         hsh = params.value.dup
         hsh[state.key] = state.value
@@ -332,7 +332,9 @@ class ArrayInput < React::Component::Base
 
   def render
     div do
-      input(value: state.tmp).on(:keyDown) do |event|
+      input(value: state.tmp).on(:change) do |event|
+          state.tmp! event.target.value
+        end.on(:keyDown) do |event|
         if event.key_code == 13
           list = params.value.dup
           list << event.target.value
