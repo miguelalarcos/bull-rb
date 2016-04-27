@@ -306,7 +306,7 @@ class HashInput < React::Component::Base
         tr do
           th{'key'}
           th{'value'}
-          tg{' '}
+          th{' '}
         end
         tr do
           params.value.each_pair do |k, v|
