@@ -25,6 +25,7 @@ class TriageList < DisplayList
           th{'nhc'}
           th{'nombre'}
           th{'fecha inicio'}
+          th{'feccha fin'}
         end
         state.docs.each do |doc|
           tr(class: tr_class(doc)) do
@@ -59,6 +60,9 @@ class TriageForm < Form
     div do
       div{DateTimeInput(value: state.ini_date, format: '%d-%m-%Y %H:%M', on_change: change_attr('ini_date'))}
       div{MultiLineInput(value: state.observations, on_change: change_attr('observations'))}
+      button{'save'}.on(:click){save} if state.dirty
+      button{'discard'}.on(:click){state.discard! true}
+      button{'really discard'}.on(:click){discard} if state.discard
     end
   end
 end
