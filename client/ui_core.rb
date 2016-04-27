@@ -299,6 +299,8 @@ class HashInput < React::Component::Base
         hsh = params.value.dup
         hsh[state.key] = state.value
         params.on_change.call hsh
+        state.key! ''
+        state.value! ''
       end
       table do
         tr do
