@@ -308,6 +308,16 @@ class SelectInput < React::Component::Base
   end
 end
 
+class FormButtons < React::Component::Base
+  def render
+    div do
+      i(class: 'save fa fa-floppy-o fa-2x').on(:click){save} if state.valid && state.dirty
+      i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if state.dirty && !state.discard
+      i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
+    end
+  end
+end
+
 class Form < React::Component::Base
 
   before_mount do

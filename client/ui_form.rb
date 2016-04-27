@@ -9,6 +9,7 @@ class MyForm < Form
 
   before_mount do
     get params.selected
+    state.valid! true
   end
 
   def clear
@@ -21,11 +22,7 @@ class MyForm < Form
       StringInput(value: state.a, on_change: change_attr('a'), dirty: state.dirty_a)
       div
       MultiLineInput(value: state.m, on_change: change_attr('m'), dirty: state.dirty_m)
-      div do
-        i(class: 'save fa fa-floppy-o fa-2x').on(:click){save} if state.dirty
-        i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if state.dirty && !state.discard
-        i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
-      end
+      FormButtons()
     end
   end
 end
