@@ -112,7 +112,6 @@ class PageDemo < React::Component::Base
 
   def render
     div(class: params.page == 'demo'? '': 'no-display' ) do
-      Notification(level: 0)
       DemoForm(selected: @selected, cte: 'miguel')
       DemoDoc(selected: @selected)
       DemoList(selected: @selected)
@@ -146,6 +145,7 @@ class App < React::Component::Base
 
   def render
     div do
+      Notification(level: 0)
       Menu(set_page: lambda{|v| state.page! v})
       PageDemo(page: state.page)
       PageLogin(page: state.page)
