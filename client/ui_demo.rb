@@ -2,6 +2,7 @@ require 'ui_core'
 require 'reactive-ruby'
 require 'reactive_var'
 require 'date-time-picker'
+require 'autocomplete'
 require_relative 'validation/validation_demo'
 
 class DemoForm < Form
@@ -22,6 +23,15 @@ class DemoForm < Form
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
+    state.date! nil
+    state.datetime! nil
+    state.auto! ''
+    state.check! false
+    state.array! []
+    state.hash! Hash.new
+    state.radio! 'yellow'
+    state.select! 'yellow'
+    state.mselect! ['yellow', 'red']
   end
 
   def render
@@ -56,6 +66,48 @@ class DemoForm < Form
           td{MultiLineInput(valid: state.valid_observations, dirty: state.dirty_observations,
                             value: state.observations, on_change: change_attr('observations'))}
         end
+        tr do
+          td{'Date'}
+          td{DateTimeInput(time: false, format: '%d-%m-%Y', value: state.date,
+                           on_change: change_attr('date'), dirty: state.dirty_date)}
+        end
+        tr do
+          td{'DateTime'}
+          td{DateTimeInput(time: true, format: '%d-%m-%Y %H:%M', value: state.datetime,
+                           on_change: change_attr('datetime'), dirty: state.dirty_datetime)}
+        end
+        tr do
+          td{'Autocomplete'}
+          td{AutocompleteInput(ref_: 'location', name: 'name', value: state.auto,
+                               on_change: change_attr('auto'), dirty: state.dirty_auto)}
+        end
+        tr do
+          td{'Check'}
+          td{CheckInput(value: state.check, on_change: change_attr('check'))}
+        end
+        tr do
+          td{'Array'}
+          td{ArrayInput(value: state.array, on_change: change_attr('array'))}
+        end
+        tr do
+          td{'Hash'}
+          td{HashInput(value: state.hash, on_change: change_attr('hash'))}
+        end
+        tr do
+          td{'Radio'}
+          td{RadioInput(value: state.radio, values: ['yellow', 'red', 'blue'], name: 'color',
+                        on_change: change_attr('radio'))}
+        end
+        tr do
+          td{'Select'}
+          td{SelectInput(value: state.select, options: ['yellow', 'red', 'blue'],
+                         on_change: change_attr('select'), dirty: state.dirty_select)}
+        end
+        tr do
+          td{'Multiple select'}
+          td{MultipleSelectInput(value: state.mselect, options: ['yellow', 'red', 'blue'],
+                                 on_change: change_attr('mselect'))}
+        end
       end
       FormButtons(save: lambda{save}, discard: lambda{discard}, valid: state.valid, dirty: state.dirty)
     end
@@ -78,16 +130,34 @@ class DemoDoc < DisplayDoc
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
+    state.date! nil
+    state.datetime! nil
+    state.auto! ''
+    state.check! false
+    state.array! []
+    state.hash! Hash.new
+    state.radio! ''
+    state.select! nil
+    state.mselect! nil
   end
 
   def render
     div do
-      div{state.id}
+      div{"The doc with id #{state.id} has these values:"}
       div{state.cte}
       div{state.string_a}
       div{state.integer_x.to_s}
       div{state.nested_float_y['value'].to_s}
       div{state.observations}
+      div{state.date.strftime('%d-%m-%Y %H:%M')}
+      div{state.datetime.strftime('%d-%m-%Y %H:%M')}
+      div{state.auto}
+      div{state.check.to_s}
+      div{state.array.to_s}
+      div{state.hash.to_s}
+      div{state.radio}
+      div{state.select}
+      div{state.mselect.to_s}
     end
   end
 end

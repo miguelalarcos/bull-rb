@@ -3,6 +3,15 @@ require '../validation/validation_demo'
 
 class AppController < BullServerController
 
+  def rpc_get_location loc
+    check loc, String
+    get_array(
+        $r.table('location').filter do |doc|
+          doc['name'] =~ /#{loc}/i
+        end
+    ) {|docs| yield docs}
+  end
+
   def before_insert_demo doc
     ValidateDemo.new.validate doc
   end

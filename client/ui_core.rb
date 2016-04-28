@@ -409,15 +409,15 @@ end
 class MultipleSelectInput < React::Component::Base
   param :on_change
   param :options
-  param :values
+  param :value
 
   def render
     span do
-      select(class: 'select ', multiple: true, value: params.values) do
+      select(class: 'select ', multiple: true, value: params.value) do
         option{''}
         params.options.each {|val| option(value: val){val}} #(selected: params.values.include? val){val}}
       end.on(:change) do |event|
-        list = params.values.dup
+        list = params.value.dup
         list << event.target.value if !list.include? event.target.value
         params.on_change.call list
       end
