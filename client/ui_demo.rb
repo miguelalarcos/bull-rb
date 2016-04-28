@@ -26,32 +26,39 @@ class DemoForm < Form
 
   def render
     ValidateDemo.new.validate state
-    table do
-      tr do
-        td{'A string'}
-        td{StringInput(valid: state.valid_string_a, dirty: state.dirty_string_a, placeholder: 'string', value: state.string_a, on_change: change_attr('string_a'))}
-        td(class: 'error'){'string must start with A'} if !valid_string_a
+    div do
+      table do
+        tr do
+          td{'A string'}
+          td{StringInput(valid: state.valid_string_a, dirty: state.dirty_string_a, placeholder: 'string',
+                         value: state.string_a, on_change: change_attr('string_a'))}
+          td(class: 'error'){'string must start with A'} if !state.valid_string_a
+        end
+        tr do
+          td{'A password'}
+          td{PasswordInput(placeholder: 'password', value: state.password, on_change: change_attr('password'))}
+        end
+        tr do
+          td{'An integer'}
+          td{IntegerInput(valid: state.valid_integer_x, dirty: state.dirty_integer_x, placeholder: 'integer',
+                          value: state.integer_x, on_change: change_attr('integer_x'))}
+          td(class: 'error'){'integer must be > 10'} if !state.valid_integer_x
+        end
+        tr do
+          td{'A nested float'}
+          td{FloatInput(valid: state.valid_nested_float_t_value, dirty: state.dirty_nested_float_t_value,
+                        placeholder: 'nested float', value: state.nested_float_y[:value],
+                        on_change: change_attr('nested_float_y.value'))}
+          td(class: 'error'){'float must be negative'} if !state.valid_nested_float_y_value
+        end
+        tr do
+          td{'Observations'}
+          td{MultiLineInput(valid: state.valid_observations, dirty: state.dirty_observations,
+                            value: state.observations, on_change: change_attr('observations'))}
+        end
       end
-      tr do
-        td{'A password'}
-        td{PasswordInput(placeholder: 'password', value: state.password, on_change: change_attr('password'))}
-      end
-      tr do
-        td{'An integer'}
-        td{IntegerInput(placeholder: 'integer', value: state.integer_x, on_change: change_attr('integer_x'))}
-        td(class: 'error'){'integer must be > 10'} if !valid_integer_x
-      end
-      tr do
-        td{'A nested float'}
-        td{FloatInput(placeholder: 'nested float', value: state.nested_float_y[:value], on_change: change_attr('nested_float_y.value'))}
-        td(class: 'error'){'float must be negative'} if !valid_nested_float_y_value
-      end
-      tr do
-        td{'Observations'}
-        td{MultiLineInput(value: state.observations, on_change: change_attr('observations'))}
-      end
+      FormButtons(save: lambda{save}, discard: lambda{discard}, valid: state.valid, dirty: state.dirty)
     end
-    FormButtons()
   end
 end
 
@@ -63,13 +70,25 @@ class DemoDoc < DisplayDoc
     watch_ params.selected
   end
 
+  def clear
+    state.id! nil
+    state.string_a! ''
+    state.password! ''
+    state.integer_x! nil
+    y = {value: nil}
+    state.nested_float_y! y
+    state.observations! ''
+  end
+
   def render
-    div{state.id}
-    div{state.cte}
-    div{state.string_a}
-    div{state.integer_x}
-    div{state.nested_float_y['value']}
-    div{state.observations}
+    div do
+      div{state.id}
+      div{state.cte}
+      div{state.string_a}
+      div{state.integer_x.to_s}
+      div{state.nested_float_y['value'].to_s}
+      div{state.observations}
+    end
   end
 end
 
@@ -93,9 +112,9 @@ class DemoList < DisplayList
           tr do
             td{doc['id']}
             td{doc['string_a']}
-            td{doc['integer_x']}
-            td{doc['nested_float_y']['value']}
-            td{a(href='#'){'select'}.on(:click){params.selected.value = doc['id']}}
+            td{doc['integer_x'].to_s}
+            td{doc['nested_float_y']['value'].to_s}
+            td{a(href: '#'){'select'}.on(:click){params.selected.value = doc['id']}}
           end
         end
       end
@@ -120,6 +139,8 @@ class PageDemo < React::Component::Base
 end
 
 class PageLogin < React::Component::Base
+  param :page
+
   def render
     div(class: params.page == 'login'? '': 'no-display') do
       'page of login!'

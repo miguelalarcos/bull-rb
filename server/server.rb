@@ -207,7 +207,7 @@ require 'em-http-request'
                 else
                     w = self.send command, *args, **kwargs
                 end
-                return if !w
+                return if !w ## ?
                 w = w.changes({include_initial: true})
                 EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
@@ -223,8 +223,14 @@ require 'em-http-request'
             end
 
             def handle_stop_watch id
-                @watch[id].close
-                @watch.delete id
+                check id, Integer
+                w = @watch[id]
+                if w
+                    w.close
+                    @watch.delete id
+                end
+                #@watch[id].close
+                #@watch.delete id
             end
 
             def handle_task command, *args, **kwargs

@@ -444,11 +444,20 @@ class MultipleSelectInput < React::Component::Base
 end
 
 class FormButtons < React::Component::Base
+  param :valid
+  param :dirty
+  param :save
+  param :discard
+
+  before_mount do
+    state.discard! false
+  end
+
   def render
     div do
-      i(class: 'save fa fa-floppy-o fa-2x').on(:click){save} if state.valid && state.dirty
-      i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if state.dirty && !state.discard
-      i(class: 'rdiscard fa fa-times fa-5x').on(:click) {discard} if state.discard
+      i(class: 'save fa fa-floppy-o fa-2x').on(:click){params.save.call} if params.valid && params.dirty
+      i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if !state.discard
+      i(class: 'rdiscard fa fa-times fa-5x').on(:click) {params.discard.call} if state.discard
     end
   end
 end

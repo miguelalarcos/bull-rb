@@ -15,13 +15,15 @@ class AppController < BullServerController
     get_unique('i18n', {lang: lang}) {|doc| yield doc}
   end
 
-  def get_demo id
+  def rpc_get_demo id
     get('demo', id) {|doc| yield doc}
   end
 
   def watch_demo id
     check id, String
-    $r.table('demo').get(id)
+    if !id.nil?
+      $r.table('demo').get(id)
+    end
   end
 
   def watch_demo_items

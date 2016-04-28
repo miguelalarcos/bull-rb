@@ -8,6 +8,7 @@ class ValidateDemo
     field 'password' => String
     field 'integer_x' => Integer
     field 'nested_float_y.value' => Float
+    field 'observations' => String
   end
 
   def valid_string_a? (value, doc)
