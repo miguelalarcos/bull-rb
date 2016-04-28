@@ -278,25 +278,20 @@ Client side:
 * client.rb: it has the controller class for the client
 * i18n.rb: module for i18n
 * index.html: this is the file sent to the browser by the http server
-* main.rb: the entry point for Opal. You must define here the global $controller
+* main.rb: the entry point for Opal.
 * Rakefile: to make the build.js and build.css
 * reactive_var.rb: here you've got the implementation for reactive vars. Please note that this reactive var does not work
   with the render method of the react.rb components. This works with the provided reactive function.
-* ui.rb: here you've got all the React components of the client application.
+* ui.rb: here you've got all the React components of the client application. Here goes the React component App.
 * ui_core.rb: useful ui components like DisplayDoc, DisplayList, Form, StringInput, PasswordInput, MultiLineInput, IntegerInput, FloatInput and SelectInput.
 * login.rb: login, create user ui with textcaptcha or netcaptcha
 
 Server side:
 ------------
-* main.rb: you define the custom controller used in the server
+* main.rb: you define the custom controller (AppController)
 * server.rb: it has the controller class for the server
 * start.rb: entry point for the server application
 * bcaptcha: functions to provide captcha service
-
-Gems:
------
-* bull-autocomplete
-* bull-date-time-picker
 
 This is an example of a custom server Controller:
 
@@ -307,7 +302,7 @@ require '../validation/validation'
 require './bcaptcha'
 require 'liquid'
 
-class MyController < Bull::Controller
+class MyController < BullServerController
 
   include NetCaptcha
 

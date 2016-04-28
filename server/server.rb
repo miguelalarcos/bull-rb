@@ -112,12 +112,14 @@ require 'em-http-request'
             end
 
             def task_send_code_to_email user
-                code = ('a'..'z').to_a.sample(8).join
-                @email_code = code
-                puts code
-                t = $reports['mail_code_new_user']
-                html = t.render(code: code)
-                EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'code', html: html
+                if !@email_code
+                    code = ('a'..'z').to_a.sample(8).join
+                    @email_code = code
+                    puts code
+                    t = $reports['mail_code_new_user']
+                    html = t.render(code: code)
+                    EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'code', html: html
+                end
             end
 
             def task_forgotten_password user
