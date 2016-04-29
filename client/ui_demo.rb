@@ -30,9 +30,9 @@ class DemoForm < Form
     state.check! false
     state.array! []
     state.hash! Hash.new
-    state.radio! 'yellow'
-    state.select! 'yellow'
-    state.mselect! ['yellow', 'red']
+    state.radio! nil
+    state.select! nil
+    state.mselect! []
   end
 
   def render
@@ -57,7 +57,7 @@ class DemoForm < Form
         end
         tr do
           td{'A nested float'}
-          td{FloatInput(valid: state.valid_nested_float_t_value, dirty: state.dirty_nested_float_t_value,
+          td{FloatInput(valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
                         placeholder: 'nested float', value: state.nested_float_y[:value],
                         on_change: change_attr('nested_float_y.value'))}
           td(class: 'error'){'float must be negative'} if !state.valid_nested_float_y_value
@@ -150,8 +150,8 @@ class DemoDoc < DisplayDoc
       div{state.integer_x.to_s}
       div{state.nested_float_y['value'].to_s}
       div{state.observations}
-      div{state.date.strftime('%d-%m-%Y %H:%M')}
-      div{state.datetime.strftime('%d-%m-%Y %H:%M')}
+      div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
+      div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
       div{state.check.to_s}
       div{state.array.to_s}
@@ -180,7 +180,7 @@ class DemoList < DisplayList
           th{'nested_float_y.value'}
         end
         state.docs.each do |doc|
-          tr do
+          tr(key: doc['id']) do
             td{doc['id']}
             td{doc['string_a']}
             td{doc['integer_x'].to_s}
@@ -211,7 +211,8 @@ class PageDemo < React::Component::Base
   end
 
   def klass
-    'demo-container ' + params.show ? '': 'no-display'
+    c = params.show ? '': 'no-display'
+    'demo-container ' + c
   end
 
   def render

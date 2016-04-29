@@ -456,8 +456,14 @@ class FormButtons < React::Component::Base
   def render
     div do
       i(class: 'save fa fa-floppy-o fa-2x').on(:click){params.save.call} if params.valid && params.dirty
-      i(class: 'discard fa fa-times fa-2x').on(:click) {state.discard! true} if !state.discard
-      i(class: 'rdiscard fa fa-times fa-5x').on(:click) {params.discard.call} if state.discard
+      i(class: 'discard fa fa-times fa-2x').on(:click) do
+        if params.dirty
+          state.discard! true
+        else
+          params.discard.call
+        end
+      end if !state.discard
+      i(class: 'rdiscard fa fa-times fa-4x').on(:click) {params.discard.call; state.discard! false} if state.discard
     end
   end
 end
