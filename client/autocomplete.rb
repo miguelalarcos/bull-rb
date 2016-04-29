@@ -5,8 +5,7 @@ class AutocompleteInput < React::Component::Base
 
   param :value
   param :on_change
-  param :ref_
-  param :name
+  param :rmethod
   param :valid
   param :dirty
 
@@ -29,7 +28,7 @@ class AutocompleteInput < React::Component::Base
     span(class: 'autocomplete-box') do
       input(type: :text, value: params.value, class: valid_class + ' ' + dirty_class).on(:change) do |event|
         params.on_change.call event.target.value
-        $controller.rpc('get_' + params.ref_, event.target.value).then do |result|
+        $controller.rpc(params.rmethod, event.target.value).then do |result|
           state.options! result.map {|x| x[params.name]}
         end
       end.on(:keyDown) do |event|

@@ -1,6 +1,7 @@
 require 'ui_core'
 require 'reactive-ruby'
 require 'reactive_var'
+require 'login'
 require 'date-time-picker'
 require 'autocomplete'
 require_relative 'validation/validation_demo'
@@ -78,7 +79,7 @@ class DemoForm < Form
         end
         tr do
           td{'Autocomplete'}
-          td{AutocompleteInput(ref_: 'location', name: 'name', value: state.auto,
+          td{AutocompleteInput(rmethod: 'location', value: state.auto,
                                on_change: change_attr('auto'), dirty: state.dirty_auto)}
         end
         tr do
@@ -184,7 +185,17 @@ class DemoList < DisplayList
             td{doc['string_a']}
             td{doc['integer_x'].to_s}
             td{doc['nested_float_y']['value'].to_s}
-            td{a(href: '#'){'select'}.on(:click){params.selected.value = doc['id']}}
+            td do
+              a(href: '#'){'select'}.on(:click) do
+                begin
+                  RVar.raise_if_dirty do
+                    params.selected.value = doc['id']
+                  end
+                rescue
+                  params.show_modal.call
+                end
+              end
+            end
           end
         end
       end
@@ -193,14 +204,18 @@ class DemoList < DisplayList
 end
 
 class PageDemo < React::Component::Base
-  param :page
+  param :show
 
   before_mount do
     @selected = RVar.new nil
   end
 
+  def klass
+    'demo-container ' + params.show ? '': 'no-display'
+  end
+
   def render
-    div(class: params.page == 'demo'? '': 'no-display' ) do
+    div(class: klass) do
       DemoForm(selected: @selected, cte: 'miguel')
       DemoDoc(selected: @selected)
       DemoList(selected: @selected)
@@ -209,10 +224,10 @@ class PageDemo < React::Component::Base
 end
 
 class PageLogin < React::Component::Base
-  param :page
+  param :show
 
   def render
-    div(class: params.page == 'login'? '': 'no-display') do
+    div(class: params.show ? '': 'no-display') do
       'page of login!'
     end
   end
@@ -228,18 +243,36 @@ class Menu < React::Component::Base
   end
 end
 
+class DirtyModal < React::Component::Base
+  include Modal
+  param :ok
+
+  def content
+    div do
+      h2{'There are data not saved. Save or discard the data.'}
+      button{'accept'}.on(:click) {params.ok.call}
+    end
+  end
+end
+
 class App < React::Component::Base
 
   before_mount do
     state.page! 'demo'
+    state.modal! false
+    state.relogin! false
+    $controller.set_relogin_state = lambda{|v| state.relogin v}
+    #$relogin = lambda{|v| state.relogin v}
   end
 
   def render
     div do
       Notification(level: 0)
+      DirtyModal(ok: lambda {state.modal! false}) if state.modal
+      Relogin() if state.relogin
       Menu(set_page: lambda{|v| state.page! v})
-      PageDemo(page: state.page)
-      PageLogin(page: state.page)
+      PageDemo(show: state.page == 'demo')
+      PageLogin(show: state.page == 'login')
     end
   end
 

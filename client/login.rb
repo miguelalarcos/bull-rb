@@ -1,8 +1,12 @@
 require 'ui_core'
 
 class Relogin < React::Component::Base
+  before_mount do
+    state.password! ''
+  end
+
   def render
-    PasswordInput(on_change: lambda{|v| state.password = v}, value: state.password)
+    PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
     button{'relogin'}.on(:click){$controller.relogin state.password}
   end
 end

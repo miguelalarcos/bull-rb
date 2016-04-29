@@ -8,23 +8,13 @@ require 'time'
 require 'lib/encode_times'
 require 'reactive_var'
 
-=begin
-$connection = RVar.new 'disconnected'
-
-reactive($connection) do
-    if $connection.value == 'disconnected'
-        $notifications.add ['error', 'disconnected', 1] if $notifications
-    else
-        $notifications.add ['ok', 'connected', 1] if $notifications
-    end
-end
-=end
-
 class BullClientController
 
     attr_accessor :app_rendered
     attr_accessor :ws
     attr_reader :connection
+    attr_writer :set_relogin_state
+
     @@ticket = 0
 
     def initialize
@@ -32,6 +22,7 @@ class BullClientController
         @promises = {}
         @ws = nil
         @app_rendered = false
+        @set_relogin_state = lambda{}
 
         @connection = RVar.new 'disconnected'
         reactive(@connection) do
@@ -111,13 +102,21 @@ class BullClientController
         rpc('login', user, password)
     end
 
+    def rewatch
+        @watch.each do |id, value|
+            send 'watch_' + value[:name], id, *value[:args]
+        end
+    end
+
     def relogin password
         login($user_id, password).then do
-            $relogin.call false
+            #$relogin.call false
+            @set_relogin_state.call false
             $notifications.add ['ok', 'relogged', 0] if $notifications
-            @watch.each do |id, value|
-                send 'watch_' + value[:name], id, *value[:args]
-            end
+            rewatch
+            #@watch.each do |id, value|
+            #    send 'watch_' + value[:name], id, *value[:args]
+            #end
         end
     end
 
@@ -156,11 +155,13 @@ class BullClientController
                         end
                     else
                         if $user_id
-                            $relogin.call true
+                            #$relogin.call true
+                            @set_relogin_state.call true
                         else
-                            controller.get_watch.each do |id, value|
-                                controller.send 'watch_' + value[:name], id, *value[:args]
-                            end
+                            controller.rewatch
+                            #controller.get_watch.each do |id, value|
+                            #    controller.send 'watch_' + value[:name], id, *value[:args]
+                            #end
                         end
                     end
                 end

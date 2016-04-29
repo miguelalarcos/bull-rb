@@ -3,7 +3,7 @@ require '../validation/validation_demo'
 
 class AppController < BullServerController
 
-  def rpc_get_location loc
+  def rpc_location loc
     check loc, String
     get_array(
         $r.table('location').filter do |doc|
