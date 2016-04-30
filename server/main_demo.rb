@@ -4,7 +4,7 @@ require '../validation/validation_demo'
 
 class AppController < BullServerController
 
-  include CreateUserEmailCode
+  include NetCaptcha
 
   def rpc_location loc
     check loc, String

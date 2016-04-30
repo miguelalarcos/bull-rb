@@ -150,13 +150,22 @@ class DemoDoc < DisplayDoc
     state.mselect! nil
   end
 
+  def format_float_sup_money value, symbol
+    integer, decimal = format_float(value).split('.')
+    span do
+      span{integer+'.'}
+      sup{decimal}
+      span{symbol}
+    end
+  end
+
   def render
     div do
       div{"The doc with id #{state.id} has these values:"}
       div{state.cte}
       div{state.string_a}
       div{format_integer state.integer_x}
-      div{format_float state.nested_float_y['value']}
+      div{format_float_sup_money(state.nested_float_y['value'], '€')}
       div{state.observations}
       div{format_phone state.phone}
       div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
