@@ -111,8 +111,8 @@ require 'em-http-request'
                 $r.table('user').filter(user: @user_id).update(password: pass, secondary_password: nil).em_run(@conn){|ret| yield ret['replaced']}
             end
 
-            def task_send_code_to_email user
-                if !@email_code
+            def task_send_code_to_email user, answer
+                if test_answer(answer) && !@email_code
                     code = ('a'..'z').to_a.sample(8).join
                     @email_code = code
                     puts code

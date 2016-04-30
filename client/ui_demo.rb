@@ -243,7 +243,7 @@ class PageLogin < React::Component::Base
       else
         Login(set_user: params.set_user)
         a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! true} if !state.create_user
-        CreateUserWithoutCaptcha(set_user: params.set_user) if state.create_user
+        CreateUserNetCaptcha(set_user: params.set_user) if state.create_user
       end
     end
   end

@@ -127,17 +127,21 @@ module CreateUserCaptcha
           state.user_exist! response
         end
       end
-      button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user)}
+      #button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user)}
       div{
         input(type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
       }
       div{
         input(class: password_class, type: :password, placeholder: 'repeat passsword', value: state.rpassword).on(:change){|event| state.rpassword! event.target.value}
       }
+      #div{
+      #  input(placeholder: 'code sent to your email', value: state.code).on(:change){|event| state.code! event.target.value}
+      #}
+      captcha
       div{
         input(placeholder: 'code sent to your email', value: state.code).on(:change){|event| state.code! event.target.value}
       }
-      captcha
+      button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user, state.answer)} if state.user && state.answer
       div do
         button(class: 'button-active'){'Create user!'}.on(:click) do
           $controller.rpc(method_create_user, state.user, state.password, state.answer, state.code).then do |v|
@@ -156,6 +160,7 @@ module CreateUserCaptcha
   end
 end
 
+=begin
 class CreateUserWithoutCaptcha < React::Component::Base
   include CreateUserCaptcha
 
@@ -180,6 +185,7 @@ class CreateUserWithoutCaptcha < React::Component::Base
   end
 
 end
+=end
 
 class CreateUserTextCaptcha < React::Component::Base
   include CreateUserCaptcha

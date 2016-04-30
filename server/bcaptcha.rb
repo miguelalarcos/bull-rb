@@ -43,6 +43,10 @@ module NetCaptcha
     text
   end
 
+  def test_answer challenge_response
+    @challenge_response == challenge_response
+  end
+
   def rpc_net_challenge
     random_text = [*('a'..'z')].sample(8).join
     url = "http://image.captchas.net/?client=demo&random=#{random_text}"
@@ -63,6 +67,12 @@ end
 
 module TextCaptcha
   include CreateUserIfNotExist
+
+  def test_answer challenge_response
+    md5 = Digest::MD5.new
+    md5 << challenge_response
+    @challenge_response.any? {|v| md5 == v}
+  end
 
   def rpc_text_challenge
     http = EventMachine::HttpRequest.new('http://api.textcaptcha.com/miguel@mail.com.json').get
@@ -88,6 +98,7 @@ module TextCaptcha
   end
 end
 
+=begin
 module CreateUserEmailCode
 
   include CreateUserIfNotExist
@@ -102,3 +113,4 @@ module CreateUserEmailCode
     end
   end
 end
+=end
