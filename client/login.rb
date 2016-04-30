@@ -145,6 +145,9 @@ module CreateUserCaptcha
               params.set_user.call true
               params.set_roles.call []
               $user_id = state.user
+              $notifications.add ['ok', 'user created', 1] if $notifications
+            else
+              $notifications.add ['error', 'error creating user', 1] if $notifications
             end
           end
         end if !state.user_exist && state.password == state.rpassword && state.password != '' and state.code

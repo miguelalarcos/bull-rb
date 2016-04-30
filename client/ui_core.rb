@@ -638,3 +638,23 @@ end
 Popover(id:'popover', target_id: 'my_input', show: state.show_popup, close: lambda{state.show_popup! 'hidden'})
 #where show_popup can be 'visible' or 'hidden'
 =end
+
+class HorizontalMenu < React::Component::Base
+  param :options
+  param :set_page
+  param :page
+
+  def active page
+    params.page == page ? 'active': ''
+  end
+
+  def render
+    div do
+      ul(class: 'menu') do
+        params.options.each_pair do |k, v|
+          li(class: 'munu-item ' + active(k)){a(href: '#'){v}.on(:click){params.set_page.call k}}
+        end
+      end
+    end
+  end
+end

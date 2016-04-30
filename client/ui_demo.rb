@@ -249,12 +249,20 @@ class PageLogin < React::Component::Base
   end
 end
 
-class Menu < React::Component::Base
+class MenuOld < React::Component::Base
   param :set_page
+  param :page
+
+  def active page
+    params.page == page ? 'active': ''
+  end
+
   def render
     div do
-      a(href: '#'){'Demo'}.on(:click){params.set_page.call 'demo'}
-      a(href: '#'){'Login'}.on(:click){params.set_page.call 'login'}
+      ul(class: 'menu') do
+        li(class: 'munu-item ' + active('demo')){a(href: '#'){'Demo'}.on(:click){params.set_page.call 'demo'}}
+        li(class: 'munu-item ' + active('login')){a(href: '#'){'Login'}.on(:click){params.set_page.call 'login'}}
+      end
     end
   end
 end
@@ -286,7 +294,7 @@ class App < React::Component::Base
       Notification(level: 0)
       DirtyModal(ok: lambda {state.modal! false}) if state.modal
       Relogin() if state.relogin
-      Menu(set_page: lambda{|v| state.page! v})
+      HorizontalMenu(page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
       PageDemo(show: state.page == 'demo')
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, show: state.page == 'login')
     end
