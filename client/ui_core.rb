@@ -309,10 +309,6 @@ class FloatInput < React::Component::Base
   param :placeholder
   param :dirty
 
-  def format value
-    format_float value
-  end
-
   def update_state event
     val = event.target.value
     begin
@@ -336,6 +332,10 @@ class FloatCommaInput < React::Component::Base
   param :on_enter
   param :placeholder
   param :dirty
+
+  def format value
+    format_float value
+  end
 
   def update_state event
     val = event.target.value
