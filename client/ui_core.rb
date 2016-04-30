@@ -263,7 +263,7 @@ class IntegerInput < React::Component::Base
 end
 
 def format_integer value
-  value.to_s.reverse.split(/(\d{,3})/).select{|v|v!=''}.join(',').reverse
+  value.to_s.reverse.split(/(\d{,3})/).select{|v| v != ''}.join(',').reverse
 end
 
 def format_float value
@@ -354,7 +354,11 @@ end
 
 def format_phone value
   m = value.match(/(\d{,3})(\d{,2})(\d{,2})(\d{,2})/)
-  "(#{m[1]}) #{m[2]}-#{m[3]}-#{m[4]}"
+  if m
+    "(#{m[1]}) #{m[2]}-#{m[3]}-#{m[4]}"
+  else
+    ''
+  end
 end
 
 class PhoneNumberInput < React::Component::Base
@@ -739,7 +743,7 @@ class HorizontalMenu < React::Component::Base
     div do
       ul(class: 'menu') do
         params.options.each_pair do |k, v|
-          li(class: 'munu-item ' + active(k)){a(href: '#'){v}.on(:click){params.set_page.call k}}
+          li(class: 'menu-item ' + active(k)){a(href: '#'){v}.on(:click){params.set_page.call k}}
         end
       end
     end

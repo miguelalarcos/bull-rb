@@ -1,20 +1,15 @@
 ul.menu
   list-style-type none
-  margin 0
   padding 0
-  overflow hidden
-  background-color #333
-  position fixed
-  top 0
-  width 100%
-
 
 li.menu-item
   float left
 
+
 li.menu-item a
   display block
   color white
+  background-color black
   text-align center
   padding 14px 16px
   text-decoration none
@@ -23,5 +18,10 @@ li.menu-item a
 li.menu-item a:hover:not(.active)
   background-color #111
 
-.active
-  background-color #4CAF50
+li.menu-item.active a
+  background-color darkorange
+
+ul.menu:after
+  content ''
+  display block
+  clear both
