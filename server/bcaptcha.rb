@@ -77,14 +77,28 @@ module TextCaptcha
   def rpc_create_user_text_challenge user, password, challenge_response, code
     md5 = Digest::MD5.new
     md5 << challenge_response
-    print md5
-    print @challenge_response
+
     if (!@challenge_response.any? {|v| md5 == v}) || @email_code != code
       yield false
     else
       create_user_if_not_exist(user, password) do |response|
         yield response
       end
+    end
+  end
+end
+
+module CreateUserEmailCode
+
+  include CreateUserIfNotExist
+
+  def create_user_email_code user, password, challenge_response, code
+    if @email_code == code
+      create_user_if_not_exist(user, password) do |response|
+        yield response
+      end
+    else
+      yield false
     end
   end
 end

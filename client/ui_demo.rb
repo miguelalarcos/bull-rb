@@ -4,7 +4,9 @@ require 'reactive_var'
 require 'login'
 require 'date-time-picker'
 require 'autocomplete'
-require_relative 'validation/validation_demo'
+require 'login'
+require 'validation/validation_demo'
+#require_relative 'validation/validation_demo'
 
 class DemoForm < Form
   @@table = 'demo'
@@ -226,10 +228,23 @@ end
 
 class PageLogin < React::Component::Base
   param :show
+  param :user
+  param :set_user
+
+  before_mount do
+    state.user! false
+    state.create_user! false
+  end
 
   def render
     div(class: params.show ? '': 'no-display') do
-      'page of login!'
+      if params.user
+        button{'logout'}.on(:click){$controller.logout}
+      else
+        Login(set_user: params.set_user)
+        a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! true} if !state.create_user
+        CreateUserWithoutCaptcha(set_user: params.set_user) if state.create_user
+      end
     end
   end
 end
@@ -259,11 +274,11 @@ end
 class App < React::Component::Base
 
   before_mount do
+    state.user! false
     state.page! 'demo'
     state.modal! false
     state.relogin! false
-    $controller.set_relogin_state = lambda{|v| state.relogin v}
-    #$relogin = lambda{|v| state.relogin v}
+    $controller.set_relogin_state = lambda{|v| state.relogin! v}
   end
 
   def render
@@ -273,7 +288,7 @@ class App < React::Component::Base
       Relogin() if state.relogin
       Menu(set_page: lambda{|v| state.page! v})
       PageDemo(show: state.page == 'demo')
-      PageLogin(show: state.page == 'login')
+      PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, show: state.page == 'login')
     end
   end
 

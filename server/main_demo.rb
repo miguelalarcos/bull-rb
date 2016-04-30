@@ -1,7 +1,10 @@
 require './server'
+require './bcaptcha'
 require '../validation/validation_demo'
 
 class AppController < BullServerController
+
+  include CreateUserEmailCode
 
   def rpc_location loc
     check loc, String

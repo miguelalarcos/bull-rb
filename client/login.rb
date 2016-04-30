@@ -153,6 +153,31 @@ module CreateUserCaptcha
   end
 end
 
+class CreateUserWithoutCaptcha < React::Component::Base
+  include CreateUserCaptcha
+
+  param :set_user
+  param :set_roles
+
+  before_mount do
+    state.user! ''
+    state.user_exist! true
+    state.password! ''
+    state.rpassword! ''
+    state.answer ''
+    state.code! ''
+  end
+
+  def captcha
+    div
+  end
+
+  def method_create_user
+    'create_user_email_code'
+  end
+
+end
+
 class CreateUserTextCaptcha < React::Component::Base
   include CreateUserCaptcha
 
