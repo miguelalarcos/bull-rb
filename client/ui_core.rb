@@ -215,13 +215,17 @@ end
 module AbstractNumeric
   include ClassesInput
 
+  def format value
+    value.to_s
+  end
+
   def render
     value = params.value
     if value.nil?
       value = ''
     end
     span do
-      input(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: value.to_s){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: format(value)){}.on(:change) do |event|
         #begin
           if event.target.value == ''
             params.on_change nil
@@ -258,7 +262,72 @@ class IntegerInput < React::Component::Base
   end
 end
 
+def format_integer value
+  value.to_s.reverse.split(/(\d{,3})/).select{|v|v!=''}.join(',').reverse
+end
+
+def format_float value
+  e, d = value.to_s.split('.')
+  v = format_integer e
+  if d.nil?
+    v
+  else
+    v + '.' + d
+  end
+end
+
+class IntegerCommaInput < React::Component::Base
+  include AbstractNumeric
+
+  param :on_change, type: Proc
+  param :value, type: Integer
+  param :valid
+  param :on_enter
+  param :placeholder
+  param :dirty
+
+  def format value
+    format_integer value
+  end
+
+  def update_state event
+    begin
+      params.on_change Integer(event.target.value.gsub(',', ''))
+    rescue
+      params.on_change event.target.value
+    end
+  end
+end
+
 class FloatInput < React::Component::Base
+  include AbstractNumeric
+
+  param :on_change, type: Proc
+  param :value, type: Float
+  param :valid
+  param :on_enter
+  param :placeholder
+  param :dirty
+
+  def format value
+    format_float value
+  end
+
+  def update_state event
+    val = event.target.value
+    begin
+      if val == '-0'
+        params.on_change val
+      else
+        params.on_change Float(val.gsub(',', ''))
+      end
+    rescue
+      params.on_change val
+    end
+  end
+end
+
+class FloatCommaInput < React::Component::Base
   include AbstractNumeric
 
   param :on_change, type: Proc
@@ -278,6 +347,23 @@ class FloatInput < React::Component::Base
       end
     rescue
       params.on_change val
+    end
+  end
+end
+
+def format_phone value
+  m = value.match(/(\d{,3})(\d{,2})(\d{,2})(\d{,2})/)
+  "(#{m[1]}) #{m[2]}-#{m[3]}-#{m[4]}"
+end
+
+class PhoneNumberInput < React::Component::Base
+  param :value
+  param :on_change
+
+  def render
+    value = format_phone params.value
+    input(type: :text, value: value).on(:change) do |e|
+      params.on_change.call e.target.value.gsub(/[\(\)-]/, '')
     end
   end
 end

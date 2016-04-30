@@ -26,6 +26,7 @@ class DemoForm < Form
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
+    state.phone! ''
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -53,13 +54,13 @@ class DemoForm < Form
         end
         tr do
           td{'An integer'}
-          td{IntegerInput(valid: state.valid_integer_x, dirty: state.dirty_integer_x, placeholder: 'integer',
+          td{IntegerCommaInput(valid: state.valid_integer_x, dirty: state.dirty_integer_x, placeholder: 'integer',
                           value: state.integer_x, on_change: change_attr('integer_x'))}
           td(class: 'error'){'integer must be > 10'} if !state.valid_integer_x
         end
         tr do
           td{'A nested float'}
-          td{FloatInput(valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
+          td{FloatCommaInput(valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
                         placeholder: 'nested float', value: state.nested_float_y[:value],
                         on_change: change_attr('nested_float_y.value'))}
           td(class: 'error'){'float must be negative'} if !state.valid_nested_float_y_value
@@ -68,6 +69,10 @@ class DemoForm < Form
           td{'Observations'}
           td{MultiLineInput(valid: state.valid_observations, dirty: state.dirty_observations,
                             value: state.observations, on_change: change_attr('observations'))}
+        end
+        tr do
+          td{'Phone'}
+          td{PhoneNumberInput(value: state.phone, on_change: change_attr('phone'))}
         end
         tr do
           td{'Date'}
@@ -133,6 +138,7 @@ class DemoDoc < DisplayDoc
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
+    state.phone! ''
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -149,9 +155,10 @@ class DemoDoc < DisplayDoc
       div{"The doc with id #{state.id} has these values:"}
       div{state.cte}
       div{state.string_a}
-      div{state.integer_x.to_s}
-      div{state.nested_float_y['value'].to_s}
+      div{format_integer state.integer_x}
+      div{format_float state.nested_float_y['value']}
       div{state.observations}
+      div{format_phone state.phone}
       div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
       div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
@@ -252,10 +259,10 @@ class PageLogin < React::Component::Base
         button{'logout'}.on(:click){$controller.logout}
       else
         Login(set_user: params.set_user, set_roles: params.set_roles)
-        a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! !state.create_user} #if !state.create_user
-        CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) if state.create_user
+        a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! !state.create_user}
+        CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) #if state.create_user
         a(href: '#'){'Have you forgotten the password?'}.on(:click){state.forgotten! !state.forgotten}
-        ForgottenPassword(klass: klass(state.forgotten)) if state.forgotten
+        ForgottenPassword(klass: klass(state.forgotten)) #if state.forgotten
       end
     end
   end

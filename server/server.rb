@@ -120,18 +120,16 @@ require 'em-http-request'
                     html = t.render('code' => code)
                     body = {to: user, subject: 'code', html: html, from: $from}
                     EventMachine::HttpRequest.new($mail_key).post :body => body
-                    #EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'code', html: html
                 end
             end
 
             def task_forgotten_password user
                 secondary_password = ('a'..'z').to_a.sample(8).join
                 puts secondary_password
-                t = $reports['mail_forgotten_password_template']
+                t = $reports['mail_forgotten_password']
                 html = t.render('password' => secondary_password)
                 body = {to: user, subject: 'new password', html: html, from: $from}
                 EventMachine::HttpRequest.new($mail_key).post :body => body
-                #EventMachine::HttpRequest.new($mail_key).post from: $from, to: user, subject: 'new password', html: html
                 pass = BCrypt::Password.new(secondary_password)
                 $r.table('user').filter(user: user).update(secondary_password: pass).em_run(@conn){}
             end
