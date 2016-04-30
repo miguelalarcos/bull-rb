@@ -8,6 +8,15 @@ require 'login'
 require 'validation/validation_demo'
 #require_relative 'validation/validation_demo'
 
+def format_float_sup_money value, symb
+  integer, decimal = format_float(value).split('.')
+  span do
+    span{integer}
+    sup{'.' + decimal} if !decimal.nil?
+    span{symb}
+  end
+end
+
 class DemoForm < Form
   @@table = 'demo'
   @@constants = ['cte']
@@ -150,15 +159,6 @@ class DemoDoc < DisplayDoc
     state.mselect! nil
   end
 
-  def format_float_sup_money value, symbol
-    integer, decimal = format_float(value).split('.')
-    span do
-      span{integer+'.'}
-      sup{decimal}
-      span{symbol}
-    end
-  end
-
   def render
     div do
       div{"The doc with id #{state.id} has these values:"}
@@ -202,7 +202,8 @@ class DemoList < DisplayList
             td{doc['id']}
             td{doc['string_a']}
             td{doc['integer_x'].to_s}
-            td{doc['nested_float_y']['value'].to_s}
+            #td{doc['nested_float_y']['value'].to_s}
+            td{format_float_sup_money(doc['nested_float_y']['value'], '€')}
             td do
               a(href: '#'){'select'}.on(:click) do
                 begin

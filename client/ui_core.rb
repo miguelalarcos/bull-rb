@@ -268,6 +268,7 @@ end
 
 def format_float value
   e, d = value.to_s.split('.')
+  return '' if e.nil?
   v = format_integer e
   if d.nil?
     v
