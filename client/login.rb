@@ -43,14 +43,14 @@ class Login < React::Component::Base
 end
 
 class ForgottenPassword < React::Component::Base
+  param :klass
 
   before_mount do
     state.email! ''
   end
 
   def render
-    div do
-      div{'Have you forgotten the password?'}
+    div(class: params.klass) do
       StringInput(placeholder: 'email', on_change: lambda{|v| state.email! v}, value: state.email)
       button{'Send me a new passoword'}.on(:click){$controller.task('forgotten_password', state.email)} if state.email
     end
@@ -119,7 +119,7 @@ module CreateUserCaptcha
   end
 
   def render
-    div do
+    div(class: params.klass) do
       div{'Create user'}
       input(class: user_class, placeholder: 'email', value: state.user).on (:change) do |event|
         state.user! event.target.value
@@ -137,11 +137,11 @@ module CreateUserCaptcha
       #div{
       #  input(placeholder: 'code sent to your email', value: state.code).on(:change){|event| state.code! event.target.value}
       #}
-      captcha
+      captcha if !state.user_exist && state.password == state.rpassword && state.password != ''
       div{
+        button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user, state.answer)}
         input(placeholder: 'code sent to your email', value: state.code).on(:change){|event| state.code! event.target.value}
-      }
-      button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user, state.answer)} if state.user && state.answer
+      } if state.user && state.answer
       div do
         button(class: 'button-active'){'Create user!'}.on(:click) do
           $controller.rpc(method_create_user, state.user, state.password, state.answer, state.code).then do |v|
@@ -203,7 +203,7 @@ class CreateUserTextCaptcha < React::Component::Base
   end
 
   def captcha
-    TextCaptcha(change_answer: lambda {|v| state.answer! v}) if !state.user_exist && state.password == state.rpassword && state.password != ''
+    TextCaptcha(change_answer: lambda {|v| state.answer! v})
   end
 
   def method_create_user
@@ -217,6 +217,7 @@ class CreateUserNetCaptcha < React::Component::Base
 
   param :set_user
   param :set_roles
+  param :klass
 
   before_mount do
     state.user! ''
@@ -228,7 +229,7 @@ class CreateUserNetCaptcha < React::Component::Base
   end
 
   def captcha
-    NetCaptcha(change_answer: lambda {|v| state.answer! v}) if !state.user_exist && state.password == state.rpassword && state.password != ''
+    NetCaptcha(change_answer: lambda {|v| state.answer! v})
   end
 
   def method_create_user

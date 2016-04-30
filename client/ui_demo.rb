@@ -230,10 +230,20 @@ class PageLogin < React::Component::Base
   param :show
   param :user
   param :set_user
+  param :set_roles
 
   before_mount do
     state.user! false
     state.create_user! false
+    state.forgotten! false
+  end
+
+  def klass bool
+    if bool
+      'animated fadeIn'
+    else
+      'animated fadeOut'
+    end
   end
 
   def render
@@ -241,9 +251,11 @@ class PageLogin < React::Component::Base
       if params.user
         button{'logout'}.on(:click){$controller.logout}
       else
-        Login(set_user: params.set_user)
-        a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! true} if !state.create_user
-        CreateUserNetCaptcha(set_user: params.set_user) if state.create_user
+        Login(set_user: params.set_user, set_roles: params.set_roles)
+        a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! !state.create_user} #if !state.create_user
+        CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) if state.create_user
+        a(href: '#'){'Have you forgotten the password?'}.on(:click){state.forgotten! !state.forgotten}
+        ForgottenPassword(klass: klass(state.forgotten)) if state.forgotten
       end
     end
   end
@@ -283,6 +295,7 @@ class App < React::Component::Base
 
   before_mount do
     state.user! false
+    state.roles! []
     state.page! 'demo'
     state.modal! false
     state.relogin! false
@@ -296,7 +309,7 @@ class App < React::Component::Base
       Relogin() if state.relogin
       HorizontalMenu(page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
       PageDemo(show: state.page == 'demo')
-      PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, show: state.page == 'login')
+      PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
     end
   end
 
