@@ -308,7 +308,24 @@ class MyController < BullServerController
 
   def initialize ws, conn
     super ws, conn
+    @post = nil
     #@mutex = EM::Synchrony::Thread::Mutex.new # I used it in *rpc_get_ticket* but I prefer the current implementation
+  end
+
+  def get_post id
+    check id, String
+    get('post', id) do |doc|
+        if can_comment_post(doc)
+            @post = id
+            yield doc
+        else
+            yield Hash.new
+        end
+    end
+  end
+
+  def before_insert_comment doc
+    doc['post_id'] = @post
   end
 
   def rpc_print_order id

@@ -165,7 +165,7 @@ class DemoDoc < DisplayDoc
       div{state.cte}
       div{state.string_a}
       div{format_integer state.integer_x}
-      div{format_float_sup_money(state.nested_float_y['value'], '€')}
+      div(class: 'montserrat'){format_float_sup_money(state.nested_float_y['value'], '€')}
       div{state.observations}
       div{format_phone state.phone}
       div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
@@ -202,8 +202,7 @@ class DemoList < DisplayList
             td{doc['id']}
             td{doc['string_a']}
             td{doc['integer_x'].to_s}
-            #td{doc['nested_float_y']['value'].to_s}
-            td{format_float_sup_money(doc['nested_float_y']['value'], '€')}
+            td(class: 'montserrat'){format_float_sup_money(doc['nested_float_y']['value'], '€')}
             td do
               a(href: '#'){'select'}.on(:click) do
                 begin
@@ -273,24 +272,6 @@ class PageLogin < React::Component::Base
         CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) #if state.create_user
         a(href: '#'){'Have you forgotten the password?'}.on(:click){state.forgotten! !state.forgotten}
         ForgottenPassword(klass: klass(state.forgotten)) #if state.forgotten
-      end
-    end
-  end
-end
-
-class MenuOld < React::Component::Base
-  param :set_page
-  param :page
-
-  def active page
-    params.page == page ? 'active': ''
-  end
-
-  def render
-    div do
-      ul(class: 'menu') do
-        li(class: 'munu-item ' + active('demo')){a(href: '#'){'Demo'}.on(:click){params.set_page.call 'demo'}}
-        li(class: 'munu-item ' + active('login')){a(href: '#'){'Login'}.on(:click){params.set_page.call 'login'}}
       end
     end
   end
