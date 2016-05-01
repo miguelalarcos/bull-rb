@@ -300,9 +300,8 @@ require './server'
 require 'em-synchrony'
 require '../validation/validation'
 require './bcaptcha'
-require 'liquid'
 
-class MyController < BullServerController
+class AppController < BullServerController
 
   include NetCaptcha
 

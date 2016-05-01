@@ -35,7 +35,6 @@ class DemoForm < Form
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
-    state.phone! ''
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -69,7 +68,7 @@ class DemoForm < Form
         end
         tr do
           td{'A nested float'}
-          td{FloatCommaInput(valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
+          td{FloatCommaInput(key: 'float_y', valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
                         placeholder: 'nested float', value: state.nested_float_y[:value],
                         on_change: change_attr('nested_float_y.value'))}
           td(class: 'error'){'float must be negative'} if !state.valid_nested_float_y_value
@@ -78,10 +77,6 @@ class DemoForm < Form
           td{'Observations'}
           td{MultiLineInput(valid: state.valid_observations, dirty: state.dirty_observations,
                             value: state.observations, on_change: change_attr('observations'))}
-        end
-        tr do
-          td{'Phone'}
-          td{PhoneNumberInput(value: state.phone, on_change: change_attr('phone'))}
         end
         tr do
           td{'Date'}
@@ -147,7 +142,6 @@ class DemoDoc < DisplayDoc
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
-    state.phone! ''
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -164,10 +158,11 @@ class DemoDoc < DisplayDoc
       div{"The doc with id #{state.id} has these values:"}
       div{state.cte}
       div{state.string_a}
+      div{state.integer_x.to_s}
+      div{state.nested_float_y['value'].to_s}
       div{format_integer state.integer_x}
       div(class: 'montserrat'){format_float_sup_money(state.nested_float_y['value'], '€')}
       div{state.observations}
-      div{format_phone state.phone}
       div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
       div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
@@ -201,7 +196,7 @@ class DemoList < DisplayList
           tr(key: doc['id']) do
             td{doc['id']}
             td{doc['string_a']}
-            td{doc['integer_x'].to_s}
+            td{format_integer doc['integer_x']}
             td(class: 'montserrat'){format_float_sup_money(doc['nested_float_y']['value'], '€')}
             td do
               a(href: '#'){'select'}.on(:click) do
