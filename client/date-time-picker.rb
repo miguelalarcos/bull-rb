@@ -88,7 +88,15 @@ class DateTimeInput < React::Component::Base
           span{state.day.strftime('%m')}
           i(class: 'plus-month fa fa-plus').on(:click) {state.day! state.day  + 30*24*60*60}
           i(class: 'minus-year fa fa-minus').on(:click) {state.day! state.day  - 365*24*60*60}
-          span{state.day.strftime('%Y')}
+          #span{state.day.strftime('%Y')}
+          input(value: state.day.strftime('%Y')).on(:keyDown) do |event|
+            if event.key_code == 13
+              begin
+                state.day! (Integer(event.target.value)-1970)*365*24*60*60 + state.day.month*30*24*60*60 + state.day*24*60*60 + state.hour*60*60 + state.min*60
+              rescue
+              end
+            end
+          end
           i(class: 'plus-year fa fa-plus').on(:click) {state.day! state.day  + 365*24*60*60}
         end
         6.times {|w| Week(week: w, day: state.day, on_change: lambda{|v| on_change v})}

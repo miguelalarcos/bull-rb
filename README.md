@@ -437,7 +437,7 @@ Instructions to install and execute:
 
 * Console in client/http folder:
 
-    * $ ruby http_server.rb_
+    * $ rvmsudo ruby http_server.rb
 
 * Console in root folder:
     *$ you must create a *conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
@@ -448,7 +448,7 @@ Instructions to install and execute:
 
 * Console in server folder:
 
-    * $ ruby start.rb
+    * $ rvmsudo ruby start.rb
 
 * Open browser in localhost:8000
 
