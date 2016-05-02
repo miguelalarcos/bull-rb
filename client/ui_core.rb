@@ -215,17 +215,24 @@ end
 module AbstractNumeric
   include ClassesInput
 
-  def format value
-    value.to_s
-  end
+  #def format value
+  #  value.to_s
+  #end
 
   def render
     #value = params.value
     #if value.nil?
     #  value = ''
     #end
+
+    if parse(state.value) != params.value
+      value = params.value.to_s
+    else
+      value = state.value
+    end
+
     span do
-      input(key: params.key, placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: state.value){}.on(:change) do |event|
+      input(key: params.key, placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: value){}.on(:change) do |event|
           state.value! event.target.value
           if event.target.value == ''
             params.on_change nil
@@ -252,12 +259,21 @@ class IntegerInput < React::Component::Base
   param :dirty
   param :key
 
-  def update_state event
+  def parse val
     begin
-      params.on_change Integer(event.target.value)
+      Integer(val)
     rescue
-      params.on_change nil #event.target.value
+      nil
     end
+  end
+
+  def update_state event
+    params.on_change parse(event.target.value)
+    #begin
+    #  params.on_change Integer(event.target.value)
+    #rescue
+    #  params.on_change nil #event.target.value
+    #end
   end
 end
 
@@ -293,16 +309,25 @@ class IntegerCommaInput < React::Component::Base
   param :dirty
   param :key
 
-  def format value
-    format_integer value
+  #def format value
+  #  format_integer value
+  #end
+
+  def parse val
+    begin
+      Integer(val.gsub(',', ''))
+    rescue
+      nil
+    end
   end
 
   def update_state event
-    begin
-      params.on_change Integer(event.target.value.gsub(',', ''))
-    rescue
-      params.on_change nil# event.target.value
-    end
+    params.on_change parse(event.target.value)
+    #begin
+    #  params.on_change Integer(event.target.value.gsub(',', ''))
+    #rescue
+    #  params.on_change nil# event.target.value
+    #end
   end
 end
 
@@ -317,17 +342,22 @@ class FloatInput < React::Component::Base
   param :dirty
   param :key
 
-  def update_state event
-    val = event.target.value
+  def parse val
     begin
-      #if val == '-0'
-      #  params.on_change val
-      #else
-      params.on_change Float(val) #.gsub(',', ''))
-      #end
+      Float(val)
     rescue
-      params.on_change nil #val
+      nil
     end
+  end
+
+  def update_state event
+    params.on_change parse(event.target.value)
+    #val = event.target.value
+    #begin
+    #  params.on_change Float(val) #.gsub(',', ''))
+    #rescue
+    #  params.on_change nil #val
+    #end
   end
 end
 
@@ -342,21 +372,26 @@ class FloatCommaInput < React::Component::Base
   param :dirty
   param :key
 
-  def format value
-    format_float value
+  #def format value
+  #  format_float value
+  #end
+
+  def parse val
+    begin
+      Float(val.gsub(',', ''))
+    rescue
+      nil
+    end
   end
 
   def update_state event
-    val = event.target.value
-    begin
-      #if val == '-0'
-      #  params.on_change val
-      #else
-      params.on_change Float(val.gsub(',', ''))
-      #end
-    rescue
-      params.on_change nil #val
-    end
+    params.on_change parse(event.target.value)
+    #val = event.target.value
+    #begin
+    #  params.on_change Float(val.gsub(',', ''))
+    #rescue
+    #  params.on_change nil #val
+    #end
   end
 end
 
