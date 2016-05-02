@@ -212,6 +212,44 @@ class MultiLineInput < React::Component::Base
   end
 end
 
+class DateInput < React::Component::Base
+  param :on_change, type: Proc
+  param :value
+  param :format
+  param :placeholder
+  param :valid
+  param :dirty
+
+  include ClassesInput
+
+  before_mount do
+    state.value! ''
+  end
+
+  def render
+    begin
+      val = Time.strptime(state.value, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y}
+    rescue
+      val = nil
+    end
+    if val != params.value && !params.value.nil?
+      val = params.value.format params.format
+    else
+      val = state.value
+    end
+    input(class: valid_class + ' ' + dirty_class, placeholder: params.placeholder, value: val).on(:change) do |event|
+      begin
+        v = event.target.value
+        v = v.gsub('-','').split(/(\d\d)(\d\d)(\d\d\d\d|\d\d\d|\d\d|\d)/).select{|v| v != ''}.join('-')
+        state.value! v
+        param.on_change(Time.strptime(v, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y})
+      rescue
+        param.on_change nil
+      end
+    end
+  end
+end
+
 module AbstractNumeric
   include ClassesInput
 
