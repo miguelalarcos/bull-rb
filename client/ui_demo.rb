@@ -81,8 +81,7 @@ class DemoForm < Form
         end
         tr do
           td{'Simple Date'}
-          td{DateInput(format: '%d-%m-%Y', value: state.sdate,
-                           on_change: change_attr('sdate'), dirty: state.dirty_sdate)}
+          td{DateInput(value: state.sdate, on_change: change_attr('sdate'), format: '%d%m', valid: state.valid_sdate, dirty: state.dirty_sdate)}
         end
         tr do
           td{'Date'}

@@ -216,36 +216,32 @@ class DateInput < React::Component::Base
   param :on_change, type: Proc
   param :value
   param :format
-  param :placeholder
   param :valid
   param :dirty
 
   include ClassesInput
 
-  before_mount do
-    state.value! ''
+  def date(value, year)
+    begin
+      Time.strptime(value+year, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y}
+    rescue
+      params.on_change nil
+    end
   end
 
   def render
-    begin
-      val = Time.strptime(state.value, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y}
-    rescue
-      val = nil
-    end
-    if val != params.value && !params.value.nil?
-      val = params.value.format params.format
+    if params.value.nil?
+      value = ''
+      year = ''
     else
-      val = state.value
+      value = params.value.format params.format
+      year = params.value.year.to_s
     end
-    input(class: valid_class + ' ' + dirty_class, placeholder: params.placeholder, value: val).on(:change) do |event|
-      begin
-        v = event.target.value
-        v = v.gsub('-','').split(/(\d\d)(\d\d)(\d\d\d\d|\d\d\d|\d\d|\d)/).select{|v| v != ''}.join('-')
-        state.value! v
-        param.on_change(Time.strptime(v, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y})
-      rescue
-        param.on_change nil
-      end
+    input(class: valid_class + ' ' + dirty_class, value: value).on(:change) do |event|
+      params.on_change date(event.target.value, year)
+    end
+    input(value: year).on(:change) do |event|
+      params.on_change date(value, event.target.value)
     end
   end
 end
@@ -253,16 +249,7 @@ end
 module AbstractNumeric
   include ClassesInput
 
-  #def format value
-  #  value.to_s
-  #end
-
   def render
-    #value = params.value
-    #if value.nil?
-    #  value = ''
-    #end
-
     if parse(state.value) != params.value
       value = params.value.to_s
     else
