@@ -2,10 +2,13 @@ require 'reactive-ruby'
 require 'time'
 require 'ui_common'
 
-def day_row week, date
+def day_row week, date, flag_time
   ret = []
-  #ini_month = Time.new(date.year, date.month, 1, date.hour, date.min)
-  ini_month = Time.new(date.year, date.month, 1)
+  if flag_time
+    ini_month = Time.new(date.year, date.month, 1, date.hour, date.min)
+  else
+    ini_month = Time.new(date.year, date.month, 1)
+  end
   ini = ini_month - (ini_month.wday-1)*24*60*60
   ini = ini + 7*week*24*60*60
   end_ = ini + 7*24*60*60
@@ -40,11 +43,12 @@ end
 class Week < React::Component::Base
   param :week
   param :day
+  param :time
   param :on_change
 
   def render
     div(class: 'xdatetime-week') do
-      day_row(params.week, params.day).each do |d|
+      day_row(params.week, params.day, params.time).each do |d|
         Day(data: d, on_change: params.on_change) # key?
       end
     end
@@ -89,7 +93,7 @@ class DateTimeInput < React::Component::Base
           i(class: 'plus-month fa fa-plus').on(:click) {state.day! state.day  + 30*24*60*60}
           i(class: 'minus-year fa fa-minus').on(:click) {state.day! state.day  - 365*24*60*60}
           #span{state.day.strftime('%Y')}
-          input(class: 'year-input').on(:keyDown) do |event| # , value: state.day.strftime('%Y')
+          input(placeholder: state.day.strftime('%Y'), autoFocus: true, class: 'year-input').on(:keyDown) do |event| # , value: state.day.strftime('%Y')
             if event.key_code == 13
               begin
                 state.day! Time.new(Integer(event.target.value), state.day.month, state.day.day, state.day.hour, state.day.min)
@@ -99,7 +103,7 @@ class DateTimeInput < React::Component::Base
           end
           i(class: 'plus-year fa fa-plus').on(:click) {state.day! state.day  + 365*24*60*60}
         end
-        6.times {|w| Week(week: w, day: state.day, on_change: lambda{|v| on_change v})}
+        6.times {|w| Week(week: w, day: state.day, time: params.time, on_change: lambda{|v| on_change v})}
         div(class: 'xdatetime-bottom') do
           i(class: 'minus-hour fa fa-minus').on(:click) {params.on_change.call day - 60*60; state.day! state.day - 60*60}
           i(class: 'plus-hour fa fa-plus').on(:click) {params.on_change.call day + 60*60; state.day! state.day + 60*60}
