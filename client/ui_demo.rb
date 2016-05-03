@@ -163,7 +163,7 @@ class DemoDoc < DisplayDoc
       div{format_integer state.integer_x}
       div(class: 'montserrat'){format_float_sup_money(state.nested_float_y['value'], '€')}
       div{state.observations}
-      div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
+      div{state.date.strftime('%d-%m-%Y') if state.date}
       div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
       div{state.check.to_s}
@@ -178,6 +178,7 @@ end
 
 class DemoList < DisplayList
   param :selected
+  param :show_modal
 
   before_mount do
     watch_ 'demo_items', []
@@ -205,7 +206,8 @@ class DemoList < DisplayList
                     params.selected.value = doc['id']
                   end
                 rescue
-                  params.show_modal.call
+                  $notifications.add ['error', 'There are data not saved. Save or discard the data.', 1] if $notifications
+                  #params.show_modal.call
                 end
               end
             end
@@ -218,6 +220,7 @@ end
 
 class PageDemo < React::Component::Base
   param :show
+  param :show_modal
 
   before_mount do
     @selected = RVar.new nil
@@ -232,7 +235,7 @@ class PageDemo < React::Component::Base
     div(class: klass) do
       DemoForm(selected: @selected, cte: 'miguel')
       DemoDoc(selected: @selected)
-      DemoList(selected: @selected)
+      DemoList(selected: @selected, show_modal: params.show_modal)
     end
   end
 end
@@ -301,7 +304,7 @@ class App < React::Component::Base
       DirtyModal(ok: lambda {state.modal! false}) if state.modal
       Relogin() if state.relogin
       HorizontalMenu(page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
-      PageDemo(show: state.page == 'demo')
+      PageDemo(show: state.page == 'demo', show_modal: lambda{state.modal! true})
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
     end
   end

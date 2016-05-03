@@ -238,6 +238,10 @@ end
 module AbstractNumeric
   include ClassesInput
 
+  def format val
+    val.to_s
+  end
+
   def render
     if parse(state.value) != params.value
       value = params.value.to_s
@@ -246,7 +250,7 @@ module AbstractNumeric
     end
 
     span do
-      input(key: params.key, placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: value){}.on(:change) do |event|
+      input(key: params.key, placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: format(value)){}.on(:change) do |event|
           state.value! event.target.value
           if event.target.value == ''
             params.on_change nil
@@ -283,11 +287,6 @@ class IntegerInput < React::Component::Base
 
   def update_state event
     params.on_change parse(event.target.value)
-    #begin
-    #  params.on_change Integer(event.target.value)
-    #rescue
-    #  params.on_change nil #event.target.value
-    #end
   end
 end
 
@@ -306,7 +305,7 @@ def format_float value
   return '' if e.nil?
   v = format_integer e
   if d.nil?
-    v + '.0'
+    v
   else
     v + '.' + d
   end
@@ -323,9 +322,9 @@ class IntegerCommaInput < React::Component::Base
   param :dirty
   param :key
 
-  #def format value
-  #  format_integer value
-  #end
+  def format value
+    format_integer value
+  end
 
   def parse val
     begin
@@ -337,11 +336,6 @@ class IntegerCommaInput < React::Component::Base
 
   def update_state event
     params.on_change parse(event.target.value)
-    #begin
-    #  params.on_change Integer(event.target.value.gsub(',', ''))
-    #rescue
-    #  params.on_change nil# event.target.value
-    #end
   end
 end
 
@@ -366,12 +360,6 @@ class FloatInput < React::Component::Base
 
   def update_state event
     params.on_change parse(event.target.value)
-    #val = event.target.value
-    #begin
-    #  params.on_change Float(val) #.gsub(',', ''))
-    #rescue
-    #  params.on_change nil #val
-    #end
   end
 end
 
@@ -386,9 +374,9 @@ class FloatCommaInput < React::Component::Base
   param :dirty
   param :key
 
-  #def format value
-  #  format_float value
-  #end
+  def format value
+    format_float value
+  end
 
   def parse val
     begin
@@ -400,12 +388,6 @@ class FloatCommaInput < React::Component::Base
 
   def update_state event
     params.on_change parse(event.target.value)
-    #val = event.target.value
-    #begin
-    #  params.on_change Float(val.gsub(',', ''))
-    #rescue
-    #  params.on_change nil #val
-    #end
   end
 end
 
@@ -445,7 +427,7 @@ class HashInput < React::Component::Base
   def render
     span do
       input(placeholder: 'key', value: state.key).on(:change){|event| state.key! event.target.value}
-      input(placeholder: 'value',value: state.key).on(:change){|event| state.value! event.target.value}
+      input(placeholder: 'value',value: state.value).on(:change){|event| state.value! event.target.value}
       button{'add'}.on(:click) do
         hsh = params.value.dup
         hsh[state.key] = state.value
@@ -463,7 +445,7 @@ class HashInput < React::Component::Base
           tr do
             td{k}
             td{v}
-            td{i(class: 'fa fa-times fa-2x')}.on(:click) do
+            td{i(class: 'fa fa-times')}.on(:click) do
               hsh = params.value.dup
               hsh.delete k
               params.on_change.call hsh
@@ -503,7 +485,7 @@ class ArrayInput < React::Component::Base
         params.value.each do |v|
           tr do
             td{v}
-            td{i(class: 'fa fa-times fa-2x')}.on(:click) do
+            td{i(class: 'fa fa-times')}.on(:click) do
               list = params.value.dup
               list.delete v
               params.on_change.call list

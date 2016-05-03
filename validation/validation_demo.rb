@@ -7,7 +7,7 @@ class ValidateDemo
     field 'string_a' => String
     field 'password' => String
     field 'integer_x' => Integer
-    field 'nested_float_y.value' => Float
+    field 'nested_float_y.value' => Numeric #Float
     field 'observations' => String
   end
 
