@@ -3,6 +3,9 @@
 
 }
 
+.year-input {
+    width: 4em;
+}
 
 .xdatetime-popover {
     position: absolute;

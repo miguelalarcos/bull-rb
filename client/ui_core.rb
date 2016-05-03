@@ -4,27 +4,7 @@ require_relative 'reactive_var'
 require_relative 'lib/utils'
 require_relative 'bcaptcha'
 require 'ui_common'
-
-=begin
-module ClassesInput
-  def valid_class
-    return '' if params.valid.nil?
-    if params.valid
-      'input-successful'
-    else
-      'input-incorrect'
-    end
-  end
-
-  def dirty_class
-    if params.dirty
-      'input-dirty'
-    else
-      ''
-    end
-  end
-end
-=end
+require 'time'
 
 class NotificationController
   @@ticket = 0
@@ -221,27 +201,36 @@ class DateInput < React::Component::Base
 
   include ClassesInput
 
+  before_mount do
+    state.value! ''
+    state.year! ''
+  end
+
   def date(value, year)
-    begin
-      Time.strptime(value+year, params.format){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y}
+    begin # opal: undefined method `strptime' for Time
+      Time.strptime(value+year, params.format+'%Y'){|y| y < 100 ? (y >= 69 ? y + 1900 : y + 2000) : y}
     rescue
-      params.on_change nil
+      nil
     end
   end
 
   def render
     if params.value.nil?
-      value = ''
-      year = ''
+      value = state.value
+      year = state.year
     else
       value = params.value.format params.format
       year = params.value.year.to_s
     end
-    input(class: valid_class + ' ' + dirty_class, value: value).on(:change) do |event|
-      params.on_change date(event.target.value, year)
-    end
-    input(value: year).on(:change) do |event|
-      params.on_change date(value, event.target.value)
+    span do
+      input(class: valid_class + ' ' + dirty_class, value: value).on(:change) do |event|
+        state.value! event.target.value
+        params.on_change date(event.target.value, year)
+      end
+      input(value: year).on(:change) do |event|
+        state.year! event.target.value
+        params.on_change date(value, event.target.value)
+      end
     end
   end
 end

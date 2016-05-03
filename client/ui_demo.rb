@@ -35,7 +35,6 @@ class DemoForm < Form
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
-    state.sdate! nil
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -78,10 +77,6 @@ class DemoForm < Form
           td{'Observations'}
           td{MultiLineInput(valid: state.valid_observations, dirty: state.dirty_observations,
                             value: state.observations, on_change: change_attr('observations'))}
-        end
-        tr do
-          td{'Simple Date'}
-          td{DateInput(value: state.sdate, on_change: change_attr('sdate'), format: '%d%m', valid: state.valid_sdate, dirty: state.dirty_sdate)}
         end
         tr do
           td{'Date'}
@@ -147,7 +142,6 @@ class DemoDoc < DisplayDoc
     y = {value: nil}
     state.nested_float_y! y
     state.observations! ''
-    state.sdate! nil
     state.date! nil
     state.datetime! nil
     state.auto! ''
@@ -169,7 +163,6 @@ class DemoDoc < DisplayDoc
       div{format_integer state.integer_x}
       div(class: 'montserrat'){format_float_sup_money(state.nested_float_y['value'], '€')}
       div{state.observations}
-      div{state.sdate.strftime('%d-%m-%Y') if state.sdate}
       div{state.date.strftime('%d-%m-%Y %H:%M') if state.date}
       div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
