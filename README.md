@@ -87,17 +87,42 @@ v.value = 8
 Other example, in App before_mount:
 
 ```ruby
-@language = RVar.new 'es'
-
+@language = RVar.new 'en'
 reactive(@language) do
-    $controller.rpc('get', 'i18n', @language.value).then do|response|
-        state.i18n_map! response
-    end
+  $controller.rpc('get_unique_i18n', @language.value).then do|response|
+    state.i18n_map! response
+  end
 end
 ```
 Every time language is set (language.value = 'en') the `$controller.rpc('get',...` is rerun.
 
 Rvars are useful when you are editing a form and you click in an item of a list of form to edit this one. The form would be:
+
+i18n
+----
+
+This is an example of a i18n map:
+
+```
+'lang': 'en'
+'map':
+  'DOC_TEXT': 'The document with id %{id} has these values:'
+  'THERE_ARE_APPLE':
+    '0': 'There are no apples'
+    '1': 'There is one apple'
+    '2..': 'There are %{count} apples'
+```
+And you would use like this:
+
+```ruby
+context = {id: state.id}
+div{i18n(params.i18n_map, 'DOC_TEXT')%context}
+context = {count: 5}
+div{i18n(params.i18n_map, 'THERE_ARE_APPLE', 5)%context}
+```
+
+Forms
+-----
 
 ```ruby
 class OrderForm < Form

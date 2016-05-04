@@ -209,6 +209,7 @@ class DemoList < DisplayList
             td{doc['string_a']}
             td{format_integer doc['integer_x']}
             td(class: 'montserrat'){format_float_sup_money(doc['nested_float_y']['value'], '€')}
+            td{a(href: '#'){'delete'}.on(:click){$controller.delete('demo', doc['id'])}}
             td do
               a(href: '#'){'select'}.on(:click) do
                 begin
