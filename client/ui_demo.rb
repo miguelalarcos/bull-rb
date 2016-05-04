@@ -207,7 +207,7 @@ class DemoList < DisplayList
                   end
                 rescue
                   $notifications.add ['error', 'There are data not saved. Save or discard the data.', 1] if $notifications
-                  #params.show_modal.call
+                  params.show_modal.call
                 end
               end
             end
@@ -301,10 +301,10 @@ class App < React::Component::Base
   def render
     div do
       Notification(level: 0)
-      #DirtyModal(ok: lambda {state.modal! false}) if state.modal
-      Relogin(show: state.relogin) #if state.relogin
+      DirtyModal(ok: lambda {state.modal! false}) if state.modal
+      Relogin() if state.relogin
       HorizontalMenu(page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
-      PageDemo(show: state.page == 'demo', show_modal: lambda{state.modal! true})
+      PageDemo(key: 'page-demo', show: state.page == 'demo', show_modal: lambda{state.modal! true})
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
     end
   end

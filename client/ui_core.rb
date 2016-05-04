@@ -250,7 +250,7 @@ module AbstractNumeric
     end
 
     span do
-      input(key: params.key, placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: format(value)){}.on(:change) do |event|
+      input(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class, type: :text, value: format(value)){}.on(:change) do |event|
           state.value! event.target.value
           if event.target.value == ''
             params.on_change nil
@@ -275,7 +275,6 @@ class IntegerInput < React::Component::Base
   param :on_enter
   param :placeholder
   param :dirty
-  param :key
 
   def parse val
     begin
@@ -302,6 +301,7 @@ end
 
 def format_float value
   e, d = value.to_s.split('.')
+  d = '' if value.to_s.end_with?('.')
   return '' if e.nil?
   v = format_integer e
   if d.nil?
@@ -320,7 +320,6 @@ class IntegerCommaInput < React::Component::Base
   param :on_enter
   param :placeholder
   param :dirty
-  param :key
 
   def format value
     format_integer value
@@ -348,7 +347,6 @@ class FloatInput < React::Component::Base
   param :on_enter
   param :placeholder
   param :dirty
-  param :key
 
   def parse val
     begin
@@ -372,7 +370,6 @@ class FloatCommaInput < React::Component::Base
   param :on_enter
   param :placeholder
   param :dirty
-  param :key
 
   def format value
     format_float value
