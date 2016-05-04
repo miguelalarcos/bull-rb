@@ -112,7 +112,7 @@ class BullClientController
         login($user_id, password).then do
             @set_relogin_state.call false
             $notifications.add ['ok', 'relogged', 0] if $notifications
-            #rewatch
+            rewatch
         end
     end
 
@@ -217,6 +217,7 @@ class BullClientController
                 value[:who].call nil
             end
             @promises = {}
+            #@watch = {}
             start nil
         end
 end

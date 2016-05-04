@@ -1,12 +1,13 @@
 require 'ui_core'
 
 class Relogin < React::Component::Base
+  param :show
   before_mount do
     state.password! ''
   end
 
   def render
-    div do
+    div(class: params.show ? '': 'no-display') do
       PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
       button{'relogin'}.on(:click){$controller.relogin state.password}
     end
