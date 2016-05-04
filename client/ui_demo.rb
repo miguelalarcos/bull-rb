@@ -263,7 +263,7 @@ class PageLogin < React::Component::Base
   def render
     div(class: params.show ? '': 'no-display') do
       if params.user
-        button{'logout'}.on(:click){$controller.logout}
+        button{'logout'}.on(:click){$controller.logout; params.set_user.call false; params.set_roles.call []}
       else
         Login(set_user: params.set_user, set_roles: params.set_roles)
         a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! !state.create_user}

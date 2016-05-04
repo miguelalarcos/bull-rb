@@ -6,8 +6,10 @@ class Relogin < React::Component::Base
   end
 
   def render
-    PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
-    button{'relogin'}.on(:click){$controller.relogin state.password}
+    div do
+      PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
+      button{'relogin'}.on(:click){$controller.relogin state.password}
+    end
   end
 end
 
@@ -37,7 +39,7 @@ class Login < React::Component::Base
           end
         end
       end
-      div(class: 'red'){'Incorrect user or password.'}
+      div(class: 'red'){'Incorrect user or password.'} if state.incorrect
     end
   end
 end

@@ -13,7 +13,7 @@ class BullClientController
     attr_accessor :app_rendered
     attr_accessor :ws
     attr_reader :connection
-    attr_writer :set_relogin_state
+    attr_accessor :set_relogin_state
 
     @@ticket = 0
 
@@ -110,20 +110,15 @@ class BullClientController
 
     def relogin password
         login($user_id, password).then do
-            #$relogin.call false
             @set_relogin_state.call false
             $notifications.add ['ok', 'relogged', 0] if $notifications
-            rewatch
-            #@watch.each do |id, value|
-            #    send 'watch_' + value[:name], id, *value[:args]
-            #end
+            #rewatch
         end
     end
 
     def logout
         rpc('logout')
         clear
-        yield
     end
 
     def notify msg
@@ -155,13 +150,9 @@ class BullClientController
                         end
                     else
                         if $user_id
-                            #$relogin.call true
-                            @set_relogin_state.call true
+                            controller.set_relogin_state.call true
                         else
                             controller.rewatch
-                            #controller.get_watch.each do |id, value|
-                            #    controller.send 'watch_' + value[:name], id, *value[:args]
-                            #end
                         end
                     end
                 end
