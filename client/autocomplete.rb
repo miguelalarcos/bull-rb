@@ -6,6 +6,7 @@ class AutocompleteInput < React::Component::Base
   param :value
   param :on_change
   param :rmethod
+  param :name
   param :valid
   param :dirty
 

@@ -6,11 +6,20 @@ class AppController < BullServerController
 
   include NetCaptcha
 
+  def rpc_report_demo id
+    check id, String
+    get('demo', id) do |doc|
+      t = $reports['demo']
+      yield t.render(doc)
+    end
+  end
+
   def rpc_location loc
     check loc, String
     get_array(
         $r.table('location').filter do |doc|
-          doc['name'] =~ /#{loc}/i
+          #doc['name'] =~ /#{loc}/i
+          doc['name'].match("(?i).*" + loc + ".*")
         end
     ) {|docs| yield docs}
   end

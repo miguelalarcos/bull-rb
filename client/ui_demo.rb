@@ -90,7 +90,7 @@ class DemoForm < Form
         end
         tr do
           td{'Autocomplete'}
-          td{AutocompleteInput(rmethod: 'location', value: state.auto,
+          td{AutocompleteInput(rmethod: 'location', value: state.auto, name: 'name',
                                on_change: change_attr('auto'), dirty: state.dirty_auto)}
         end
         tr do
@@ -130,6 +130,7 @@ class DemoDoc < DisplayDoc
   @@table = 'demo'
   param :selected
   param :i18n_map
+  #param :set_report_page
 
   before_mount do
     watch_ params.selected
@@ -175,6 +176,12 @@ class DemoDoc < DisplayDoc
       div{state.radio}
       div{state.select}
       div{state.mselect.to_s}
+      button(){'print doc'}.on(:click) do
+        $controller.rpc('report_demo', params.selected.value).then do |report|
+          `document.getElementById("report").innerHTML = #{report}`
+        end
+        #params.set_report_page.call
+      end
     end
   end
 end
@@ -240,6 +247,17 @@ class PageDemo < React::Component::Base
       DemoForm(selected: @selected, cte: 'miguel')
       DemoDoc(i18n_map: params.i18n_map, selected: @selected)
       DemoList(selected: @selected, show_modal: params.show_modal)
+    end
+  end
+end
+
+class PageReport < React::Component::Base
+  param :show
+
+  def render
+    div(class: params.show ? '': 'no-display') do
+      i(class: "fa fa-print no-print fa-5x", style: {position: 'absolute'}).on(:click) {`window.print()`}
+      div(id: 'report')
     end
   end
 end
@@ -314,9 +332,11 @@ class App < React::Component::Base
       Notification(level: 0)
       DirtyModal(ok: lambda {state.modal! false}) if state.modal
       Relogin() if state.relogin
-      HorizontalMenu(language: @language, page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
+      HorizontalMenu(language: @language, page: state.page, set_page: lambda{|v| state.page! v},
+                     options: {'demo'=>'Demo', 'login'=>'Login', 'report' => 'Report'})
       PageDemo(i18n_map: state.i18n_map, key: 'page-demo', show: state.page == 'demo', show_modal: lambda{state.modal! true})
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
+      PageReport(show: state.page == 'report')
     end
   end
 
