@@ -764,7 +764,7 @@ class HorizontalMenu < React::Component::Base
   end
 
   def render
-    div do
+    div(class: 'no-print') do
       ul(class: 'menu') do
         params.options.each_pair do |k, v|
           li(class: 'menu-item ' + active(k)){a(href: '#'){v}.on(:click){params.set_page.call k}}

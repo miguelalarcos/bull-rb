@@ -8,7 +8,7 @@ class AppController < BullServerController
 
   def rpc_report_demo id
     check id, String
-    get('demo', id) do |doc|
+    get('demo', id, symbolize=false) do |doc|
       t = $reports['demo']
       yield t.render(doc)
     end

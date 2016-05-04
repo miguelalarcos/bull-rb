@@ -257,13 +257,17 @@ require 'em-http-request'
                 end
             end
 
-            def get table, id
+            def get table, id, symbolize=true
                 if id.nil?
                     yield Hash.new
                 else
                     $r.table(table).get(id).em_run(@conn) do |doc|
                         doc['owner'] = user_is_owner? doc
-                        yield symbolize_keys doc
+                        if symbolize
+                            yield symbolize_keys doc
+                        else
+                          yield doc
+                        end
                     end
                 end
             end
