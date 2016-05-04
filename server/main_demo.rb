@@ -23,7 +23,7 @@ class AppController < BullServerController
     ValidateDemo.new.validate merged
   end
 
-  def get_unique_i18n(lang:)
+  def rpc_get_unique_i18n(lang)
     get_unique('i18n', {lang: lang}) {|doc| yield doc}
   end
 

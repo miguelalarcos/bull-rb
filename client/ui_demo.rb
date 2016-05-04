@@ -6,7 +6,7 @@ require 'date-time-picker'
 require 'autocomplete'
 require 'login'
 require 'validation/validation_demo'
-#require_relative 'validation/validation_demo'
+require 'i18n'
 
 def format_float_sup_money value, symb
   integer, decimal = format_float(value).split('.')
@@ -129,6 +129,7 @@ end
 class DemoDoc < DisplayDoc
   @@table = 'demo'
   param :selected
+  param :i18n_map
 
   before_mount do
     watch_ params.selected
@@ -154,8 +155,10 @@ class DemoDoc < DisplayDoc
   end
 
   def render
+    context = {id: state.id}
     div do
-      div{"The doc with id #{state.id} has these values:"}
+      #div{"The doc with id #{state.id} has these values:"}
+      div{i18n(params.i18n_map, 'DOC_TEXT')%context}
       div{state.cte}
       div{state.string_a}
       div{state.integer_x.to_s}
@@ -221,6 +224,7 @@ end
 class PageDemo < React::Component::Base
   param :show
   param :show_modal
+  param :i18n_map
 
   before_mount do
     @selected = RVar.new nil
@@ -234,7 +238,7 @@ class PageDemo < React::Component::Base
   def render
     div(class: klass) do
       DemoForm(selected: @selected, cte: 'miguel')
-      DemoDoc(selected: @selected)
+      DemoDoc(i18n_map: params.i18n_map, selected: @selected)
       DemoList(selected: @selected, show_modal: params.show_modal)
     end
   end
@@ -267,9 +271,9 @@ class PageLogin < React::Component::Base
       else
         Login(set_user: params.set_user, set_roles: params.set_roles)
         a(href: '#'){'I want to create an user!'}.on(:click){state.create_user! !state.create_user}
-        CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) #if state.create_user
+        CreateUserNetCaptcha(klass: klass(state.create_user), set_user: params.set_user, set_roles: params.set_roles) if state.create_user
         a(href: '#'){'Have you forgotten the password?'}.on(:click){state.forgotten! !state.forgotten}
-        ForgottenPassword(klass: klass(state.forgotten)) #if state.forgotten
+        ForgottenPassword(klass: klass(state.forgotten)) if state.forgotten
       end
     end
   end
@@ -290,6 +294,13 @@ end
 class App < React::Component::Base
 
   before_mount do
+    @language = RVar.new 'en'
+    reactive(@language) do
+      $controller.rpc('get_unique_i18n', @language.value).then do|response|
+        state.i18n_map! response
+      end
+    end
+
     state.user! false
     state.roles! []
     state.page! 'demo'
@@ -303,8 +314,8 @@ class App < React::Component::Base
       Notification(level: 0)
       DirtyModal(ok: lambda {state.modal! false}) if state.modal
       Relogin() if state.relogin
-      HorizontalMenu(page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
-      PageDemo(key: 'page-demo', show: state.page == 'demo', show_modal: lambda{state.modal! true})
+      HorizontalMenu(language: @language, page: state.page, set_page: lambda{|v| state.page! v}, options: {'demo'=>'Demo', 'login'=>'Login'})
+      PageDemo(i18n_map: state.i18n_map, key: 'page-demo', show: state.page == 'demo', show_modal: lambda{state.modal! true})
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
     end
   end

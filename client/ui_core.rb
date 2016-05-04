@@ -622,11 +622,17 @@ class Form < React::Component::Base
     state.dirty! false
   end
 
+  def clear_dirty
+    @dirty.each {|attr| state.__send__('dirty_' + attr.gsub('.', '_')+'!', false)}
+    @dirty.clear
+  end
+
   def discard
     @selected.value = nil
     clear
-    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
-    @dirty.clear
+    #@dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
+    #@dirty.clear
+    clear_dirty
     state.discard! false
     state.dirty! false
   end
@@ -640,8 +646,9 @@ class Form < React::Component::Base
         $notifications.add ['ok', 'form: data inserted', 1] if $notifications
       end
     end
-    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
-    @dirty.clear
+    #@dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
+    #@dirty.clear
+    clear_dirty
   end
 
   def update
@@ -652,8 +659,9 @@ class Form < React::Component::Base
         $notifications.add ['ok', 'form: data updated', 1] if $notifications
       end
     end
-    @dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
-    @dirty.clear
+    #@dirty.each {|attr| state.__send__('dirty_' + attr.gsub('.', '_')+'!', false)}
+    #@dirty.clear
+    clear_dirty
   end
 
   def get selected
@@ -749,6 +757,7 @@ class HorizontalMenu < React::Component::Base
   param :options
   param :set_page
   param :page
+  param :language
 
   def active page
     params.page == page ? 'active': ''
@@ -760,6 +769,8 @@ class HorizontalMenu < React::Component::Base
         params.options.each_pair do |k, v|
           li(class: 'menu-item ' + active(k)){a(href: '#'){v}.on(:click){params.set_page.call k}}
         end
+        li{a(href: '#'){'en'}.on(:click){params.language.value = 'en'}}
+        li{a(href: '#'){'es'}.on(:click){params.language.value = 'es'}}
       end
     end
   end
