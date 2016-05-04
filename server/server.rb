@@ -89,19 +89,25 @@ require 'em-http-request'
             end
 
             def rpc_login user, password
-              $r.table('user').filter(user: user).em_run(@conn) do |response|
-                pass = response['password']
-                pass = BCrypt::Password.new(pass)
-                if response['secondary_password']
-                    secondary_password = response['secondary_password']
-                    secondary_password = BCrypt::Password.new(secondary_password)
-                end
-                if pass == password || (response['secondary_password'] && pass == secondary_password)
-                    @user_id = user
-                    @roles = response['roles']
-                    yield response['roles'] #true
-                else
+              $r.table('user').filter(user: user).count.em_run(@conn) do |count|
+                if count == 0
                     yield false
+                else
+                  $r.table('user').filter(user: user).em_run(@conn) do |response|
+                    pass = response['password']
+                    pass = BCrypt::Password.new(pass)
+                    if response['secondary_password']
+                        secondary_password = response['secondary_password']
+                        secondary_password = BCrypt::Password.new(secondary_password)
+                    end
+                    if pass == password || (response['secondary_password'] && pass == secondary_password)
+                        @user_id = user
+                        @roles = response['roles']
+                        yield response['roles'] #true
+                    else
+                        yield false
+                    end
+                  end
                 end
               end
             end

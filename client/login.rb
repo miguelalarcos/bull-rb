@@ -21,7 +21,7 @@ class Login < React::Component::Base
   before_mount do
     state.user_name! ''
     state.password! ''
-    state.incorrect = false
+    state.incorrect! false
   end
 
   def render
@@ -31,12 +31,12 @@ class Login < React::Component::Base
       button(type: :button) { 'login' }.on(:click) do
         $controller.rpc('login', state.user_name, state.password).then do |roles|
           if roles
-            state.incorrect = false
+            state.incorrect! false
             $user_id = state.user_name
             params.set_user.call true
             params.set_roles.call roles
           else
-            state.incorrect = true
+            state.incorrect! true
           end
         end
       end
