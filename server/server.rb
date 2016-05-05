@@ -50,7 +50,7 @@ require 'em-http-request'
                         yield Hash.new
                     else
                         $r.table(table).filter(filter).em_run(@conn) do |doc|
-                            doc['owner'] = user_is_owner? doc
+                            doc['owner'] = owner? doc
                             yield symbolize_keys doc
                         end
                     end
@@ -68,7 +68,7 @@ require 'em-http-request'
             def docs_with_count predicate
                 predicate.count().em_run(@conn) do |count|
                     predicate.em_run(@conn) do |doc|
-                        doc['owner'] = user_is_owner? doc
+                        doc['owner'] = owner? doc
                         yield count, doc
                     end
                 end
@@ -147,7 +147,11 @@ require 'em-http-request'
                 true
             end
 
-            def user_is_owner? doc
+            #def user_is_owner? doc
+            #    doc[:owner] == @user_id
+            #end
+
+            def owner? doc
                 doc[:owner] == @user_id
             end
 
@@ -182,11 +186,15 @@ require 'em-http-request'
 
             def rpc_delete(table, id)
                 $r.table(table).get(id).em_run(@conn) do |doc|
-                    if !self.send('before_delete_'+table, doc)
-                        yield 0
-                    else
-                        $r.table(table).get(id).delete.em_run(@conn){|ret| yield ret['deleted']}
-                    end
+                    #begin
+                        if doc.nil? || !respond_to?('before_delete_'+table) || !self.send('before_delete_'+table, doc)
+                            yield 0
+                        else
+                            $r.table(table).get(id).delete.em_run(@conn){|ret| yield ret['deleted']}
+                        end
+                    #rescue
+                    #    yield 0
+                    #end
                 end
             end
 
@@ -198,14 +206,21 @@ require 'em-http-request'
                 value.delete :id
 
                 $r.table(table).get(id).em_run(@conn) do |old_val|
-                    old_val = symbolize_keys old_val
-
-                    merged = old_val.merge(value)
-                    if !(old_val && self.send('before_update_'+table, old_val, value, merged))
-                        yield 0
-                    else
-                        $r.table(table).get(id).update(merged).em_run(@conn){|ret| yield ret['replaced']}
-                    end
+                    #begin
+                        if old_val.nil? || !respond_to?('before_update_'+table)
+                            yield 0
+                        else
+                            old_val = symbolize_keys old_val
+                            merged = old_val.merge(value)
+                            if !(old_val && self.send('before_update_'+table, old_val, value, merged))
+                                yield 0
+                            else
+                                $r.table(table).get(id).update(merged).em_run(@conn){|ret| yield ret['replaced']}
+                            end
+                        end
+                    #rescue
+                    #    yield 0
+                    #end
                 end
             end
 
@@ -218,15 +233,18 @@ require 'em-http-request'
                 return if !w ## ?
                 w = w.changes({include_initial: true})
                 #EventMachine.run do
-                    @watch[id] = w.em_run(@conn) do |doc|
-                        doc['owner'] = user_is_owner? doc
-                        ret = {}
-                        ret[:response] = 'watch'
-                        ret[:id] = id
-                        ret[:data] = doc
-                        ret[:times] = times doc
-                        @ws.send ret.to_json
-                    end
+                @watch[id] = w.em_run(@conn) do |doc|
+                    doc['owner'] = owner? doc
+                    ret = {}
+                    ret[:response] = 'watch'
+                    ret[:id] = id
+                    ret[:data] = doc
+                    ret[:times] = times doc
+                    #begin
+                    @ws.send ret.to_json
+                    #rescue
+                    #end
+                end
                 #end
             end
 
@@ -262,7 +280,7 @@ require 'em-http-request'
                     yield Hash.new
                 else
                     $r.table(table).get(id).em_run(@conn) do |doc|
-                        doc['owner'] = user_is_owner? doc
+                        doc['owner'] = owner? doc
                         if symbolize
                             yield symbolize_keys doc
                         else

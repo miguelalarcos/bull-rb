@@ -355,7 +355,7 @@ class AppController < BullServerController
   def rpc_print_order id
     check id, String # it raises an exception if id is not a String
     get('order', id) do |doc| # to be strict, this should be a join between *order* and *lines* tables
-      if user_is_owner? doc
+      if owner? doc
         t = $reports['order']
         yield t.render(doc)
       else
@@ -409,7 +409,7 @@ class AppController < BullServerController
   end
 
   def before_delete_order doc
-    user_is_owner? doc
+    owner? doc
   end
 
   def before_insert_order doc
@@ -469,13 +469,14 @@ Instructions to install and execute:
         $mail_key='https://api:key-...'
         $from='Mailgun Sandbox <postmaster@sandbox...'
     *$ rethinkdb
-    *$ rethinkdb restore filename-dump.tar.gz (if you haven't done yet)
+    *$ rethinkdb restore demo.tar.gz (if you haven't done yet)
+    *see the document 'openssl_howto.txt'
 
 * Console in server folder:
 
-    * $ rvmsudo ruby start.rb
+    * $ ruby start.rb
 
-* Open browser in localhost:8000
+* Open browser in https://localhost:8000
 
 API
 ---
@@ -495,7 +496,7 @@ Controller client side:
 * start(app)
 
 Controller server side:
-* user_is_owner? doc -> boolean
+* owner? doc -> boolean
 * user_roles -> list of roles
 * user_role_in? doc -> user has a role that is included in doc\['update_roles']
 * i_timestamp! doc # sets the inserted timestamp

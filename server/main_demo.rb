@@ -37,10 +37,12 @@ class AppController < BullServerController
   end
 
   def rpc_get_unique_i18n(lang)
+    check lang, String
     get_unique('i18n', {lang: lang}) {|doc| yield doc}
   end
 
   def rpc_get_demo id
+    check id, String
     get('demo', id) {|doc| yield doc}
   end
 
