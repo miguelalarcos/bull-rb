@@ -122,6 +122,7 @@ class BullClientController
     end
 
     def notify msg
+      begin
         msg = JSON.parse(msg)
         data = msg['data'] || msg['result']
         if data.instance_of?(String) && msg['times'] && msg['times'][0] == 'result'
@@ -134,6 +135,10 @@ class BullClientController
         elsif msg['response'] == 'rpc'
             handle_rpc_result msg['id'], data
         end
+      rescue Exception => e
+          print e.message
+          print e.backtrace.inspect
+      end
     end
 
     def start(app)

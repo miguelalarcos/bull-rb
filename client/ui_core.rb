@@ -113,7 +113,7 @@ class DisplayDoc < React::Component::Base
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
       @predicate_id = $controller.watch(@@table, value) do |data|
         clear
-        data['new_val'].each {|k, v| state.__send__(k+'!', v)} if !data.nil?
+        data['new_val'].each {|k, v| state.__send__(k+'!', v)} if !(data.nil? || data['new_val'].nil?)
       end
     end
   end
