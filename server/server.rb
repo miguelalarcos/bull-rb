@@ -217,7 +217,7 @@ require 'em-http-request'
                 end
                 return if !w ## ?
                 w = w.changes({include_initial: true})
-                EventMachine.run do
+                #EventMachine.run do
                     @watch[id] = w.em_run(@conn) do |doc|
                         doc['owner'] = user_is_owner? doc
                         ret = {}
@@ -227,7 +227,7 @@ require 'em-http-request'
                         ret[:times] = times doc
                         @ws.send ret.to_json
                     end
-                end
+                #end
             end
 
             def handle_stop_watch id

@@ -41,6 +41,6 @@ EM.run do
 
     ws.onclose { controller.close; controller = nil }
 
-    ws.onerror { |e| controller = nil; puts "Error: #{e.message}"}
+    ws.onerror { |e| controller.close; controller = nil; puts "Error: #{e.message}"}
   end
 end
