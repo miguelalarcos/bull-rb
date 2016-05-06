@@ -192,6 +192,7 @@ class MultiLineInput < React::Component::Base
   end
 end
 
+=begin
 class DateInput < React::Component::Base
   param :on_change, type: Proc
   param :value
@@ -214,6 +215,7 @@ class DateInput < React::Component::Base
     end
   end
 
+
   def render
     if params.value.nil?
       value = state.value
@@ -234,6 +236,7 @@ class DateInput < React::Component::Base
     end
   end
 end
+=end
 
 module AbstractNumeric
   include ClassesInput
@@ -524,7 +527,11 @@ class MultipleSelectInput < React::Component::Base
         params.options.each {|val| option(value: val){val}} #(selected: params.values.include? val){val}}
       end.on(:change) do |event|
         list = params.value.dup
-        list << event.target.value if !list.include? event.target.value
+        if list.include? event.target.value
+          list.delete event.target.value
+        else
+          list << event.target.value
+        end
         params.on_change.call list
       end
 =begin
