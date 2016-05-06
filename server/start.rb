@@ -4,6 +4,7 @@ require './main_demo'
 require 'rethinkdb'
 require 'liquid'
 require '../conf'
+require 'time'
 
 $reports = {}
 Dir.glob(File.join('reports' , '*.html')).each do |file|
@@ -11,6 +12,7 @@ Dir.glob(File.join('reports' , '*.html')).each do |file|
   $reports[File.basename(file, '.html')] = Liquid::Template.parse(html)
 end
 
+puts Time.now
 puts 'reports loaded'
 
 $r = RethinkDB::RQL.new

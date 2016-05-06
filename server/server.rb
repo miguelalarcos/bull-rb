@@ -6,6 +6,15 @@ require 'bcrypt'
 require 'lib/encode_times' #..
 require 'lib/symbolize'    #..
 require 'em-http-request'
+require 'logger'
+#require 'em-logger'
+
+$logger = Logger.new('bull-rb.log', 10, 1024000)
+$logger.level = Logger::DEBUG
+def log_info msg
+    proc {$logger.info msg}
+end
+#logger = EM::Logger.new(logger)
 
 #module Bull
     class BullServerController
@@ -18,7 +27,9 @@ require 'em-http-request'
 
         def notify(msg)
             msg = JSON.parse msg
-            print '>>', msg, "\n"
+            #print '>>', msg, "\n"
+            #logger.info msg
+            EventMachine.defer(log_info msg)
             command = msg['command']
             kwargs = symbolize_keys(msg['kwargs'])
             resolve_times kwargs, msg['times']
