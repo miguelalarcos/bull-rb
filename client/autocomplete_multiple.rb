@@ -13,7 +13,7 @@ class AutocompleteMultipleInput < React::Component::Base
   include ClassesInput
 
   before_mount do
-
+    state.value! ''
   end
 
   def on_change v
@@ -24,7 +24,8 @@ class AutocompleteMultipleInput < React::Component::Base
 
   def render
     span do
-      AutocompleteInput(rmethod: rmethod, value: params.value, on_change: lambda{|v| on_change v}, dirty: params.dirty)
+      AutocompleteInput(rmethod: rmethod, value: state.value, on_change: lambda{|v| state.value! v},
+                        on_select: lambda{|v| on_change v}, dirty: params.dirty)
       params.value.each do |v|
         span(class: 'auto-multiple') do
           span{v}

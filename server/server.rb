@@ -30,7 +30,7 @@ end
         def notify(msg)
             msg = JSON.parse msg
             #print '>>', msg, "\n"
-            #logger.info msg
+            #log_info msg
             EventMachine.defer(log_info msg)
             command = msg['command']
             kwargs = symbolize_keys(msg['kwargs'])

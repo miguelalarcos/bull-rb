@@ -6,7 +6,7 @@ class AutocompleteInput < React::Component::Base
   param :value
   param :on_change
   param :rmethod
-  #param :name
+  param :on_select
   param :valid
   param :dirty
 
@@ -30,11 +30,12 @@ class AutocompleteInput < React::Component::Base
       input(type: :text, value: params.value, class: valid_class + ' ' + dirty_class).on(:change) do |event|
         params.on_change.call event.target.value
         $controller.rpc(params.rmethod, event.target.value).then do |result|
-          state.options! result #result.map {|x| x[params.name]}
+          state.options! result
         end
       end.on(:keyDown) do |event|
         if event.key_code == 13
           params.on_change.call state.options[state.index]
+          params.on_select.call state.options[state.index] if params.on_select
           state.options! []
         elsif event.key_code == 40
           state.index! (state.index + 1) % state.options.length if state.options.length != 0
@@ -52,6 +53,7 @@ class AutocompleteInput < React::Component::Base
             span{m[3]}
           end.on(:click) do |e|
             params.on_change.call v
+            params.on_select.call v if params.on_select
             state.options! []
           end if m
         end
