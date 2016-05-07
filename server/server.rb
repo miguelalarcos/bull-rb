@@ -7,12 +7,14 @@ require 'lib/encode_times' #..
 require 'lib/symbolize'    #..
 require 'em-http-request'
 require 'logger'
+require 'fiber'
 #require 'em-logger'
 
 $logger = Logger.new('bull-rb.log', 10, 1024000)
 $logger.level = Logger::DEBUG
 def log_info msg
     proc {$logger.info msg}
+    #EventMachine.defer(proc)
 end
 #logger = EM::Logger.new(logger)
 
@@ -58,39 +60,43 @@ end
             def get_unique table, filter
                 count = rsync $r.table(table).filter(filter).count
                 if count == 0
-                    return nil
+                    return nil #Hash.new
                 else
-                  doc = rsync $r.table(table).filter(filter)
+                  docs = rmsync $r.table(table).filter(filter)
+                  doc = docs[0]
                   doc['owner'] = owner? doc
                   return symbolize_keys doc
                 end
-                #$r.table(table).filter(filter).count.em_run(@conn) do |count|
-                #    if count == 0
-                #        yield Hash.new
-                #    else
-                #        $r.table(table).filter(filter).em_run(@conn) do |doc|
-                #            doc['owner'] = owner? doc
-                #            yield symbolize_keys doc
-                #        end
-                #    end
-                #end
             end
 
             def get_array predicate
                 ret = []
                 docs_with_count(predicate) do |count, row|
-                    return [] if count == 0
-                    ret << symbolize_keys(row)
-                    yield ret if ret.length == count
+                    if count == 0
+                        yield []
+                    else
+                        ret << symbolize_keys(row)
+                        yield ret if ret.length == count
+                    end
                 end
             end
 
             def docs_with_count predicate
-                predicate.count().em_run(@conn) do |count|
-                    predicate.em_run(@conn) do |doc|
-                        doc['owner'] = owner? doc
-                        yield count, doc
+                predicate.count.em_run(@conn) do |count|
+                    if count == 0
+                        yield 0, {}
+                    else
+                        predicate.em_run(@conn) do |doc|
+                            doc['owner'] = owner? doc
+                            yield count, doc
+                        end
                     end
+                    #predicate.em_run(@conn) do |doc|
+                    #    doc['owner'] = owner? doc
+                    #    print 'yield', count, doc
+                    #    puts
+                    #    yield count, doc
+                    #end
                 end
             end
 
@@ -375,12 +381,20 @@ end
             end
 
             def handle_rpc command, id, *args, **kwargs
-                if kwargs.empty?
-                    v = self.send(command, *args)
-                else
-                    v = self.send(command, *args, **kwargs)
+                helper = Fiber.new do
+                  begin
+                    if kwargs.empty?
+                        v = self.send(command, *args)
+                    else
+                        v = self.send(command, *args, **kwargs)
+                    end
+                    @ws.send({response: 'rpc', id: id, result: v, times: times(v)}.to_json)
+                  rescue Exception => e
+                    #puts e
+                    #log
+                  end
                 end
-                @ws.send({response: 'rpc', id: id, result: v, times: times(v)}.to_json)
+                helper.transfer
             end
 
             def handle_rpc_old command, id, *args, **kwargs

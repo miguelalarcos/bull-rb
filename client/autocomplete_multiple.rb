@@ -18,7 +18,7 @@ class AutocompleteMultipleInput < React::Component::Base
 
   def on_change v
     list = params.value.dup
-    list << v if !list.include v
+    list << v if !list.include? v
     params.on_change list
   end
 

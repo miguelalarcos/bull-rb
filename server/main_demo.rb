@@ -19,8 +19,7 @@ class AppController < BullServerController
       doc['name'].match("(?i).*" + loc + ".*")
     end
     docs = rmsync pred
-    # noinspection RubyArgCount
-    docs.select{|k,v| k=='name'}.values
+    docs.collect{|x| x[:name]}
   end
 
   def before_insert_demo doc
