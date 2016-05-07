@@ -373,11 +373,19 @@ end
             end
 
             def handle_task command, *args, **kwargs
-                if kwargs.empty?
-                    self.send(command, *args)
-                else
-                    self.send(command, *args, **kwargs)
+                helper = Fiber.new do
+                    begin
+                        if kwargs.empty?
+                            self.send(command, *args)
+                        else
+                            self.send(command, *args, **kwargs)
+                        end
+                    rescue Exception => e
+                        puts e
+                        #log
+                    end
                 end
+                helper.transfer
             end
 
             def handle_rpc command, id, *args, **kwargs
@@ -390,7 +398,7 @@ end
                     end
                     @ws.send({response: 'rpc', id: id, result: v, times: times(v)}.to_json)
                   rescue Exception => e
-                    #puts e
+                    puts e
                     #log
                   end
                 end

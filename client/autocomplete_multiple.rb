@@ -26,13 +26,15 @@ class AutocompleteMultipleInput < React::Component::Base
     span do
       AutocompleteInput(rmethod: rmethod, value: state.value, on_change: lambda{|v| state.value! v},
                         on_select: lambda{|v| on_change v}, dirty: params.dirty)
-      params.value.each do |v|
-        span(class: 'auto-multiple') do
-          span{v}
-          span{i(class: 'fa fa-times')}.on(:click) do
-            list = params.value.dup
-            list.delete v
-            params.on_change list
+      div do
+        params.value.each do |v|
+          span(class: 'auto-multiple') do
+            span{v}
+            span{i(class: 'fa fa-times')}.on(:click) do
+              list = params.value.dup
+              list.delete v
+              params.on_change list
+            end
           end
         end
       end
