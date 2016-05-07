@@ -81,27 +81,17 @@ end
                 docs_with_count(predicate) do |count, row|
                     return [] if count == 0
                     ret << symbolize_keys(row)
-                    #yield ret if ret.length == count
-                    return ret if ret.length == count
+                    yield ret if ret.length == count
                 end
             end
 
             def docs_with_count predicate
-                count = rsync predicate.count()
-                if count == 0
-                    yield 0, nil
-                else
+                predicate.count().em_run(@conn) do |count|
                     predicate.em_run(@conn) do |doc|
                         doc['owner'] = owner? doc
                         yield count, doc
                     end
                 end
-                #predicate.count().em_run(@conn) do |count|
-                #    predicate.em_run(@conn) do |doc|
-                #        doc['owner'] = owner? doc
-                #        yield count, doc
-                #    end
-                #end
             end
 
             def rpc_user_exist? user
@@ -287,8 +277,7 @@ end
 
             def rmsync pred
                 helper = Fiber.new do |parent|
-                    #get_array(pred){|docs| parent.transfer docs}
-                    parent.transfer get_array(pred)
+                    get_array(pred){|docs| parent.transfer docs}
                 end
                 helper.transfer Fiber.current
             end
