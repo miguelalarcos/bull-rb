@@ -6,7 +6,7 @@ class AutocompleteInput < React::Component::Base
   param :value
   param :on_change
   param :rmethod
-  param :name
+  #param :name
   param :valid
   param :dirty
 
@@ -30,7 +30,7 @@ class AutocompleteInput < React::Component::Base
       input(type: :text, value: params.value, class: valid_class + ' ' + dirty_class).on(:change) do |event|
         params.on_change.call event.target.value
         $controller.rpc(params.rmethod, event.target.value).then do |result|
-          state.options! result.map {|x| x[params.name]}
+          state.options! result #result.map {|x| x[params.name]}
         end
       end.on(:keyDown) do |event|
         if event.key_code == 13

@@ -8,20 +8,19 @@ class AppController < BullServerController
 
   def rpc_report_demo id
     check id, String
-    get('demo', id, symbolize=false) do |doc|
-      t = $reports['demo']
-      yield t.render(doc)
-    end
+    doc = get('demo', id, symbolize=false)
+    t = $reports['demo']
+    t.render(doc)
   end
 
   def rpc_location loc
     check loc, String
-    get_array(
-        $r.table('location').filter do |doc|
-          #doc['name'] =~ /#{loc}/i
-          doc['name'].match("(?i).*" + loc + ".*")
-        end
-    ) {|docs| yield docs}
+    pred = $r.table('location').filter do |doc|
+      doc['name'].match("(?i).*" + loc + ".*")
+    end
+    docs = rmsync pred
+    # noinspection RubyArgCount
+    docs.select{|k,v| k=='name'}.values
   end
 
   def before_insert_demo doc
@@ -38,12 +37,12 @@ class AppController < BullServerController
 
   def rpc_get_unique_i18n(lang)
     check lang, String
-    get_unique('i18n', {lang: lang}) {|doc| yield doc}
+    get_unique('i18n', {lang: lang}) #{|doc| yield doc}
   end
 
   def rpc_get_demo id
     check id, String
-    get('demo', id) {|doc| yield doc}
+    get('demo', id) #{|doc| yield doc}
   end
 
   def watch_demo id

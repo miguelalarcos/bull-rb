@@ -4,6 +4,7 @@ require 'reactive_var'
 require 'login'
 require 'date-time-picker'
 require 'autocomplete'
+require 'autocomplete_multiple'
 require 'login'
 require 'validation/validation_demo'
 require 'i18n'
@@ -38,6 +39,7 @@ class DemoForm < Form
     state.date! nil
     state.datetime! nil
     state.auto! ''
+    state.autom! []
     state.check! false
     state.array! []
     state.hash! Hash.new
@@ -90,8 +92,13 @@ class DemoForm < Form
         end
         tr do
           td{'Autocomplete'}
-          td{AutocompleteInput(rmethod: 'location', value: state.auto, name: 'name',
+          td{AutocompleteInput(rmethod: 'location', value: state.auto, #name: 'name',
                                on_change: change_attr('auto'), dirty: state.dirty_auto)}
+        end
+        tr do
+          td{'Autocomplete Multiple'}
+          td{AutocompleteMultipleInput(rmethod: 'location', value: state.autom,
+                               on_change: change_attr('autom'), dirty: state.dirty_autom)}
         end
         tr do
           td{'Check'}
@@ -147,6 +154,7 @@ class DemoDoc < DisplayDoc
     state.date! nil
     state.datetime! nil
     state.auto! ''
+    state.autom! []
     state.check! false
     state.array! []
     state.hash! Hash.new
@@ -158,7 +166,6 @@ class DemoDoc < DisplayDoc
   def render
     context = {id: state.id}
     div do
-      #div{"The doc with id #{state.id} has these values:"}
       div{i18n(params.i18n_map, 'DOC_TEXT')%context}
       div{state.cte}
       div{state.string_a}
@@ -170,6 +177,7 @@ class DemoDoc < DisplayDoc
       div{state.date.strftime('%d-%m-%Y') if state.date}
       div{state.datetime.strftime('%d-%m-%Y %H:%M') if state.datetime}
       div{state.auto}
+      div{state.autom.to_s}
       div{state.check.to_s}
       div{state.array.to_s}
       div{state.hash.to_s}
