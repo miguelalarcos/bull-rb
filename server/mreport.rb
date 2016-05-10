@@ -5,8 +5,7 @@ module MReport
     MReport.reports
   end
 
-  def self.reports
-    return @reports if !@reports.nil?
+  def self.load_reports
     @reports = {}
     Dir.glob(File.join('reports' , '*.html')).each do |file|
       html = File.read(file)
@@ -14,5 +13,10 @@ module MReport
     end
     puts 'reports loaded'
     @reports
+  end
+
+  def self.reports
+    return @reports if !@reports.nil?
+    load_reports
   end
 end

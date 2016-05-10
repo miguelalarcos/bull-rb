@@ -4,8 +4,10 @@ require './main_demo'
 require 'rethinkdb'
 require '../conf'
 require 'time'
+require './mreport'
 
 puts Time.now
+MReport.load_reports
 
 $r = RethinkDB::RQL.new
 conn = $r.connect()
