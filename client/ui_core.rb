@@ -6,51 +6,6 @@ require_relative 'bcaptcha'
 require 'ui_common'
 require 'time'
 
-class NotificationController
-  @@ticket = 0
-
-  def initialize state, level
-    @state = state
-    @level = level
-  end
-
-  def add msg
-    return if msg[-1] < @level
-    id = @@ticket
-    @@ticket += 1
-    aux = @state.notifications
-    aux[id] = ['animated fadeIn'] + msg
-    @state.notifications! aux
-    $window.after(2) do
-      aux = @state.notifications
-      aux[id] = ['animated fadeOut'] + aux[id][1..-1]
-      @state.notifications! aux
-    end
-    $window.after(3) do
-      aux = @state.notifications
-      aux.delete id
-      @state.notifications! aux
-    end
-  end
-end
-
-class Notification < React::Component::Base
-  param :level
-
-  before_mount do
-    state.notifications! Hash.new
-    $notifications = NotificationController.new state, params.level
-  end
-
-  def render
-    div(style: {position: 'absolute'}) do
-      state.notifications.each_pair do |k, (animation, code, v, level)|
-        div(key: k, class: animation + ' notification ' + code){v}
-      end
-    end
-  end
-end
-
 class DisplayList < React::Component::Base
 
   before_mount do
@@ -583,6 +538,8 @@ end
 
 class Form < React::Component::Base
 
+  include MNotification
+
   before_mount do
     @dirty = Set.new
     @refs = {}
@@ -647,10 +604,12 @@ class Form < React::Component::Base
   def insert
     $controller.insert(@@table, hash_from_state).then do |response|
       if response.nil?
-        $notifications.add ['error', 'form: data not inserted', 1] if $notifications
+        #$notifications.add ['error', 'form: data not inserted', 1] if $notifications
+        notify_error 'form: data not inserted', 1
       else
         params.selected.value = response
-        $notifications.add ['ok', 'form: data inserted', 1] if $notifications
+        #$notifications.add ['ok', 'form: data inserted', 1] if $notifications
+        notify_ok 'form: data inserted', 1
       end
     end
     #@dirty.each {|attr| state.__send__('dirty_' + attr+'!', false)}
@@ -661,9 +620,11 @@ class Form < React::Component::Base
   def update
     $controller.update(@@table, state.id, hash_from_state).then do |count|
       if count == 0
-        $notifications.add ['error', 'form: data not updated', 1] if $notifications
+        #$notifications.add ['error', 'form: data not updated', 1] if $notifications
+        notify_error 'form: data not updated', 1
       elsif count == 1
-        $notifications.add ['ok', 'form: data updated', 1] if $notifications
+        #$notifications.add ['ok', 'form: data updated', 1] if $notifications
+        notify_ok 'form: data updated', 1
       end
     end
     #@dirty.each {|attr| state.__send__('dirty_' + attr.gsub('.', '_')+'!', false)}

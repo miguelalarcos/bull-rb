@@ -8,6 +8,8 @@ require 'autocomplete_multiple'
 require 'login'
 require 'validation/validation_demo'
 require 'i18n'
+require 'notification'
+require 'native'
 
 def format_float_sup_money value, symb
   integer, decimal = format_float(value).split('.')
@@ -198,6 +200,8 @@ class DemoList < DisplayList
   param :selected
   param :show_modal
 
+  include MNotification
+
   before_mount do
     watch_ 'demo_items', []
   end
@@ -225,7 +229,8 @@ class DemoList < DisplayList
                     params.selected.value = doc['id']
                   end
                 rescue
-                  $notifications.add ['error', 'There are data not saved. Save or discard the data.', 1] if $notifications
+                  #$notifications.add ['error', 'There are data not saved. Save or discard the data.', 1] if $notifications
+                  notify_error 'There are data not saved. Save or discard the data.', 1
                   params.show_modal.call
                 end
               end
@@ -332,21 +337,42 @@ class App < React::Component::Base
     state.roles! []
     state.page! 'demo'
     state.modal! false
-    state.relogin! false
-    $controller.set_relogin_state = lambda{|v| state.relogin! v}
+    #state.relogin! false
+    #$controller.set_relogin_state = lambda{|v| state.relogin! v}
   end
 
   def render
     div do
       Notification(level: 0)
       DirtyModal(ok: lambda {state.modal! false}) if state.modal
-      Relogin() if state.relogin
+      Relogin() #if state.relogin
       HorizontalMenu(language: @language, page: state.page, set_page: lambda{|v| state.page! v},
-                     options: {'demo'=>'Demo', 'login'=>'Login', 'report' => 'Report'})
+                     options: {'demo'=>'Demo', 'login'=>'Login', 'report' => 'Report', 'chartist'=>'Chartist'})
       PageDemo(i18n_map: state.i18n_map, key: 'page-demo', show: state.page == 'demo', show_modal: lambda{state.modal! true})
       PageLogin(user:state.user, set_user: lambda{|v| state.user! v}, set_roles: lambda{|v| state.roles! v}, show: state.page == 'login')
       PageReport(show: state.page == 'report')
+      PageChartist(show: state.page == 'chartist')
     end
   end
 
 end
+
+class PageChartist < React::Component::Base
+  param :show
+  def graphic
+    data = {
+      :labels =>  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+      :series =>  [ [5, 2, 4, 2, 0] ]
+    }
+    Native(`Chartist`).Line('.ct-chart', data)
+  end
+
+  def render
+    div(class: params.show ? '': 'no-display') do
+      div(class: "ct-chart ct-perfect-fourth")
+      button{'graphic'}.on(:click){graphic}
+    end
+  end
+end
+
+

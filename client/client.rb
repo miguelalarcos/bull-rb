@@ -7,29 +7,37 @@ require 'json'
 require 'time'
 require 'lib/encode_times'
 require 'reactive_var'
+require 'notification'
+require 'mrelogin'
 
 class BullClientController
+
+    include MNotification
+    include MRelogin
 
     attr_accessor :app_rendered
     attr_accessor :ws
     attr_reader :connection
-    attr_accessor :set_relogin_state
+    #attr_accessor :set_relogin_state
 
     @@ticket = 0
 
     def initialize
+        @user_id = nil
         @watch = {}
         @promises = {}
         @ws = nil
         @app_rendered = false
-        @set_relogin_state = lambda{}
+        #@set_relogin_state = lambda{}
 
         @connection = RVar.new 'disconnected'
         reactive(@connection) do
             if @connection.value == 'disconnected'
-                $notifications.add ['error', 'disconnected', 1] if $notifications
+                #$notifications.add ['error', 'disconnected', 1] if $notifications
+                notify_error 'disconnected', 1
             else
-                $notifications.add ['ok', 'connected', 1] if $notifications
+                #$notifications.add ['ok', 'connected', 1] if $notifications
+                notify_ok 'connected', 1
             end
         end
     end
@@ -65,9 +73,11 @@ class BullClientController
     def insert(table, hsh)
         prom = rpc('insert', table, value: hsh).then do |response|
             if response.nil?
-                $notifications.add ['error', 'data not inserted', 0] if $notifications
+                #$notifications.add ['error', 'data not inserted', 0] if $notifications
+                notify_error 'data not inserted', 0
             else
-                $notifications.add ['ok', 'data inserted', 0] if $notifications
+                #$notifications.add ['ok', 'data inserted', 0] if $notifications
+              notify_ok 'data inserted', 0
             end
             response
         end
@@ -77,9 +87,11 @@ class BullClientController
     def update(table, id, hsh)
         prom = rpc('update', table, id, value: hsh).then do |count|
             if count == 0
-                $notifications.add ['error', 'data not updated', 0] if $notifications
+                #$notifications.add ['error', 'data not updated', 0] if $notifications
+                notify_error 'data not updated', 0
             elsif count == 1
-                $notifications.add ['ok', 'data updated', 0] if $notifications
+                #$notifications.add ['ok', 'data updated', 0] if $notifications
+                notify_ok 'data updated', 0
             end
             count
         end
@@ -87,19 +99,31 @@ class BullClientController
     end
 
     def delete(table, id)
-        prom = rpc('delete', table, id).then do |count|
+        #prom = rpc('delete', table, id).then do |count|
+        rpc('delete', table, id).then do |count|
             if count == 0
-                $notifications.add ['error', 'data not deleted', 0] if $notifications
+                #$notifications.add ['error', 'data not deleted', 0] if $notifications
+                notify_error 'data not deleted', 0
             elsif count == 1
-                $notifications.add ['ok', 'data deleted', 0] if $notifications
+                #$notifications.add ['ok', 'data deleted', 0] if $notifications
+                notify_ok 'data deleted', 0
             end
-            count
+            #count
         end
-        prom
+        #prom
     end
 
     def login user, password
-        rpc('login', user, password)
+        rpc('login', user, password).then do |response|
+            if response
+                @user_id = user
+                @roles = response
+                notify_ok 'logged', 0
+            else
+                notify_error 'incorrect user or password', 0
+            end
+            response
+        end
     end
 
     def rewatch
@@ -109,10 +133,16 @@ class BullClientController
     end
 
     def relogin password
-        login($user_id, password).then do
-            @set_relogin_state.call false
-            $notifications.add ['ok', 'relogged', 0] if $notifications
-            rewatch
+        login(@user_id, password).then do |response|
+            #@set_relogin_state.call false
+            if response
+                show_relogin false
+                #$notifications.add ['ok', 'relogged', 0] if $notifications
+                notify_ok 'relogged', 0
+                rewatch
+            else
+                notify_error 'password incorrect', 0
+            end
         end
     end
 
@@ -144,7 +174,7 @@ class BullClientController
     def start(app)
         begin
             controller = self
-            url = 'wss://' + `document.location.hostname` + ':3000'
+            url = 'ws://' + `document.location.hostname` + ':3000'
             @ws = Browser::Socket.new url do
                 on :open do |e|
                     controller.connection.value = 'connected'
@@ -154,8 +184,9 @@ class BullClientController
                           controller.app_rendered = true
                         end
                     else
-                        if $user_id
-                            controller.set_relogin_state.call true
+                        if @user_id
+                            #controller.set_relogin_state.call true
+                            controller.show_relogin true
                         else
                             controller.rewatch
                         end
@@ -170,8 +201,11 @@ class BullClientController
                     end
                 end
                 on :close do |e|
+                    print e.message
+                    print e.backtrace.inspect
                     controller.connection.value = 'disconnected'
                     $window.after(5) {controller.reset}
+
                 end
             end            
         rescue Exception => e  
@@ -212,7 +246,7 @@ class BullClientController
                 value[:who].call nil
             end
             @promises = {}
-            $user_id = nil
+            @user_id = nil
             @watch = {} ###
         end
 

@@ -1,15 +1,28 @@
 require 'ui_core'
+require 'notification'
+require 'mrelogin'
 
 class Relogin < React::Component::Base
 
+  include MRelogin
   before_mount do
     state.password! ''
+    state.show! false
+    MRelogin.panel = self
+  end
+
+  def show_relogin val
+    state.show! val
   end
 
   def render
     div do
-      PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
-      button{'relogin'}.on(:click){$controller.relogin state.password}
+      div do
+        PasswordInput(on_change: lambda{|v| state.password! v}, value: state.password)
+        button{'relogin'}.on(:click) do
+          $controller.relogin state.password
+        end
+      end if state.show
     end
   end
 end
@@ -29,10 +42,10 @@ class Login < React::Component::Base
       StringInput(on_change: lambda {|v| state.user_name! v}, value: state.user_name)
       PasswordInput(on_change: lambda {|v| state.password! v}, value: state.password)
       button(type: :button) { 'login' }.on(:click) do
-        $controller.rpc('login', state.user_name, state.password).then do |roles|
+        $controller.login(state.user_name, state.password).then do |roles|
           if roles
             state.incorrect! false
-            $user_id = state.user_name
+            #$user_id = state.user_name
             params.set_user.call true
             params.set_roles.call roles
           else
@@ -105,6 +118,8 @@ end
 
 module CreateUserCaptcha
 
+  include MNotification
+
   def user_class
     if state.user_exist
       'input-incorrect'
@@ -152,9 +167,11 @@ module CreateUserCaptcha
               params.set_user.call true
               params.set_roles.call []
               $user_id = state.user
-              $notifications.add ['ok', 'user created', 1] if $notifications
+              #$notifications.add ['ok', 'user created', 1] if $notifications
+              notify_ok 'user created', 1
             else
-              $notifications.add ['error', 'error creating user', 1] if $notifications
+              #$notifications.add ['error', 'error creating user', 1] if $notifications
+              notify_error 'error creating user', 1
             end
           end
         end if !state.user_exist && state.password == state.rpassword && state.password != '' and state.code

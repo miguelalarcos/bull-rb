@@ -507,13 +507,9 @@ Globals
 -------
 Client side:
 * $controller
-* $user_id
-* $notifications
-* $relogin
 
 Server side:
 * $r
-* $reports
 
 TODO
 ----

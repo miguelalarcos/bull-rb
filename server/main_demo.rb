@@ -9,7 +9,7 @@ class AppController < BullServerController
   def rpc_report_demo id
     check id, String
     doc = get('demo', id, symbolize=false)
-    t = $reports['demo']
+    t = reports['demo']
     t.render(doc)
   end
 
