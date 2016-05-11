@@ -249,8 +249,8 @@ end
 
 def format_integer value
   path = value.to_s.reverse.split(/(\d\d\d)/).select{|v| v != ''}
-  if path[0] == '-'
-    path.shift
+  if path[-1] == '-'
+    path.pop
     '-' + path.join(',').reverse
   else
     path.join(',').reverse
