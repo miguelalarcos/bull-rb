@@ -62,3 +62,4 @@ class AutocompleteInput < React::Component::Base
   end
 end
 
+

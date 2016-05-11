@@ -2,7 +2,7 @@ require 'reactive-ruby'
 require 'autocomplete'
 require 'ui_common'
 
-class AutocompleteMultipleInput < React::Component::Base
+class TagAutocompleteInput < React::Component::Base
 
   param :value
   param :on_change, type: Proc

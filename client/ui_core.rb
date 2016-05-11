@@ -555,6 +555,20 @@ class Form < React::Component::Base
     !@dirty.empty?
   end
 
+  def expand_attr(hsh={})
+    lambda do |value|
+      value.each_pair do |k, v|
+        if !hsh[k].nil?
+          k = hsh[k]
+        end
+        @dirty.add k
+        state.__send__(k+'!', v)
+        state.__send__('dirty_' + k + '!', true)
+        state.dirty! true
+      end
+    end
+  end
+
   def change_attr(attr)
     lambda do |value|
       @dirty.add attr

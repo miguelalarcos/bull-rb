@@ -5,16 +5,17 @@ def set_nested attr, value, doc
     yield root, value
   else
     doc = doc[root] || {}
+    doc_ = doc
     while !path.empty?
       aux = path.shift
       if path.empty?
         doc[aux] = value
       else
-        doc[aux] = {}
+        doc[aux] = {} if doc[aux].nil?
         doc = doc[aux]
       end
     end
-    yield root, doc
+    yield root, doc_
   end
 end
 

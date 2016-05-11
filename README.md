@@ -59,16 +59,6 @@ end
 
 We are going to see those features in a moment.
 
-And this is the root app:
-```ruby
-class App < React::Component::Base
-  attr_reader :user_id, :password
-
-  def render
-    ...
-  end
-````
-
 RVar
 ----
 You can have reactive vars, and use like this:
@@ -87,16 +77,17 @@ v.value = 8
 Other example, in App before_mount:
 
 ```ruby
-@language = RVar.new 'en'
-reactive(@language) do
-  $controller.rpc('get_unique_i18n', @language.value).then do|response|
-    state.i18n_map! response
-  end
-end
+  before_mount do
+    @language = RVar.new 'en'
+    reactive(@language) do
+      $controller.rpc('get_unique_i18n', @language.value).then do|response|
+        state.i18n_map! response
+      end
+    end
 ```
-Every time language is set (language.value = 'en') the `$controller.rpc('get',...` is rerun.
+Every time language is set (language.value = 'es') the `$controller.rpc('get...',...` is rerun.
 
-Rvars are useful when you are editing a form and you click in an item of a list of form to edit this one. The form would be:
+Rvars are useful when you are editing a form and you click in an item of a list to edit this one.
 
 i18n
 ----

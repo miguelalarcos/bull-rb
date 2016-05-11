@@ -4,7 +4,7 @@ require 'reactive_var'
 require 'login'
 require 'date-time-picker'
 require 'autocomplete'
-require 'autocomplete_multiple'
+require 'tag-autocomplete'
 require 'login'
 require 'validation/validation_demo'
 require 'i18n'
@@ -94,12 +94,12 @@ class DemoForm < Form
         end
         tr do
           td{'Autocomplete'}
-          td{AutocompleteInput(rmethod: 'location', value: state.auto, #name: 'name',
+          td{AutocompleteInput(rmethod: 'location', value: state.auto,
                                on_change: change_attr('auto'), dirty: state.dirty_auto)}
         end
         tr do
           td{'Autocomplete Multiple'}
-          td{AutocompleteMultipleInput(rmethod: 'location', value: state.autom,
+          td{TagAutocompleteInput(rmethod: 'location', value: state.autom,
                                on_change: change_attr('autom'), dirty: state.dirty_autom)}
         end
         tr do
