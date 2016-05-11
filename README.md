@@ -116,73 +116,106 @@ Forms
 -----
 
 ```ruby
-class OrderForm < Form
-    @@table = 'order'
-    @@constants = ['client_code'] #client code comes as a param: params.client_code
-    param :order_code #this is a RVar
+class DemoForm < Form
+  @@table = 'demo'
+  @@constants = ['cte']
+  param :selected
+  param :cte
 
-    before_mount do
-        get params.order_code  # get does the reactive inside. If we set order_code in another place, the code inside get will be rerun
-    end
+  before_mount do
+    get params.selected
+  end
 
-    def clear
-        state.code! nil
-        state.description! ''
-        state.date! nil
-    end
+  def clear
+    state.id! nil
+    state.string_a! ''
+    state.password! ''
+    state.integer_x! nil
+    ...
+  end
 
-    def render
-        ValidateOrder.new.validate state
-        div do
-            div{'Order form'}
-            div{state.code}
-            button{'new order'}.on(:click) do
-                $controller.rpc('get_ticket').then do |code|
-                    clear
-                    state.code! code
-                end
-            end
-            div('Date:')
-            DateTimeInput(on_change: change_attr('date'), format: '%d-%m-%Y %H:%M', value: state.date)
-            div{'Description:'}
-            StringInput(value: state.description, on_change: change_attr('description'), dirty: state.dirty_description)
-            button{'save'}.on(:click) do
-                save
-            end if state.valid && state.dirty
+  def render
+    ValidateDemo.new.validate state
+    div do
+      table do
+        tr do
+          td{'A string'}
+          td{StringInput(valid: state.valid_string_a, dirty: state.dirty_string_a, placeholder: 'string',
+                         value: state.string_a, on_change: change_attr('string_a'))}
+          td(class: 'error'){'string must start with A'} if !state.valid_string_a
         end
-    end
-end
+        tr do
+          td{'A password'}
+          td{PasswordInput(placeholder: 'password', value: state.password, on_change: change_attr('password'))}
+        end
+        tr do
+          td{'An integer'}
+          td{IntegerCommaInput(valid: state.valid_integer_x, dirty: state.dirty_integer_x, placeholder: 'integer',
+                          value: state.integer_x, on_change: change_attr('integer_x'))}
+          td(class: 'error'){'integer must be > 10'} if !state.valid_integer_x
+        end
+        tr do
+          td{'A nested float'}
+          td{FloatCommaInput(key: 'float_y', valid: state.valid_nested_float_y_value, dirty: state.dirty_nested_float_y_value,
+                        placeholder: 'nested float', value: state.nested_float_y[:value],
+                        on_change: change_attr('nested_float_y.value'))}
+          td(class: 'error'){'float must be negative'} if !state.valid_nested_float_y_value
+        end
+        ...
+    FormButtons(save: lambda{save}, discard: lambda{discard}, valid: state.valid, dirty: state.dirty)
 ```
 
 What happens if I click in an item of a list of forms to edit this one, and the form is dirty? Well, we don't want to lose the data.
+
 ```ruby
-class MyList < DisplayList
-   param :selected
-   param :show_modal
+class DemoList < DisplayList
+  param :selected
+  param :show_modal
 
-   before_mount do
-     watch_ 'my_table', []
-   end
+  include MNotification
 
-   def render
-     div do
-       state.docs.each do |doc|
-         div(key: doc['id']){doc['a']}.on(:click) do
-           begin
-             RVar.raise_if_dirty do
-               params.selected.value = doc['id']
-             end
-           rescue
-             params.show_modal.call
-           end
-         end
-       end
-     end
-   end
- end
+  before_mount do
+    watch_ 'demo_items', []
+  end
+
+  def render
+    div do
+      table do
+        tr do
+          th{'id'}
+          th{'string_a'}
+          th{'integer_x'}
+          th{'nested_float_y.value'}
+        end
+        state.docs.each do |doc|
+          tr(key: doc['id']) do
+            td{doc['id']}
+            td{doc['string_a']}
+            td{format_integer doc['integer_x']}
+            td(class: 'montserrat'){format_float_sup_money(doc['nested_float_y']['value'], '€')}
+            td{a(href: '#'){'delete'}.on(:click){$controller.delete('demo', doc['id'])}}
+            td do
+              a(href: '#'){'select'}.on(:click) do
+                begin
+                  RVar.raise_if_dirty do
+                    params.selected.value = doc['id']
+                  end
+                rescue
+                  notify_error 'There are data not saved. Save or discard the data.', 1
+                  params.show_modal.call
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
 ```
 
 Also there's a *rgrouping* function when you want to group the changes of several Rvars:
+
 ```ruby
 RVAr.rgrouping do
   var1.value = 5
@@ -253,40 +286,6 @@ class DisplayCar < DisplayDoc
     end
 end
 ```
-
-Lets see a component List
-
-```ruby
-class OrderLines < DisplayList
-    param :line_selected # this is a RVar
-    param :order_code    # this is a RVar
-
-    before_mount do
-        watch_ 'lines_of_order', params.order_code.value, [params.order_code]
-    end
-
-    def render
-        total = state.docs.inject(0){|sum, doc| sum + doc['price']}
-        div do
-            div{'Order lines'}
-            state.docs.each do |doc|
-                div(key: doc['id']) do
-                    tr do
-                        td{doc['product']}
-                        td{doc['quantity']}
-                        td{doc['price']}
-                        td{'Edit'}.on(:click) do
-                            params.line_selected.value = doc['id']
-                        end
-                    end
-                end
-            end
-            span{"Total: #{total} €"}
-        end
-    end
-end
-```
-
 Files
 -----
 Client side:
@@ -313,105 +312,75 @@ This is an example of a custom server Controller:
 
 ```ruby
 require './server'
-require 'em-synchrony'
-require '../validation/validation'
 require './bcaptcha'
+require '../validation/validation_demo'
 
 class AppController < BullServerController
 
   include NetCaptcha
 
   def initialize ws, conn
-    super ws, conn
-    @post = nil
-    #@mutex = EM::Synchrony::Thread::Mutex.new # I used it in *rpc_get_ticket* but I prefer the current implementation
-  end
-
-  def get_post id
-    check id, String
-    get('post', id) do |doc|
-        if can_comment_post(doc)
-            @post = id
-            yield doc
-        else
-            yield Hash.new
-        end
-    end
-  end
-
-  def before_insert_comment doc
-    doc['post_id'] = @post
-  end
-
-  def rpc_print_order id
-    check id, String # it raises an exception if id is not a String
-    get('order', id) do |doc| # to be strict, this should be a join between *order* and *lines* tables
-      if owner? doc
-        t = $reports['order']
-        yield t.render(doc)
-      else
-        yield ''
-      end
-    end
+      super ws, conn
+      #@mutex = EM::Synchrony::Thread::Mutex.new # I used it in *rpc_get_ticket* but I prefer the current implementation
   end
 
   def rpc_get_ticket
     #@mutex.synchronize do
-    $r.table('ticket').get('0').update(:return_changes => true) do |doc|
+    doc = rsync $r.table('ticket').get('0').update(:return_changes => true) do |doc|
       :value => doc['value'] + 1
-    end.em_run(@conn) {|x| x['changes'][0]['new_val']['value']}
+    end
+    doc['changes'][0]['new_val']['value']
   end
 
-    def rpc_get_clients code, surname
-      check code, Integer
-      check surname, String
-      get_array(
-          $r.table('client').filter do |cli|
-            cli['code'] == code | cli['surname'].match("(?i).*"+surname+".*")
-          end
-      ) {|docs| yield docs}
-    end
-
-  def rpc_get_i18n id
+  def rpc_report_demo id
     check id, String
-    get('i18n', id) {|doc| yield doc}
+    doc = get('demo', id, symbolize=false)
+    t = reports['demo']
+    t.render(doc)
   end
 
-  def watch_orders code, client_code, date
-    check code, Integer
-    check client_code, Integer
-    check date, Time
-    $r.table('order').filter do |v|
-      v['code'] == code | (v['client_code'] == client_code & (v['date'] == date))
+  def rpc_location loc
+    check loc, String
+    pred = $r.table('location').filter do |doc|
+      doc['name'].match("(?i).*" + loc + ".*")
     end
+    docs = rmsync pred
+    docs.collect{|x| x[:name]}
   end
 
-  def watch_lines_of_order code
-    check code, Integer
-    $r.table('line').filter(order_code: code)
+  def before_insert_demo doc
+    ValidateDemo.new.validate doc
   end
 
-  def before_update_order old_val, new_val, merged
-    if !ValidateOrder.new.validate merged
-      return false
-    end
-    u_timestamp! merged
+  def before_update_demo old, new, merged
+    ValidateDemo.new.validate merged
+  end
+
+  def before_delete_demo id
     true
   end
 
-  def before_delete_order doc
-    owner? doc
+  def rpc_get_unique_i18n(lang)
+    check lang, String
+    get_unique('i18n', {lang: lang}) #{|doc| yield doc}
   end
 
-  def before_insert_order doc
-    if user_roles.include? 'writer' && ValidateOrder.new.validate(doc)
-      i_timestamp! doc
-      owner! doc
-      true
-    else
-      false
+  def rpc_get_demo id
+    check id, String
+    get('demo', id) #{|doc| yield doc}
+  end
+
+  def watch_demo id
+    check id, String
+    if !id.nil?
+      $r.table('demo').get(id)
     end
   end
+
+  def watch_demo_items
+    $r.table('demo')
+  end
+
 end
 ```
 
@@ -422,28 +391,39 @@ Both sides:
 ```ruby
 require_relative 'validation_core'
 
-class ValidateOrder
+class ValidateDemo
   include Validate
 
   def initialize
-    field 'code' => Integer
-    field 'description' => String
-    field 'client_code_' => Integer
-    field 'date' => Time
+    field 'string_a' => String
+    field 'password' => String
+    field 'integer_x' => Integer
+    field 'nested_float_y.value' => Numeric #Float
+    field 'observations' => String
   end
 
-  def valid_description? (value, doc)
-    value.start_with? 'Description: '
+  def valid_string_a? (value, doc)
+    value.start_with? 'A'
   end
+
+  def valid_integer_x? (value, doc)
+    value > 10
+  end
+
+  def valid_nested_float_y_value?(value, doc)
+    value < 0.0
+  end
+
 end
 ```
 
-You can have nested fields: `field 'nested.power' => Float`
+You can have nested fields: `field 'nested.power' => Numeric`
 
 Instructions to install and execute:
 ------------------------------------
 * You have to install Ruby and Rethinkdb.
 * Clone the repository: git clone https://github.com/miguelalarcos/bull-rb.git
+* git checkout rsync
 * Gemfile in client folder
 * Gemfile in server folder
 * Console in client folder:
@@ -453,7 +433,8 @@ Instructions to install and execute:
 
 * Console in client/http folder:
 
-    * $ rvmsudo ruby http_server.rb
+    * $ ruby http_server.rb (you can change the code to execute with ssl. You then execute `rvmsudo ruby http_server.rb`)
+    (I will write the code to select between ssl or not)
 
 * Console in root folder:
     *$ you must create a *conf.rb* file (I use [mailgun](https://www.mailgun.com/)). Content:
@@ -461,35 +442,37 @@ Instructions to install and execute:
         $from='Mailgun Sandbox <postmaster@sandbox...'
     *$ rethinkdb
     *$ rethinkdb restore demo.tar.gz (if you haven't done yet)
-    *see the document 'openssl_howto.txt'
+    *see the document 'openssl_howto.txt' if you execute in rvmsudo mode
 
 * Console in server folder:
 
     * $ ruby start.rb
 
-* Open browser in https://localhost:8000
+* Open browser in https://localhost or localhost:8000
 
 API
 ---
 Controller client side:
 * watch(name, *args, &block) -> id
 * stop_watch(id)
+* task(command, \*args)
 * rpc(command, \*args) -> promise
 
-  you can send Time objects, but you have to use keyword arguments: rpc('date middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
+  you can send Time objects, but you have to use keyword arguments: rpc('date_middle', date_ini: Time.now, date_end: Time.now + 24*60*60)
   Behind the scenes: with the message sent to the server, there is an array *times* with the attrs that are Time instances. This is the
   way I construct Times in the other side. From the server side, in a rpc method, you can return a Time.
 
 * insert(table, hsh) -> promise
 * update(table, id, hsh) -> promise
 * delete(table, id)
+* login(user, password)
 * logout
 * start(app)
 
 Controller server side:
+* get table, id, symbolize=true -> doc
+* get_unique table, filter -> doc
 * owner? doc -> boolean
-* user_roles -> list of roles
-* user_role_in? doc -> user has a role that is included in doc\['update_roles']
 * i_timestamp! doc # sets the inserted timestamp
 * u_timestamp! doc # sets the updated timestamp
 * owner! doc # sets the user_id as owner in the doc
@@ -510,6 +493,7 @@ TODO
   server.rb --> server_controller.rb
 * lots of things
 * Do you like the code name of the project? --> Bull
+* delete code: client.rb def get_watch
 
 Help
 ----

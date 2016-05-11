@@ -153,7 +153,7 @@ class BullServerController
             if user == ''
                 return true # false
             else
-                count = rsync $r.table('user').filter(user: user).count()
+                count = rsync $r.table('user').filter(user: user).count
                 if count == 0
                     return false
                 else
@@ -176,7 +176,8 @@ class BullServerController
             if count == 0
                 return false
             else
-                response = rsync $r.table('user').filter(user: user)
+                response = rmsync $r.table('user').filter(user: user)
+                response = response[0]
                 pass = response['password']
                 pass = BCrypt::Password.new(pass)
                 if response['secondary_password']
