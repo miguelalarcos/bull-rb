@@ -9,6 +9,7 @@ class AutocompleteInput < React::Component::Base
   param :on_select
   param :valid
   param :dirty
+  param :field
 
   include ClassesInput
 
@@ -46,7 +47,11 @@ class AutocompleteInput < React::Component::Base
       div(class: 'autocomplete-popover') do
         state.options.each_with_index do |v, i|
           r = Regexp.new("(.*)(#{params.value})(.*)", true)
-          m = v.match(r)
+          if params.field
+            m = v[params.field].match(r)
+          else
+            m = v.match(r)
+          end
           div(class: selected(i)) do
             span{m[1]}
             b{m[2]}
