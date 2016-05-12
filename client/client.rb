@@ -28,6 +28,7 @@ class BullClientController
         @promises = {}
         @ws = nil
         @app_rendered = false
+        @files = {}
         #@set_relogin_state = lambda{}
 
         @connection = RVar.new 'disconnected'
@@ -67,6 +68,15 @@ class BullClientController
         promise = Promise.new
         send 'rpc_'+command, id, *args
         @promises[id] = promise
+        promise
+    end
+
+    def file(command, *args)
+        id = get_ticket
+        promise = Promise.new
+        send 'file_'+command, id, *args
+        @promises[id] = promise
+        @files[id] = ""
         promise
     end
 
@@ -164,6 +174,8 @@ class BullClientController
             handle_watch_data msg['id'], data
         elsif msg['response'] == 'rpc'
             handle_rpc_result msg['id'], data
+        elsif msg['response'] == 'file'
+            handle_file_data msg['id'], data, msg['end']
         end
       rescue Exception => e
           print e.message
@@ -239,6 +251,15 @@ class BullClientController
         def handle_rpc_result(id, result)
             @promises[id].resolve result
             @promises.delete id
+        end
+
+        def handle_file_data(id, data, end_)
+            @files[id] << data
+            if end_
+                @promises[id].resolve @files[id]
+                @promises.delete id
+                @files.delete id
+            end
         end
 
         def clear

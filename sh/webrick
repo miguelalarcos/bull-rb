@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ruby /home/miguel/development/ruby/bull-rb/client/http/http_server.rb
+

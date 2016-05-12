@@ -88,6 +88,8 @@ class BullServerController
             handle_rpc command, msg['id'], *msg['args'], **kwargs
         elsif command.start_with? 'task_'
             handle_task command, *msg['args'], **kwargs
+        elsif command.start_with? 'file_'
+            handle_file command, *msg['args'], **kwargs
         elsif command.start_with? 'watch_'
             handle_watch command, msg['id'], *msg['args'], **kwargs
         elsif command == 'stop_watch'
@@ -125,6 +127,28 @@ class BullServerController
                 else
                     ret << symbolize_keys(row)
                     yield ret if ret.length == count
+                end
+            end
+        end
+
+        def file_send id, predicate, keys
+            ret = ""
+            size = 0
+            total = 0
+            @ws.send({response: 'file', id: id, data: keys.join(';'), end: false, times: []}.to_json)
+            docs_with_count(predicate) do |count, row|
+                if count == 0
+                    @ws.send({response: 'file', id: id, data: '', end: true, times: []}.to_json)
+                else
+                    total += 1
+                    size += 1
+                    aux = keys.inject([]){|r, k| r << row[k]}
+                    ret << aux.join(';') << "\n"
+                    if total == count || size == 10
+                        @ws.send({response: 'file', id: id, data: ret, end: total==count, times: []}.to_json)
+                        size = 0
+                        ret = ""
+                    end
                 end
             end
         end
@@ -450,6 +474,23 @@ class BullServerController
                   logger.debug e
                   stdout_logger.debug e
               end
+            end
+            helper.transfer
+        end
+
+        def handle_file command, id, *args, **kwargs
+            helper = Fiber.new do
+                begin
+                    if kwargs.empty?
+                        predicate, keys = self.send(command, *args)
+                    else
+                        predicate, keys = self.send(command, *args, **kwargs)
+                    end
+                    file_send id, predicate, keys
+                rescue Exception => e
+                    logger.debug e
+                    stdout_logger.debug e
+                end
             end
             helper.transfer
         end
