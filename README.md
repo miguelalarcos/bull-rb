@@ -165,6 +165,8 @@ class DemoForm < Form
     FormButtons(save: lambda{save}, discard: lambda{discard}, valid: state.valid, dirty: state.dirty)
 ```
 
+See ui_demo.rb for a complete list of available inputs.
+
 What happens if I click in an item of a list of forms to edit this one, and the form is dirty? Well, we don't want to lose the data.
 
 ```ruby
