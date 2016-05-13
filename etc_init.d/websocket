@@ -22,7 +22,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="websocket server"
 NAME=websocket
 DAEMON=/usr/sbin/$NAME
-DAEMON_ARGS="--options args"
+DAEMON_ARGS="-c bull:bull"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 

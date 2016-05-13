@@ -1,3 +1,8 @@
+sudo apt-get install npm
+sudo npm install stylus -g
+sudo apt-get install python-pip
+sudo pip install rethinkdb
+
 source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list
 wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -
 sudo apt-get update
@@ -7,6 +12,7 @@ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB8
 \curl -sSL https://get.rvm.io | bash -s stable
 rvm install 2.2.2
 rvm --default use 2.2.2
+gem install bundler
 
 git clone https://github.com/miguelalarcos/bull-rb.git
 cd bull-rb

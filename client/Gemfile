@@ -3,6 +3,4 @@ source 'https://rubygems.org'
 gem "opal", "0.8.0"
 gem "reactive-ruby"
 gem "uglifier"
-gem "bull-autocomplete"
-gem "bull-date-time-picker"
 gem "webrick"

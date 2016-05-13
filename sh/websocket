@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ruby /home/bull/bull-rb/server/start.rb
+/home/bull/.rvm/rubies/ruby-2.2.2/bin/ruby /home/bull/bull-rb/server/start.rb
 
 
 
