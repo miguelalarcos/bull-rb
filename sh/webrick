@@ -1,4 +1,4 @@
 #!/bin/bash
 
-ruby /home/miguel/bull-rb/client/http/http_server.rb
+ruby /home/bull/bull-rb/client/http/http_server.rb
 
