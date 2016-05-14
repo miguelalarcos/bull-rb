@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'em-websocket'
-require './main_demo'
+#require './main_demo'
+require '../../app/server/main'
 require 'rethinkdb'
 require '../conf'
 require 'time'

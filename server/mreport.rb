@@ -7,7 +7,7 @@ module MReport
 
   def self.load_reports
     @reports = {}
-    Dir.glob(File.join('reports' , '*.html')).each do |file|
+    (Dir.glob(File.join('..', '..', 'app', 'reports' , '*.html'))+Dir.glob(File.join('reports' , '*.html'))).each do |file|
       html = File.read(file)
       @reports[File.basename(file, '.html')] = Liquid::Template.parse(html)
     end
@@ -20,3 +20,5 @@ module MReport
     load_reports
   end
 end
+
+MReport.load_reports

@@ -1,6 +1,7 @@
 require 'opal'
 require 'client'
-require_relative 'ui_demo'
+require 'ui'
+#require '../../app/client/ui' # why does not work??
 
 $controller = BullClientController.new
 $controller.start App

@@ -36,5 +36,7 @@ update-rc.d websocket defaults
 sudo cp instance1.conf /etc/rethinkdb/instances.d/
 update-rc.d rethinkdb defaults
 
-rake css
-rake development
+touch conf.rb
+
+#rake css
+#rake development

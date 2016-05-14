@@ -7,6 +7,8 @@ desc "Build our app to build.js in development mode"
 task :development do
   Opal.append_path "."
   Opal.append_path ".."
+  Opal.append_path "../../app"
+  Opal.append_path "../../app/client"
 
   #Opal.use_gem 'bull-autocomplete'
   #Opal.use_gem 'bull-date-time-picker'
