@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift '..'
+#$LOAD_PATH.unshift '..'
 require 'eventmachine'
 require 'json'
 require 'time'

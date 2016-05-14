@@ -1,3 +1,4 @@
+$LOAD_PATH.unshift '..'
 require 'eventmachine'
 require 'em-websocket'
 #require './main_demo'
