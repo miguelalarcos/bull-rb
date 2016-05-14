@@ -44,7 +44,7 @@ module Logging
     end
 
     def self.logger
-        @logger ||= EMLogger.new('bull-rb.log', count: 10, size: 1024000, level: Logger::DEBUG)
+        @logger ||= EMLogger.new(File.join(File.expand_path(File.dirname(__FILE__)), 'log', 'log.txt'), count: 10, size: 1024000, level: Logger::DEBUG)
     end
 
     def stdout_logger
