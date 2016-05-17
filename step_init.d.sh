@@ -1,14 +1,20 @@
-sudo cp etc_init.d/webrick /etc/init.d
-sudo chmod +x /etc/init.d/webrick
-sudo cp sh/webrick /usr/sbin
-sudo chmod +x /usr/sbin/webrick
-sudo update-rc.d webrick defaults
+#!/usr/bin/env bash
 
-sudo cp etc_init.d/websocket /etc/init.d
-sudo chmod +x /etc/init.d/websocket
-sudo cp sh/websocket /usr/sbin
-sudo chmod +x /usr/sbin/websocket
-sudo update-rc.d websocket defaults
+sudo cp etc_init.d/webrickdaemon /etc/init.d
+sudo chmod +x /etc/init.d/webrickdaemon
+sudo cp sh/webrickdaemon /usr/sbin
+sudo chmod +x /usr/sbin/webrickdaemon
+sudo update-rc.d webrickdaemon defaults
 
-sudo cp instance1.conf /etc/rethinkdb/instances.d/
-sudo update-rc.d rethinkdb defaults
+sudo cp etc_init.d/websocketdaemon /etc/init.d
+sudo chmod +x /etc/init.d/websocketdaemon
+sudo cp sh/websocketdaemon /usr/sbin
+sudo chmod +x /usr/sbin/websocketdaemon
+sudo update-rc.d websocketdaemon defaults
+
+sudo cp etc_init.d/rethinkdbdaemon /etc/init.d
+sudo chmod +x /etc/init.d/rethinkdbdaemon
+sudo cp sh/rethinkdbdaemon /usr/sbin
+sudo chmod +x /usr/sbin/rethinkdbdaemon
+sudo update-rc.d rethinkdbdaemon defaults
+
