@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo -u bull -i ./websocket.sh&
+
+
+

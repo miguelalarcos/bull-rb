@@ -1,8 +1,7 @@
 $LOAD_PATH.unshift '..'
 require 'eventmachine'
 require 'em-websocket'
-#require './main_demo'
-require '../../app/server/main'
+require_relative '../../app/server/main'
 require 'rethinkdb'
 require '../conf'
 require 'time'
@@ -16,12 +15,12 @@ conn = $r.connect()
 
 EM.run do
   EM::WebSocket.run(:host => "0.0.0.0",
-                    :port => 3000
-                    #:secure => true,
-                    #:tls_options => {
-                    #  :private_key_file => "../privateKey.key",
-                    #  :cert_chain_file => "../certificate.crt"
-                    #}
+                    :port => 3000,
+                    :secure => true,
+                    :tls_options => {
+                      :private_key_file => "../privateKey.key",
+                      :cert_chain_file => "../certificate.crt"
+                    }
                     ) do |ws|
     controller = nil
 

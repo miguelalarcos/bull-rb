@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo -u bull -i ./webrick.sh&
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -u bull -i ./rethinkdb2.sh&

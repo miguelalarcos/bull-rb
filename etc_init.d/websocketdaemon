@@ -1,12 +1,12 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          webrick
-# Required-Start:    $remote_fs $syslog
+# Provides:          websocket
+# Required-Start:    $remote_fs $syslog rethinkdb2
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: webrick http server
-# Description:       webrick http server
+# Short-Description: websocket server
+# Description:       websocket server
 #
 ### END INIT INFO
 
@@ -19,10 +19,10 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="webrick http server"
-NAME=webrick
+DESC="websocket server"
+NAME=websocket
 DAEMON=/usr/sbin/$NAME
-DAEMON_ARGS="-c bull:bull"
+DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 

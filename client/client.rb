@@ -186,7 +186,7 @@ class BullClientController
     def start(app)
         begin
             controller = self
-            url = 'ws://' + `document.location.hostname` + ':3000'
+            url = 'wss://' + `document.location.hostname` + ':3000'
             @ws = Browser::Socket.new url do
                 on :open do |e|
                     controller.connection.value = 'connected'

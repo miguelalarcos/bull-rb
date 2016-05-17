@@ -39,7 +39,7 @@ end
 
 desc "stylus compile"
 task :stylus => [:clean] do
-  files = Dir.glob(File.join("..", "style", "**", "*.styl"))
+  files = Dir.glob(File.join("..", "style", "**", "*.styl")) + Dir.glob(File.join("..", "..", "app", "style", "**", "*.styl"))
   dest = File.join('..', 'style', 'build.styl.css')
   files.each do |f|
     `stylus < #{f} >> #{dest}`

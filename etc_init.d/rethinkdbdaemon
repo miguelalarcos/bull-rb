@@ -1,12 +1,12 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          websocket
-# Required-Start:    $remote_fs $syslog rethinkdb
+# Provides:          rethinkdb2
+# Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: websocket server
-# Description:       websocket server
+# Short-Description: rethinkdb2 server
+# Description:       rethinkdb2 server
 #
 ### END INIT INFO
 
@@ -19,10 +19,10 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="websocket server"
-NAME=websocket
+DESC="rethinkdb daemon 2"
+NAME=rethinkdbdaemon
 DAEMON=/usr/sbin/$NAME
-DAEMON_ARGS="-c bull:bull"
+DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
