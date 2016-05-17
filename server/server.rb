@@ -9,7 +9,7 @@ require 'em-http-request'
 require 'logger'
 require 'fiber'
 #require 'liquid'
-require './mreport'
+require_relative 'mreport'
 
 class EMLogger < Logger
     def initialize(file, count: 1, size: 1024000, level: Logger::DEBUG)
