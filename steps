@@ -24,6 +24,12 @@ rvm install 2.2.2
 rvm --default use 2.2.2
 gem install bundler
 
+sudo cp etc_init.d/rethinkdbdaemon /etc/init.d
+sudo chmod +x /etc/init.d/rethinkdbdaemon
+sudo cp sh/rethinkdbdaemon /usr/sbin
+sudo chmod +x /usr/sbin/rethinkdbdaemon
+sudo update-rc.d rethinkdbdaemon defaults
+
 sudo cp etc_init.d/webrickdaemon /etc/init.d
 sudo chmod +x /etc/init.d/webrickdaemon
 sudo cp sh/webrickdaemon /usr/sbin
@@ -36,14 +42,9 @@ sudo cp sh/websocketdaemon /usr/sbin
 sudo chmod +x /usr/sbin/websocketdaemon
 sudo update-rc.d websocketdaemon defaults
 
-sudo cp etc_init.d/rethinkdbdaemon /etc/init.d
-sudo chmod +x /etc/init.d/rethinkdbdaemon
-sudo cp sh/rethinkdbdaemon /usr/sbin
-sudo chmod +x /usr/sbin/rethinkdbdaemon
-sudo update-rc.d rethinkdbdaemon defaults
-
-
 #touch conf.rb
 #bundle install in client and server
 #rake css
 #rake development
+#openssl
+#rethinkdb restore ...
