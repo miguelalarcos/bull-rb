@@ -2,6 +2,7 @@ git clone https://github.com/miguelalarcos/bull-rb.git
 cd bull-rb
 git checkout rsync
 
+cd ..
 git clone https://github.com/miguelalarcos/bull-demo.git
 mv bull-demo app
 
@@ -23,28 +24,35 @@ source /home/bull/.rvm/scripts/rvm
 rvm install 2.2.2
 rvm --default use 2.2.2
 gem install bundler
+cd bull-rb/client
+bundle install
+cd ../server
+bundle install
+cd
+
+cd bull-rb
+chmod +x sh/*
 
 sudo cp etc_init.d/rethinkdbdaemon /etc/init.d
-sudo chmod +x /etc/init.d/rethinkdbdaemon
 sudo cp sh/rethinkdbdaemon /usr/sbin
-sudo chmod +x /usr/sbin/rethinkdbdaemon
 sudo update-rc.d rethinkdbdaemon defaults
 
 sudo cp etc_init.d/webrickdaemon /etc/init.d
-sudo chmod +x /etc/init.d/webrickdaemon
 sudo cp sh/webrickdaemon /usr/sbin
-sudo chmod +x /usr/sbin/webrickdaemon
 sudo update-rc.d webrickdaemon defaults
 
 sudo cp etc_init.d/websocketdaemon /etc/init.d
-sudo chmod +x /etc/init.d/websocketdaemon
 sudo cp sh/websocketdaemon /usr/sbin
-sudo chmod +x /usr/sbin/websocketdaemon
 sudo update-rc.d websocketdaemon defaults
 
-#touch conf.rb
-#bundle install in client and server
-#rake css
-#rake development
-#openssl
+touch conf.rb
+cd
+cd bull-rb/client
+rake css
+rake development
+
+cd
+cd app
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
+
 #rethinkdb restore ...
