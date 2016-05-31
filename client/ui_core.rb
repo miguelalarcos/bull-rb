@@ -470,6 +470,31 @@ class SelectInput < React::Component::Base
   end
 end
 
+class SelectObjectInput < React::Component::Base
+  param :on_change
+  param :value
+  param :options
+  param :dirty
+  param :display
+
+  include ClassesInput
+
+  before_mount do
+    @map = {}
+  end
+
+  def render
+    @map = {}
+    params.options.each {|val| @map[val[params.display]] = val}
+    span do
+      select(class: 'select ' + dirty_class, value: params.value) do
+        option{''}
+        params.options.each {|val| option(value: val[params.display]){val[params.display]}}
+      end.on(:change) {|event| params.on_change.call @map[event.target.value]}
+    end
+  end
+end
+
 class MultipleSelectInput < React::Component::Base
   param :on_change
   param :options

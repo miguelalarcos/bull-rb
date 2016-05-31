@@ -67,13 +67,7 @@ class BullServerController
         @conn = conn
         @watch = {}
         @user_id = nil
-
-        #@reports = {}
-        #Dir.glob(File.join('reports' , '*.html')).each do |file|
-        #    html = File.read(file)
-        #    @reports[File.basename(file, '.html')] = Liquid::Template.parse(html)
-        #end
-        #puts 'reports loaded'
+        @root = Fiber.current
     end
 
     def notify(msg)
@@ -163,12 +157,6 @@ class BullServerController
                         yield count, doc
                     end
                 end
-                #predicate.em_run(@conn) do |doc|
-                #    doc['owner'] = owner? doc
-                #    print 'yield', count, doc
-                #    puts
-                #    yield count, doc
-                #end
             end
         end
 
@@ -183,13 +171,6 @@ class BullServerController
                 else
                     return true
                 end
-                #$r.table('user').filter(user: user).count().em_run(@conn) do |count|
-                #    if count == 0
-                #        yield false
-                #    else
-                #        yield true
-                #    end
-                #end
             end
         end
 
@@ -216,30 +197,6 @@ class BullServerController
                     return false
                 end
             end
-        end
-
-        def rpc_login_old user, password
-          $r.table('user').filter(user: user).count.em_run(@conn) do |count|
-            if count == 0
-                yield false
-            else
-              $r.table('user').filter(user: user).em_run(@conn) do |response|
-                pass = response['password']
-                pass = BCrypt::Password.new(pass)
-                if response['secondary_password']
-                    secondary_password = response['secondary_password']
-                    secondary_password = BCrypt::Password.new(secondary_password)
-                end
-                if pass == password || (response['secondary_password'] && pass == secondary_password)
-                    @user_id = user
-                    @roles = response['roles']
-                    yield response['roles'] #true
-                else
-                    yield false
-                end
-              end
-            end
-          end
         end
 
         def rpc_change_password new_password
@@ -311,41 +268,50 @@ class BullServerController
         def rpc_insert(table, value:)
             check table, String
             new_val = value
+            new_val.delete :u_timestamp
             new_val.delete :i_timestamp
             new_val.delete :owner
             new_val.delete :id
 
             if !self.send('before_insert_'+table, new_val)
-                nil
+                ret = nil
             else
                 ret = rsync $r.table(table).insert(new_val)
-                ret['generated_keys'][0]
+                ret = ret['generated_keys'][0]
+                self.send('after_insert_'+table, new_val) if respond_to?('after_insert_'+table) && !ret.nil?
             end
+            ret
         end
 
         def rpc_delete(table, id)
             check table, String
+            check id, String
             doc = rsync $r.table(table).get(id)
             if doc.nil? || !respond_to?('before_delete_'+table) || !self.send('before_delete_'+table, doc)
-                0
+                ret = 0
             else
                 ret = rsync $r.table(table).get(id).delete
-                ret['deleted']
+                ret = ret['deleted']
+                self.send('after_delete_'+table, doc) if respond_to?('after_delete_'+table) && ret == 1
             end
-            #$r.table(table).get(id).em_run(@conn) do |doc|
-                #begin
-            #        if doc.nil? || !respond_to?('before_delete_'+table) || !self.send('before_delete_'+table, doc)
-            #            yield 0
-            #        else
-            #            $r.table(table).get(id).delete.em_run(@conn){|ret| yield ret['deleted']}
-            #        end
-                #rescue
-                #    yield 0
-                #end
-            #end
+            ret
         end
 
         def rsync pred
+            fb = Fiber.current
+            pred.em_run(@conn) do |doc|
+                fb.transfer doc
+            end
+            @root.transfer
+        end
+
+        def rmsync pred
+            fb = Fiber.current
+            get_array(pred){|docs| fb.transfer docs}
+            @root.transfer
+        end
+
+        def rsync_ pred
             helper = Fiber.new do |parent|
                 pred.em_run(@conn) do |doc|
                     parent.transfer doc
@@ -354,7 +320,7 @@ class BullServerController
             helper.transfer Fiber.current
         end
 
-        def rmsync pred
+        def rmsync_ pred
             helper = Fiber.new do |parent|
                 get_array(pred){|docs| parent.transfer docs}
             end
@@ -365,7 +331,6 @@ class BullServerController
             check table, String
             check id, String
             value.delete :u_timestamp
-            value.delete :update_roles
             value.delete :i_timestamp
             value.delete :owner
             value.delete :id
@@ -377,37 +342,13 @@ class BullServerController
             old_doc = symbolize_keys old_doc
             merged = old_doc.merge(value)
             if !self.send('before_update_'+table, old_doc, value, merged)
-                0
+                ret = 0
             else
                 response = rsync $r.table(table).get(id).update(merged)
-                response['replaced']
+                ret = response['replaced']
+                self.send('after_update_'+table, merged) if respond_to?('after_update_'+table) && ret == 1
             end
-        end
-
-        def rpc_update_old(table, id, value:)
-            value.delete :u_timestamp
-            value.delete :update_roles
-            value.delete :i_timestamp
-            value.delete :owner
-            value.delete :id
-
-            $r.table(table).get(id).em_run(@conn) do |old_val|
-                #begin
-                    if old_val.nil? || !respond_to?('before_update_'+table)
-                        yield 0
-                    else
-                        old_val = symbolize_keys old_val
-                        merged = old_val.merge(value)
-                        if !(old_val && self.send('before_update_'+table, old_val, value, merged))
-                            yield 0
-                        else
-                            $r.table(table).get(id).update(merged).em_run(@conn){|ret| yield ret['replaced']}
-                        end
-                    end
-                #rescue
-                #    yield 0
-                #end
-            end
+            ret
         end
 
         def handle_watch command, id, *args, **kwargs
@@ -416,7 +357,7 @@ class BullServerController
             else
                 w = self.send command, *args, **kwargs
             end
-            return if !w ## ?
+            return if !w
             w = w.changes({include_initial: true})
             #EventMachine.run do
             @watch[id] = w.em_run(@conn) do |doc|
@@ -495,14 +436,6 @@ class BullServerController
             helper.transfer
         end
 
-        def handle_rpc_old command, id, *args, **kwargs
-            if kwargs.empty?
-                self.send(command, *args){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
-            else
-                self.send(command, *args, **kwargs){|ret| @ws.send({response: 'rpc', id: id, result: ret, times: times(ret)}.to_json)}
-            end
-        end
-
         def get table, id, symbolize=true
             if id.nil?
                 return nil # Hash.new # nil
@@ -514,14 +447,6 @@ class BullServerController
                 else
                     return doc
                 end
-                #$r.table(table).get(id).em_run(@conn) do |doc|
-                #    doc['owner'] = owner? doc
-                #    if symbolize
-                #        yield symbolize_keys doc
-                #    else
-                #      yield doc
-                #    end
-                #end
             end
         end
 

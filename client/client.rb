@@ -13,31 +13,28 @@ require 'mrelogin'
 class BullClientController
 
     include MNotification
-    include MRelogin
+    #include MRelogin
 
     attr_accessor :app_rendered
     attr_accessor :ws
     attr_reader :connection
-    #attr_accessor :set_relogin_state
 
     @@ticket = 0
 
     def initialize
         @user_id = nil
+        @password = nil
         @watch = {}
         @promises = {}
         @ws = nil
         @app_rendered = false
         @files = {}
-        #@set_relogin_state = lambda{}
 
         @connection = RVar.new 'disconnected'
         reactive(@connection) do
             if @connection.value == 'disconnected'
-                #$notifications.add ['error', 'disconnected', 1] if $notifications
                 notify_error 'disconnected', 1
             else
-                #$notifications.add ['ok', 'connected', 1] if $notifications
                 notify_ok 'connected', 1
             end
         end
@@ -127,6 +124,7 @@ class BullClientController
         rpc('login', user, password).then do |response|
             if response
                 @user_id = user
+                @password = password
                 @roles = response
                 notify_ok 'logged', 0
             else
@@ -142,12 +140,10 @@ class BullClientController
         end
     end
 
-    def relogin password
-        login(@user_id, password).then do |response|
-            #@set_relogin_state.call false
+    def relogin #password
+        login(@user_id, @password).then do |response|
             if response
-                show_relogin false
-                #$notifications.add ['ok', 'relogged', 0] if $notifications
+                #show_relogin false
                 notify_ok 'relogged', 0
                 rewatch
             else
@@ -197,8 +193,8 @@ class BullClientController
                         end
                     else
                         if @user_id
-                            #controller.set_relogin_state.call true
-                            controller.show_relogin true
+                            #controller.show_relogin true
+                            controller.relogin
                         else
                             controller.rewatch
                         end
@@ -268,6 +264,7 @@ class BullClientController
             end
             @promises = {}
             @user_id = nil
+            @password = nil
             @watch = {} ###
         end
 

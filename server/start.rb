@@ -1,9 +1,7 @@
-$LOAD_PATH.unshift '..'
+#$LOAD_PATH.unshift '..'
 require 'eventmachine'
 require 'em-websocket'
-#require_relative '../../app/server/main'
 require 'rethinkdb'
-require_relative '../conf'
 require 'time'
 require_relative 'mreport'
 
@@ -19,8 +17,8 @@ def start app_controller
                       :port => 3000,
                       :secure => true,
                       :tls_options => {
-                        :private_key_file => "../privateKey.key",
-                        :cert_chain_file => "../certificate.crt"
+                        :private_key_file => "../../privateKey.key",
+                        :cert_chain_file => "../../certificate.crt"
                       }
                       ) do |ws|
       controller = nil

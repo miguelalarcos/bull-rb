@@ -45,8 +45,7 @@ class Login < React::Component::Base
         $controller.login(state.user_name, state.password).then do |roles|
           if roles
             state.incorrect! false
-            #$user_id = state.user_name
-            params.set_user.call true
+            params.set_user.call state.user_name #true
             params.set_roles.call roles
           else
             state.incorrect! true
@@ -145,16 +144,12 @@ module CreateUserCaptcha
           state.user_exist! response
         end
       end
-      #button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user)}
       div{
         input(type: :password, placeholder: 'password', value: state.password).on(:change){|event| state.password! event.target.value}
       }
       div{
         input(class: password_class, type: :password, placeholder: 'repeat passsword', value: state.rpassword).on(:change){|event| state.rpassword! event.target.value}
       }
-      #div{
-      #  input(placeholder: 'code sent to your email', value: state.code).on(:change){|event| state.code! event.target.value}
-      #}
       captcha if !state.user_exist && state.password == state.rpassword && state.password != ''
       div{
         button{'send me the code'}.on(:click){$controller.task('send_code_to_email', state.user, state.answer)}
@@ -164,13 +159,11 @@ module CreateUserCaptcha
         button(class: 'button-active'){'Create user!'}.on(:click) do
           $controller.rpc(method_create_user, state.user, state.password, state.answer, state.code).then do |v|
             if v
-              params.set_user.call true
+              params.set_user.call state.user #true
               params.set_roles.call []
               $user_id = state.user
-              #$notifications.add ['ok', 'user created', 1] if $notifications
               notify_ok 'user created', 1
             else
-              #$notifications.add ['error', 'error creating user', 1] if $notifications
               notify_error 'error creating user', 1
             end
           end
