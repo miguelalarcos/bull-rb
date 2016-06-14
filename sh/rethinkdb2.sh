@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /home/bull/database
-rethinkdb
+rethinkdb --no-http-admin

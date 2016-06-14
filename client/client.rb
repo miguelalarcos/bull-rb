@@ -174,8 +174,8 @@ class BullClientController
             handle_file_data msg['id'], data, msg['end']
         end
       rescue Exception => e
-          print e.message
-          print e.backtrace.inspect
+          #print e.message
+          #print e.backtrace.inspect
       end
     end
 
@@ -204,21 +204,21 @@ class BullClientController
                     begin
                         controller.notify e.data
                     rescue Exception => e
-                        print e.message
-                        print e.backtrace.inspect
+                        #print e.message
+                        #print e.backtrace.inspect
                     end
                 end
                 on :close do |e|
-                    print e.message
-                    print e.backtrace.inspect
+                    #print e.message
+                    #print e.backtrace.inspect
                     controller.connection.value = 'disconnected'
                     $window.after(5) {controller.reset}
 
                 end
             end            
         rescue Exception => e  
-            print e.message
-            print e.backtrace.inspect
+            #print e.message
+            #print e.backtrace.inspect
             $window.after(5) {reset}
         end
     end

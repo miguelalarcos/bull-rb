@@ -18,7 +18,14 @@ class DisplayList < React::Component::Base
     @rvs = reactive(*reactives) do
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
-      @predicate_id = $controller.watch(name, *args) {|data| consume data}
+      args_ = args.collect do |arg|
+        if arg.is_a? RVar
+          arg.value
+        else
+          arg
+        end
+      end
+      @predicate_id = $controller.watch(name, *args_) {|data| consume data}
     end
   end
 

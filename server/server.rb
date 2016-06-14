@@ -67,6 +67,7 @@ class BullServerController
         @conn = conn
         @watch = {}
         @user_id = nil
+        @user_doc = nil
         @root = Fiber.current
     end
 
@@ -191,6 +192,7 @@ class BullServerController
                 end
                 if pass == password || (response['secondary_password'] && pass == secondary_password)
                     @user_id = user
+                    @user_doc = response
                     @roles = response['roles']
                     return response['roles']
                 else
