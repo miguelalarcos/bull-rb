@@ -14,7 +14,8 @@ class DisplayList < React::Component::Base
   end
 
   def watch_(name, *args)
-    reactives = args.pop
+    #reactives = args.pop
+    reactives = args.select{|v| v.is_a? RVar}
     @rvs = reactive(*reactives) do
       clear
       $controller.stop_watch(@predicate_id) if @predicate_id != nil
@@ -25,7 +26,11 @@ class DisplayList < React::Component::Base
           arg
         end
       end
+      #if args_.empty?
+      #  @predicate_id = $controller.watch(name) {|data| consume data}
+      #else
       @predicate_id = $controller.watch(name, *args_) {|data| consume data}
+      #end
     end
   end
 

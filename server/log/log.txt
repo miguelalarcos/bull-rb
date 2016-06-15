@@ -205,3 +205,108 @@ I, [2016-06-14T11:19:39.932840 #20622]  INFO -- : {"command"=>"stop_watch", "id"
 I, [2016-06-14T11:19:39.934508 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>8, "args"=>["coc"], "kwargs"=>{}, "times"=>[]}
 I, [2016-06-14T11:19:40.076512 #20622]  INFO -- : {"command"=>"stop_watch", "id"=>8, "args"=>[], "kwargs"=>{}, "times"=>[]}
 I, [2016-06-14T11:19:40.078020 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>9, "args"=>["coca"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:05.683130 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:05.684300 #20622]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[[]], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:07.789797 #20622]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:07.790943 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>4, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:07.920387 #20622]  INFO -- : {"command"=>"stop_watch", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:07.922143 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:08.143625 #20622]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T11:26:08.146234 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["coc"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:44:03.790783 #20622]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:44:03.792832 #20622]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[[]], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:44:03.793921 #20622]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:55:35.638981 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:55:35.639474 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[[]], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:59:38.811530 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:59:38.812557 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T15:59:38.813408 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:01:29.050423 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:01:29.051542 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:01:29.094507 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:01:29.096769 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:04:55.851893 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:04:55.852792 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:04:55.853533 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:00.215338 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:00.217159 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:00.382353 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:00.383772 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:01.070974 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>6, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:01.073818 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>7, "args"=>["coc"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:01.894634 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-14T16:05:01.896517 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>8, "args"=>["coca"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:11.324803 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:11.328306 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:11.330917 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:44.460336 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:44.461178 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:10:44.461902 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:13:05.012879 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:13:05.014766 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:13:05.018660 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:14:24.694449 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:14:24.695571 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:14:24.801891 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:14:24.803275 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:24.581738 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:24.582556 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:24.583268 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:26.885275 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:26.886920 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:27.011776 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:27.012847 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:16:41.954896 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>nil, "price"=>nil, "background-color"=>"#da2222", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:20:31.225744 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:31.226811 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:31.227677 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:33.380483 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:33.381876 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:33.484888 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:33.486196 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:20:45.178063 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>0, "background-color"=>"#f50e0e", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:21:48.415671 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:48.416447 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:48.417130 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:50.401788 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:50.403708 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:50.531395 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:21:50.533812 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:22:13.488772 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>0, "background-color"=>"#000000", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:26:07.172256 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:07.173039 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:07.173929 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:09.211108 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:09.215298 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:09.315945 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:09.317026 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:26:19.406119 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>0, "background-color"=>"#c02222", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:26:30.739010 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>9, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#c02222", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:31:05.332697 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:05.335005 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:05.338421 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:07.359408 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:07.360310 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:07.491909 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:31:07.493597 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:37.951122 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:37.953288 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:37.962984 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:39.648894 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:39.650380 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:39.735874 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:32:39.739078 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:33:04.661322 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#c02222", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:33:41.207663 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>9, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#cc9494", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:34:59.214864 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>11, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#000000", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:36:16.164541 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:16.166543 #26982]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:16.172300 #26982]  INFO -- : {"command"=>"rpc_items", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:17.592849 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>2, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:17.593450 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>5, "args"=>["c"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:17.717393 #26982]  INFO -- : {"command"=>"stop_watch", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:17.719465 #26982]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>6, "args"=>["co"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-15T17:36:20.847655 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>7, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#000000", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:36:54.169176 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>9, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#000000", "color"=>"white"}}, "times"=>[]}
+I, [2016-06-15T17:36:59.174481 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>11, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#000000", "color"=>"black"}}, "times"=>[]}
+I, [2016-06-15T17:37:03.061849 #26982]  INFO -- : {"command"=>"rpc_update", "id"=>13, "args"=>["item", "b77b1bae-7d21-439b-ac98-5339fe7d5118"], "kwargs"=>{"value"=>{"display"=>"Coca Cola Zero", "price"=>1.1, "background-color"=>"#000000", "color"=>"white"}}, "times"=>[]}
