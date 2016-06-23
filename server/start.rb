@@ -36,7 +36,7 @@ def start app_controller
 
       ws.onclose { controller.close; controller = nil }
 
-      ws.onerror { |e| controller = nil; puts "Error: #{e.message}"}
+      ws.onerror { |e| puts "Error: #{e.message}"}
     end
   end
 end

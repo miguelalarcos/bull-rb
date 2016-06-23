@@ -3,6 +3,8 @@ require 'opal-browser'
 require 'reactive-ruby'
 require 'uglifier'
 
+Opal::Processor.source_map_enabled = true
+
 desc "Build our app to build.js in development mode"
 task :development do
   Opal.append_path "."
@@ -18,10 +20,9 @@ task :development do
 
   #source_map = builder.source_map
   #build_js << '//# sourceMappingURL=main.js.map'
-  #File.write('main.js.map', source_map)
-
+  #File.write(File.join('http', 'main.js.map'), source_map.to_s)
   File.write(File.join('http', 'build.js'), build_js)
-  #File.binwrite "build.js", Opal::Builder.build("main").to_s
+
 end
 
 desc "build reactive-ruby"

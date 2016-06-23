@@ -151,11 +151,11 @@ class MultiLineInput < React::Component::Base
     textarea(placeholder: params.placeholder, class: valid_class + ' ' + dirty_class,
              value: params.value){}.on(:change) do |event|
       params.on_change event.target.value
-    end.on(:keyDown) do |event|
-      if event.key_code == 13
-        params.on_enter.call event.target.value
-      end
-    end
+    end#.on(:keyDown) do |event|
+    #  if event.key_code == 13
+    #    params.on_enter.call event.target.value
+    #  end
+    #end
   end
 end
 
@@ -790,7 +790,7 @@ class HorizontalMenu < React::Component::Base
         end
         li{a(href: '#'){'en'}.on(:click){params.language.value = 'en'}}
         li{a(href: '#'){'es'}.on(:click){params.language.value = 'es'}}
-      end
+      end if params.options.length > 1
     end
   end
 end

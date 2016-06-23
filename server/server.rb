@@ -102,12 +102,12 @@ class BullServerController
             raise Exception.new("#{arg} is not a #{type}") if !arg.nil? && !arg.is_a?(type)
         end
 
-        def get_unique table, filter
-            count = rsync $r.table(table).filter(filter).count
+        def get_unique pred #table, filter
+            count = rsync pred.count # $r.table(table).filter(filter).count
             if count == 0
                 return nil #Hash.new
             else
-              docs = rmsync $r.table(table).filter(filter)
+              docs = rmsync pred #$r.table(table).filter(filter)
               doc = docs[0]
               doc['owner'] = owner? doc
               return symbolize_keys doc
