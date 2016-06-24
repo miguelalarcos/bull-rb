@@ -457,3 +457,302 @@ I, [2016-06-23T18:30:24.315137 #11599]  INFO -- : {"command"=>"watch_tables", "i
 I, [2016-06-23T18:31:19.288470 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
 I, [2016-06-23T18:31:19.290175 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
 I, [2016-06-23T18:31:19.291383 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:36:31.496796 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:36:31.498595 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:36:31.499810 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:36:31.500571 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:41:17.096030 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:41:17.100333 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:41:17.105711 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:41:17.110212 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:42:51.348612 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:42:51.354600 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:42:51.363701 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:42:51.372274 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:47:19.327804 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:47:19.330544 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:47:19.334324 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:47:19.336064 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:48:20.117124 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:48:20.127092 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:48:20.132077 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:48:20.140781 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:15.584308 #11599]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:15.585675 #11599]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:15.592703 #11599]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:15.600233 #11599]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:15.604823 #11599]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:20.884602 #11599]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:20.885675 #11599]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["c229a211-87af-4ad1-94dd-4311ae5db233"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:51:28.617682 #11599]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"c229a211-87af-4ad1-94dd-4311ae5db233", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T16:54:48.174444 #14388]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:48.174971 #14388]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:48.177487 #14388]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:48.178464 #14388]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:48.179947 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:50.233934 #14388]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:50.236432 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:54:53.616710 #14388]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T16:59:32.227096 #14388]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:32.228296 #14388]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:32.228994 #14388]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:32.229738 #14388]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:32.230496 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:37.685946 #14388]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T16:59:37.699965 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:34.238103 #14388]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:34.239308 #14388]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:34.240400 #14388]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:34.241622 #14388]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:34.242723 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:36.670139 #14388]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:36.672331 #14388]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:00:46.666748 #14388]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:04:51.697167 #14715]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:04:51.699780 #14715]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:04:51.707650 #14715]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:04:51.707862 #14715]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:00.609966 #14715]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:00.611341 #14715]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:00.616139 #14715]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:00.626263 #14715]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:00.628192 #14715]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:03.711515 #14715]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:03.714045 #14715]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:07.645138 #14715]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:05:22.660183 #14774]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:22.660448 #14774]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:22.661280 #14774]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:22.661958 #14774]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:05:33.491388 #14774]  INFO -- : {"command"=>"rpc_insert", "id"=>13, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+I, [2016-06-24T17:08:27.379081 #14774]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:27.379992 #14774]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:27.380887 #14774]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:27.381891 #14774]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:27.382774 #14774]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:29.443594 #14774]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:29.445680 #14774]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:08:34.453264 #14774]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+I, [2016-06-24T17:09:38.604541 #14967]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:38.604855 #14967]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:38.609165 #14967]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:38.613160 #14967]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:38.619245 #14967]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:40.774183 #14967]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:40.777253 #14967]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:09:44.612819 #14967]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:11:20.518679 #15069]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:20.518953 #15069]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:20.519064 #15069]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:20.519158 #15069]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:23.695253 #15069]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:23.696060 #15069]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:23.696696 #15069]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:23.697390 #15069]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:23.698052 #15069]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:25.713712 #15069]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:25.723046 #15069]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:11:28.685614 #15069]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:14:05.702849 #15176]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:05.703099 #15176]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:05.703976 #15176]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:05.705314 #15176]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:13.663510 #15176]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:13.664398 #15176]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:13.665182 #15176]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:13.666419 #15176]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:13.668543 #15176]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:16.049282 #15176]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:16.051871 #15176]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:14:19.577054 #15176]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:16:20.871565 #15276]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:20.872499 #15276]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:20.872725 #15276]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:20.887516 #15276]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:20.888104 #15276]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:22.479842 #15276]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:22.482695 #15276]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:16:25.213523 #15276]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+D, [2016-06-24T17:16:25.226351 #15276] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:60:in `after_insert_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:283:in `rpc_insert'
+/home/miguel/development/ruby/bull-rb/server/server.rb:413:in `block in handle_rpc'
+I, [2016-06-24T17:16:29.805989 #15276]  INFO -- : {"command"=>"rpc_insert", "id"=>10, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+D, [2016-06-24T17:16:29.820176 #15276] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:60:in `after_insert_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:283:in `rpc_insert'
+/home/miguel/development/ruby/bull-rb/server/server.rb:413:in `block in handle_rpc'
+I, [2016-06-24T17:16:31.389837 #15276]  INFO -- : {"command"=>"rpc_insert", "id"=>11, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+D, [2016-06-24T17:16:31.402650 #15276] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:60:in `after_insert_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:283:in `rpc_insert'
+/home/miguel/development/ruby/bull-rb/server/server.rb:413:in `block in handle_rpc'
+I, [2016-06-24T17:16:35.861863 #15276]  INFO -- : {"command"=>"rpc_insert", "id"=>12, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+D, [2016-06-24T17:16:35.870427 #15276] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:60:in `after_insert_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:283:in `rpc_insert'
+/home/miguel/development/ruby/bull-rb/server/server.rb:413:in `block in handle_rpc'
+I, [2016-06-24T17:18:20.048786 #15383]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:20.049053 #15383]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:20.049160 #15383]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:20.050412 #15383]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:20.050607 #15383]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:23.142472 #15383]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:23.144995 #15383]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:18:26.360304 #15383]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:20:22.439276 #15511]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:22.441459 #15511]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:22.444175 #15511]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:22.445439 #15511]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:22.446487 #15511]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:23.943622 #15511]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:23.946758 #15511]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:20:26.788477 #15511]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:22:59.963494 #15627]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:22:59.964963 #15627]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:22:59.970088 #15627]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:22:59.971958 #15627]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:22:59.971585 #15627]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:23:01.701786 #15627]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:23:01.709499 #15627]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:23:04.073499 #15627]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:24:48.503546 #15727]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:48.503877 #15727]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:48.504717 #15727]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:48.511144 #15727]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:48.515331 #15727]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:50.524762 #15727]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:50.527228 #15727]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:24:54.091623 #15727]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:29:47.852989 #15905]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:47.853327 #15905]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:47.855114 #15905]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:47.860121 #15905]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:47.863187 #15905]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:49.782603 #15905]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:49.785746 #15905]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:29:53.558123 #15905]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:30:02.584473 #15905]  INFO -- : {"command"=>"rpc_insert", "id"=>11, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+I, [2016-06-24T17:31:00.527614 #15905]  INFO -- : {"command"=>"rpc_delete", "id"=>13, "args"=>["line", "0c7ecb12-5582-4010-8945-a7aa0ce719b9"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:26.613958 #15987]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:26.614188 #15987]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:26.614279 #15987]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:26.614361 #15987]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:26.629844 #15987]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:28.526293 #15987]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:28.528773 #15987]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:31:31.163025 #15987]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "a71bca9e-ebb9-4a56-aae9-951109f5307d"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:22.434840 #16047]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:22.441268 #16047]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:22.443799 #16047]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:22.444010 #16047]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:22.445136 #16047]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:23.719478 #16047]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:23.722419 #16047]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:32:26.270773 #16047]  INFO -- : {"command"=>"rpc_insert", "id"=>9, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:32:28.157965 #16047]  INFO -- : {"command"=>"rpc_insert", "id"=>11, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"coca-cola-zero", "status"=>"draft", "display"=>"Coca Cola Zero", "price"=>1.1}}, "times"=>[]}
+I, [2016-06-24T17:32:32.488205 #16047]  INFO -- : {"command"=>"rpc_insert", "id"=>13, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+I, [2016-06-24T17:32:33.529408 #16047]  INFO -- : {"command"=>"rpc_insert", "id"=>15, "args"=>["line"], "kwargs"=>{"value"=>{"order_id"=>"4d3c5831-be5e-40b1-a728-8044bc4d60ab", "type"=>"carta", "code"=>"fanta-naranja", "status"=>"draft", "display"=>"Fanta Naranja", "price"=>0}}, "times"=>[]}
+I, [2016-06-24T17:32:42.128875 #16047]  INFO -- : {"command"=>"rpc_delete", "id"=>17, "args"=>["line", "1701149e-30a7-4054-a519-2773592c638f"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:19.021384 #16148]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:19.021704 #16148]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:19.025928 #16148]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:19.029964 #16148]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:19.032168 #16148]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:20.488663 #16148]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:20.491804 #16148]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:22.565123 #16148]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "dcda6a3c-6289-4f40-93ae-885074840019"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:24.256780 #16148]  INFO -- : {"command"=>"rpc_delete", "id"=>11, "args"=>["line", "66a42101-176a-4c92-a4fa-bb9ad75da686"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:34:26.620729 #16148]  INFO -- : {"command"=>"rpc_delete", "id"=>13, "args"=>["line", "17591a25-b604-4cba-8b78-9914c7ebf899"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:40.962343 #16224]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:40.962602 #16224]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:40.962706 #16224]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:40.979651 #16224]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:40.979875 #16224]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:42.990326 #16224]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:42.992716 #16224]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:35:44.991221 #16224]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "e494833f-2c7d-4d10-9a92-76ad6dd4df0f"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:57.801672 #16351]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:57.803747 #16351]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:57.804762 #16351]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:57.806483 #16351]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:57.807799 #16351]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:58.984880 #16351]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:36:58.987583 #16351]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:37:02.366334 #16351]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "801f610d-50b3-4d0c-a707-b071589265ac"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:38.462478 #16455]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:38.462805 #16455]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:38.463974 #16455]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:38.464149 #16455]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:42.514288 #16455]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:42.515783 #16455]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:42.522880 #16455]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:42.527009 #16455]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:42.531804 #16455]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:44.344891 #16455]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:44.346442 #16455]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:38:46.854783 #16455]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "9f0f8354-40d0-4562-b003-bbb4ba8d4adb"], "kwargs"=>{}, "times"=>[]}
+D, [2016-06-24T17:38:46.865665 #16455] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:71:in `after_delete_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:297:in `rpc_delete'
+/home/miguel/development/ruby/bull-rb/server/server.rb:411:in `block in handle_rpc'
+I, [2016-06-24T17:38:48.228340 #16455]  INFO -- : {"command"=>"rpc_delete", "id"=>10, "args"=>["line", "20ce342e-fee2-4d0d-a3d5-ade292936bc0"], "kwargs"=>{}, "times"=>[]}
+D, [2016-06-24T17:38:48.235067 #16455] DEBUG -- : No handler specified. (ArgumentError)
+/home/miguel/.rvm/gems/ruby-2.2.2/gems/rethinkdb-2.2.0.4/lib/net.rb:353:in `em_run'
+main.rb:71:in `after_delete_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:297:in `rpc_delete'
+/home/miguel/development/ruby/bull-rb/server/server.rb:411:in `block in handle_rpc'
+I, [2016-06-24T17:39:04.566979 #16511]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:04.567334 #16511]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:04.567442 #16511]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:04.567555 #16511]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:04.567657 #16511]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:06.049130 #16511]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:06.055281 #16511]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:39:09.748802 #16511]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "a78539cf-441c-4e67-8146-d3a2c4eeadf1"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:11.331077 #16616]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:11.331388 #16616]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:11.333057 #16616]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:11.333259 #16616]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:11.333364 #16616]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:12.856370 #16616]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:12.859834 #16616]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:41:16.024629 #16616]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "bb5db381-db79-4481-9d5b-fa05a2dd424b"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:08.689175 #16685]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:08.695687 #16685]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:08.699398 #16685]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:08.705374 #16685]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:08.716861 #16685]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:10.078903 #16685]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:10.081393 #16685]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:42:12.730460 #16685]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "eb80f7d6-c2c6-49dd-bd63-7a2d5ae11031"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:48.562158 #16807]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:48.563860 #16807]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:48.568545 #16807]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:48.572476 #16807]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:48.575745 #16807]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:50.043601 #16807]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:50.045172 #16807]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:44:53.315127 #16807]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "962e855d-c06b-4c5c-80bd-fefa0db033b8"], "kwargs"=>{}, "times"=>[]}
+D, [2016-06-24T17:44:53.329035 #16807] DEBUG -- : undefined local variable or method `pred' for #<AppController:0x0000000234d1e8> (NameError)
+main.rb:75:in `after_delete_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:298:in `rpc_delete'
+/home/miguel/development/ruby/bull-rb/server/server.rb:412:in `block in handle_rpc'
+I, [2016-06-24T17:44:56.410975 #16807]  INFO -- : {"command"=>"rpc_delete", "id"=>10, "args"=>["line", "345d5881-3b1a-4c80-908c-ff18949e9534"], "kwargs"=>{}, "times"=>[]}
+D, [2016-06-24T17:44:56.416901 #16807] DEBUG -- : undefined local variable or method `pred' for #<AppController:0x0000000234d1e8> (NameError)
+main.rb:75:in `after_delete_line'
+/home/miguel/development/ruby/bull-rb/server/server.rb:298:in `rpc_delete'
+/home/miguel/development/ruby/bull-rb/server/server.rb:412:in `block in handle_rpc'
+I, [2016-06-24T17:45:38.208950 #16873]  INFO -- : {"command"=>"watch_items_by_pattern", "id"=>2, "args"=>[""], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:38.218006 #16873]  INFO -- : {"command"=>"watch_groupers", "id"=>3, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:38.218335 #16873]  INFO -- : {"command"=>"watch_tables", "id"=>4, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:38.225168 #16873]  INFO -- : {"command"=>"rpc_items", "id"=>5, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:38.225369 #16873]  INFO -- : {"command"=>"watch_table_draft", "id"=>7, "args"=>[nil], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:39.407471 #16873]  INFO -- : {"command"=>"stop_watch", "id"=>7, "args"=>[], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:39.410347 #16873]  INFO -- : {"command"=>"watch_table_draft", "id"=>8, "args"=>["4d3c5831-be5e-40b1-a728-8044bc4d60ab"], "kwargs"=>{}, "times"=>[]}
+I, [2016-06-24T17:45:40.933490 #16873]  INFO -- : {"command"=>"rpc_delete", "id"=>9, "args"=>["line", "c291ba10-7b36-48c8-b84d-71b7e2487340"], "kwargs"=>{}, "times"=>[]}

@@ -289,6 +289,7 @@ class BullServerController
             check table, String
             check id, String
             doc = rsync $r.table(table).get(id)
+            doc = symbolize_keys doc
             if doc.nil? || !respond_to?('before_delete_'+table) || !self.send('before_delete_'+table, doc)
                 ret = 0
             else
